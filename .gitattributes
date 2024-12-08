@@ -1,0 +1,4 @@
+# Exclude some folders from language statistics
+rapport/** linguist-generated=true
+benchmarks/results/** linguist-generated=true
+benchmarks/programs/complex/poems.txt linguist-generated=true
