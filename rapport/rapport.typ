@@ -173,6 +173,23 @@ On peut aussi le voir car les programmes réels utilisant beaucoup de petites al
 
 = Fonctionnalités rajoutées
 
+- Detection de fuites de mémoire
+	#alloc_name est capable de détecter les fuites de mémoire en fin de programme.
+	Pour cela, j'ai crée un tableau dynamique de pointeurs alloués (à la manière de std::vector en C++, Vec en Rust, etc...).
+	Pour l'initialiser, j'utilise une fonction marquée avec ```c __attribute__((constructor))``` pour qu'elle soit appelée avant le main.
+	À chaque appel de malloc, calloc ou realloc, on ajoute le pointeur alloué à ce tableau, et à chaque appel de free, on le retire.
+	En fin de programme, grâce à une fonction marquée avec ```c __attribute__((destructor))```, on parcourt le tableau et on affiche les pointeurs qui n'ont pas été libérés, ainsi que leur contenu.
+	#linebreak()
+	Notes:
+		- J'ai dû créer deux versions de malloc et free, une qui peut garder trace des pointeurs pour l'utilisateur, et une qui ne le fait pas pour #alloc_name sinon le mécansime de détection de fuites de mémoire se détecte lui-même et il y aurait de faux positifs.
+		- J'aurais aimé utiliser les fonctions backtrace, backtrace_symbols, etc... pour afficher la pile d'appels, mais je n'ai pas réussi à les faire marcher et je préfère ne pas perdre de temps là-dessus.
+		- Quand il n'y a pas de fuite de mémoire, un petit chat content magnifique en ascii art apparaît, je pense que c'est un point non-négligeable pour le confort de l'utilisateur.
+			```
+			 /\_/\
+			>(^w^)<
+			  b d
+			```
+
 = Problèmes avec Rust
 Malgré le fait que Rust soit mon langage préféré et avec lequel je suis le plus à l'aise, j'ai rencontré des problèmes qui m'ont fait repassé en C pour ce projet.
 	- Beaucoup de boilerplate inutile pour pouvoir compiler le code puis l'interfacer avec du C. 
