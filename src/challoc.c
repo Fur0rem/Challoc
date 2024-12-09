@@ -12,6 +12,10 @@ typedef struct {
 	size_t size;
 } AllocMetadata;
 
+AllocMetadata* challoc_get_metadata(void* ptr) {
+	return (AllocMetadata*)(ptr - sizeof(AllocMetadata));
+}
+
 void* __chamalloc(size_t size) {
 	// Allocate memory for the metadata + user data
 	size	  = size + sizeof(AllocMetadata);
@@ -45,8 +49,32 @@ void __chafree(void* ptr) {
 	}
 }
 
-AllocMetadata* challoc_get_metadata(void* ptr) {
-	return (AllocMetadata*)(ptr - sizeof(AllocMetadata));
+void* __chacalloc(size_t nmemb, size_t size) {
+	// Allocate memory
+	void* ptr = __chamalloc(nmemb * size);
+
+	// Set memory to zero
+	if (ptr != NULL) {
+		memset(ptr, 0, nmemb * size);
+	}
+
+	return ptr;
+}
+
+void* __charealloc(void* ptr, size_t size) {
+	// Allocate new memory
+	void* new_ptr = __chamalloc(size);
+
+	// Copy the old data without the metadata
+	if (new_ptr != NULL && ptr != NULL) {
+		AllocMetadata* metadata = challoc_get_metadata(ptr);
+		memcpy(new_ptr, ptr, metadata->size - sizeof(AllocMetadata));
+	}
+
+	// Free the old memory
+	__chafree(ptr);
+
+	return new_ptr;
 }
 
 #ifdef CHALLOC_LEAKCHECK
@@ -56,46 +84,60 @@ void* __chamalloc_untracked(size_t size) {
 }
 
 void __chafree_untracked(void* ptr) {
-	return __chafree(ptr);
+	__chafree(ptr);
 }
 
 typedef struct {
-	void** ptrs;
+	void* ptr;
+	size_t size;
+} AllocTrace;
+
+void AllocTrace_free(AllocTrace trace) {}
+
+typedef struct {
+	AllocTrace* ptrs;
 	size_t size;
 	size_t capacity;
 } AllocList;
 
 AllocList AllocList_with_capacity(size_t capacity) {
 	return (AllocList){
-	    .ptrs     = __chamalloc(capacity * sizeof(void*)),
+	    .ptrs     = __chamalloc_untracked(capacity * sizeof(AllocTrace)),
 	    .size     = 0,
 	    .capacity = capacity,
 	};
 }
 
-void AllocList_push(AllocList* list, void* ptr) {
+void AllocList_push(AllocList* list, void* ptr, size_t ptr_size) {
 	if (list->size == list->capacity) {
 		list->capacity *= 2;
-		void** new_ptrs = __chamalloc_untracked(list->capacity * sizeof(void*));
-		memcpy(new_ptrs, list->ptrs, list->size * sizeof(void*));
+		AllocTrace* new_ptrs = __chamalloc_untracked(list->capacity * sizeof(AllocTrace));
+		memcpy(new_ptrs, list->ptrs, list->size * sizeof(AllocTrace));
 		__chafree_untracked(list->ptrs);
 		list->ptrs = new_ptrs;
 	}
-	list->ptrs[list->size] = ptr;
+	list->ptrs[list->size] = (AllocTrace){
+	    .ptr  = ptr,
+	    .size = ptr_size,
+	};
 	list->size++;
 }
 
 void AllocList_remove_ptr(AllocList* list, void* ptr) {
 	for (size_t i = 0; i < list->size; i++) {
-		if (list->ptrs[i] == ptr) {
+		if (list->ptrs[i].ptr == ptr) {
 			list->ptrs[i] = list->ptrs[list->size - 1];
 			list->size--;
+			AllocTrace_free(list->ptrs[list->size]);
 			return;
 		}
 	}
 }
 
 void AllocList_free(AllocList* list) {
+	for (size_t i = 0; i < list->size; i++) {
+		AllocTrace_free(list->ptrs[i]);
+	}
 	__chafree_untracked(list->ptrs);
 }
 
@@ -110,10 +152,10 @@ void __attribute__((destructor)) fini() {
 	if (alloc_list.size > 0) {
 		fprintf(stderr, "challoc: detected %zu memory leaks\n", alloc_list.size);
 		for (size_t i = 0; i < alloc_list.size; i++) {
-			fprintf(stderr, "Leaked memory at %p, Content: ", alloc_list.ptrs[i]);
-			AllocMetadata* metadata = challoc_get_metadata(alloc_list.ptrs[i]);
-			for (size_t j = 0; j < metadata->size - sizeof(AllocMetadata); j++) {
-				fprintf(stderr, "%02X ", ((uint8_t*)alloc_list.ptrs[i])[j]);
+			fprintf(stderr, "Leaked memory at %p, Content: ", alloc_list.ptrs[i].ptr);
+			size_t ptr_size = alloc_list.ptrs[i].size;
+			for (size_t j = 0; j < ptr_size; j++) {
+				fprintf(stderr, "%02X ", ((uint8_t*)alloc_list.ptrs[i].ptr)[j]);
 			}
 			fprintf(stderr, "\n");
 		}
@@ -129,7 +171,7 @@ void __attribute__((destructor)) fini() {
 void* chamalloc(size_t size) {
 	void* ptr = __chamalloc(size);
 #ifdef CHALLOC_LEAKCHECK
-	AllocList_push(&alloc_list, ptr);
+	AllocList_push(&alloc_list, ptr, size);
 #endif
 	return ptr;
 }
@@ -142,30 +184,19 @@ void chafree(void* ptr) {
 }
 
 void* chacalloc(size_t nmemb, size_t size) {
-	// Allocate memory
-	void* ptr = chamalloc(nmemb * size);
-
-	// Set memory to zero
-	if (ptr != NULL) {
-		memset(ptr, 0, nmemb * size);
-	}
-
+	void* ptr = __chacalloc(nmemb, size);
+#ifdef CHALLOC_LEAKCHECK
+	AllocList_push(&alloc_list, ptr, nmemb * size);
+#endif
 	return ptr;
 }
 
 void* charealloc(void* ptr, size_t size) {
-	// Allocate new memory
-	void* new_ptr = chamalloc(size);
-
-	// Copy the old data without the metadata
-	if (new_ptr != NULL && ptr != NULL) {
-		AllocMetadata* metadata = challoc_get_metadata(ptr);
-		memcpy(new_ptr, ptr, metadata->size - sizeof(AllocMetadata));
-	}
-
-	// Free the old memory
-	chafree(ptr);
-
+	void* new_ptr = __charealloc(ptr, size);
+#ifdef CHALLOC_LEAKCHECK
+	AllocList_remove_ptr(&alloc_list, ptr);
+	AllocList_push(&alloc_list, new_ptr, size);
+#endif
 	return new_ptr;
 }
 

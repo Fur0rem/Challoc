@@ -181,7 +181,7 @@ On peut aussi le voir car les programmes réels utilisant beaucoup de petites al
 	En fin de programme, grâce à une fonction marquée avec ```c __attribute__((destructor))```, on parcourt le tableau et on affiche les pointeurs qui n'ont pas été libérés, ainsi que leur contenu.
 	#linebreak()
 	Notes:
-		- J'ai dû créer deux versions de malloc et free, une qui peut garder trace des pointeurs pour l'utilisateur, et une qui ne le fait pas pour #alloc_name sinon le mécansime de détection de fuites de mémoire se détecte lui-même et il y aurait de faux positifs.
+		- J'ai dû créer deux versions de malloc, calloc, realloc et free, une qui peut garder trace des pointeurs pour l'utilisateur, et une qui ne le fait pas pour #alloc_name sinon le mécansime de détection de fuites de mémoire se détecte lui-même et il y aurait de faux positifs.
 		- J'aurais aimé utiliser les fonctions backtrace, backtrace_symbols, etc... pour afficher la pile d'appels, mais je n'ai pas réussi à les faire marcher et je préfère ne pas perdre de temps là-dessus.
 		- Quand il n'y a pas de fuite de mémoire, un petit chat content magnifique en ascii art apparaît, je pense que c'est un point non-négligeable pour le confort de l'utilisateur.
 			```
