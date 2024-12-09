@@ -137,6 +137,7 @@ Pour les benchmarks, j'ai utilisé Criterion pour les faire tourner, puis matplo
 
 Il y a 2 familles de benchmarks :
 	- Les benchmarks unitaires de malloc, calloc, realloc pour différentes tailles de mémoire demandée.
+		Chaque benchmark fait une boucle de alloc puis free, et on mesure le temps moyen pour une taille donnée.
 	La taille allant de 1 octet à 1 Go, avec des paliers par puissance de 2.
 	- Les benchmarks de programmes plus ou moins complexes en C pour voir l'impact de l'allocateur sur des programmes réels, car la performance de l'allocateur peut se ressentir aussi quand on écrit dans la mémoire allouée de façon intensive, et qu'il y a sûrement plein de mécanismes de cache qui rentrent en jeu.
 		- small_allocs, big_allocs & mixed_allocs : Allouent plein de fois de la mémoire de taille petite (\<1024o), grande (\>16Mo), ou un mélange des 2.
@@ -171,6 +172,53 @@ On peut aussi le voir car les programmes réels utilisant beaucoup de petites al
 
 = Optimisations faites
 
+== Allocateur slab pour les petites allocations
+Pour des allocations de < 512 octets, j'utilise un allocateur slab sur une pag de 4Ko, puis le découpe en 1*512 + 2*256 + 4*128 + ... + 64*8 + 64*4.
+Chaque palier possède un champ de bits pour savoir quels blocs sont en cours d'utilisation.
+#code_snippet(code: "
+// Allocateur slab qui tient sur une page de 4Ko
+struct Minislab {
+	// Slabs pour les différentes tailles
+	uint8_t slab512[1][512]; // 1 bloc de 512 octets
+	uint8_t slab256[2][256]; // 2 blocs de 256 octets
+	uint8_t slab128[4][128]; // etc...
+	uint8_t slab64[8][64];
+	uint8_t slab32[16][32];
+	uint8_t slab16[32][16];
+	uint8_t slab8[64][8];
+	uint8_t slab_small[64][4];
+
+	// Champs de bits pour savoir quels blocs sont en cours d'utilisation
+	uint64_t slab_small_usage; // 64 blocs de 4 octets
+	uint64_t slab8_usage; // 64 blocs de 8 octets
+	uint32_t slab16_usage; // 32 blocs de 16 octets
+	uint16_t slab32_usage; // etc...
+	uint8_t slab64_usage;
+	uint8_t slab128_usage;
+	uint8_t slab256_usage;
+	uint8_t slab512_usage;
+};")
+
+Note : Les champs pour 512, 256 et 128 sont compressés en uint8_t avec un bitfield.
+#code_snippet(
+code: "struct Slab512x256x128Usage {
+	uint8_t slab512_usage : 1;
+	uint8_t slab256_usage : 2;
+	uint8_t slab128_usage : 4;
+};")
+
+Pour allouer, on regarde le pallier de la puissance de 2 supérieure ou égale à la taille demandée, puis on regarde si un bloc est libre en utilisant les opérations de bits telles que ```popcount``` et ```ctz```.
+Pour libérer, on peut comparer l'adresse du bloc avec les adresses des slabs pour savoir s'il s'agit un pointeur alloué par la slab, et si oui de quel pallier il s'agit, puis on libère le bloc en mettant à 0 le bit correspondant.
+Aussi, je met un seuil de concordance de taille pour éviter de gâcher le palier de 512 octets pour une allocation de 257 octets, et donc de gaspiller la moitié de la mémoire.
+
+Maintenant, comparons les benchmarks de l'allocateur slab.
+#pagebreak(weak: true)
+#bench_show("bench_results/slab")
+
+On peut remarquer que les benchmarks unitaires pour des petites tailles sont bien plus rapides, et parfois même plus rapides que la libc pour des tailles de moins de 512 octets.
+Cependant, le reste de la courbe est similaire à l'allocateur minimal, car on n'utilise pas le slab pour des tailles de mémoire plus grandes.
+Aussi, on ne peut pas observer d'impact conséquent sur les programmes réels, car les allocations de petites tailles ne sont pas assez nombreuses pour que l'allocateur slab ait un impact significatif.
+
 = Fonctionnalités rajoutées
 
 - Detection de fuites de mémoire
@@ -198,7 +246,7 @@ Malgré le fait que Rust soit mon langage préféré et avec lequel je suis le p
 		#[no_mangle]
 		pub unsafe extern "C" fn malloc(size: usize) -> *mut c_void {}
 		```
-		et il fallait rajouter des annotations #[repr(C)] pour les structures, ect... ainsi qu'utiliser l'intermédiaire de Cbindgen pour générer les headers C. 
+		et il fallait rajouter des annotations #[repr(C)] pour les structures, etc... ainsi qu'utiliser l'intermédiaire de Cbindgen pour générer les headers C. 
 
 	- Le système de test et de benchmarks ne marchait pas avec un allocateur custom interposé, car il rentrait en conflit avec l'allocateur de Rust. 
 		Donc j'ai du ajouter des flags #[cfg(test)] et des features et d'autres macros de configuration pour pouvoir tester l'allocateur, ce qui rendait le code encore moins lisible et dupliquait les fichiers de configuration comme cbingen, Cargo.toml, etc... 

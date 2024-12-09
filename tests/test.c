@@ -9,7 +9,6 @@
 bool test_malloc() {
 	for (size_t size = 1; size < 10000; size++) {
 		volatile uint8_t* ptr = chamalloc(size * sizeof(uint8_t));
-		;
 		if (ptr == NULL) {
 			return false;
 		}
@@ -22,26 +21,35 @@ bool test_mallocs_dont_overlap() {
 	const size_t NB_PTRS = 1000;
 	volatile uint8_t* ptrs[NB_PTRS];
 	for (size_t i = 0; i < NB_PTRS; i++) {
-		ptrs[i] = chamalloc(i);
+		ptrs[i] = chamalloc(i * sizeof(uint8_t));
 		if (ptrs[i] == NULL) {
 			return false;
 		}
 	}
+	bool overlap = false;
 	for (size_t i = 0; i < NB_PTRS; i++) {
 		for (size_t j = 0; j < i; j++) {
 			volatile uint8_t* ptr_i = ptrs[i];
 			volatile uint8_t* ptr_j = ptrs[j];
-			size_t end_i		= (size_t)ptr_i + i;
-			size_t end_j		= (size_t)ptr_j + j;
+			size_t end_i		= (size_t)ptr_i + (i * sizeof(uint8_t));
+			size_t end_j		= (size_t)ptr_j + (j * sizeof(uint8_t));
 			if (end_i > (size_t)ptr_j && end_j > (size_t)ptr_i) {
-				return false;
+				fprintf(stderr,
+					"Memory regions overlap: [%p-%p] and [%p-%p] for i=%zu and j=%zu\n",
+					ptr_i,
+					(void*)end_i,
+					ptr_j,
+					(void*)end_j,
+					i,
+					j);
+				overlap = true;
 			}
 		}
 	}
 	for (size_t i = 0; i < NB_PTRS; i++) {
 		chafree(ptrs[i]);
 	}
-	return true;
+	return !overlap;
 }
 
 bool test_calloc() {
@@ -61,28 +69,45 @@ bool test_calloc() {
 }
 
 bool test_realloc() {
-	size_t size	      = 1024;
-	volatile uint8_t* ptr = chamalloc(size * sizeof(uint8_t));
-	if (ptr == NULL) {
-		return false;
-	}
-	for (size_t i = 0; i < size; i++) {
-		ptr[i] = 10;
-	}
-	size_t new_size		  = 2048;
-	volatile uint8_t* new_ptr = charealloc(ptr, new_size * sizeof(uint8_t));
-	if (new_ptr == NULL) {
-		return false;
-	}
-	for (size_t i = 0; i < size; i++) {
-		if (new_ptr[i] != 10) {
+	for (size_t size = 1; size <= 4096; size *= 2) {
+		volatile uint8_t* ptr = chamalloc(size * sizeof(uint8_t));
+		if (ptr == NULL) {
 			return false;
 		}
+		for (size_t i = 0; i < size; i++) {
+			ptr[i] = 10;
+		}
+		size_t new_size		  = 2048;
+		volatile uint8_t* new_ptr = charealloc(ptr, new_size * sizeof(uint8_t));
+		if (new_ptr == NULL) {
+			chafree(ptr);
+			return false;
+		}
+		for (size_t i = 0; i < size; i++) {
+			if (new_ptr[i] != 10) {
+				chafree(new_ptr);
+				return false;
+			}
+		}
+		for (size_t i = size; i < new_size; i++) {
+			new_ptr[i] = 20;
+		}
+
+		for (size_t i = 0; i < size; i++) {
+			if (new_ptr[i] != 10) {
+				chafree(new_ptr);
+				return false;
+			}
+		}
+		for (size_t i = size; i < new_size; i++) {
+			if (new_ptr[i] != 20) {
+				chafree(new_ptr);
+				return false;
+			}
+		}
+
+		chafree(new_ptr);
 	}
-	for (size_t i = size; i < new_size; i++) {
-		new_ptr[i] = 20;
-	}
-	chafree(new_ptr);
 	return true;
 }
 

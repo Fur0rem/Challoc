@@ -19,19 +19,21 @@ else
 endif
 
 libchalloc.so: src/challoc.c | target
-	$(CC) -fpic -shared -O4 -o target/libchalloc.so src/challoc.c $(LEAKCHECK_FLAG) -DCHALLOC_INTERPOSING
+	$(CC) -fpic -shared -O4 -Wall -Wextra -o target/libchalloc.so src/challoc.c $(LEAKCHECK_FLAG) -DCHALLOC_INTERPOSING
 
 libchalloc_dev.so: src/challoc.c | target
-	$(CC) -fpic -shared -O4 -o target/libchalloc_dev.so src/challoc.c $(LEAKCHECK_FLAG) -DNDCHALLOC_INTERPOSING
+	$(CC) -fpic -shared -O4 -Wall -Wextra -o target/libchalloc_dev.so src/challoc.c $(LEAKCHECK_FLAG) -DNDCHALLOC_INTERPOSING
 
 challoc-dev: libchalloc_dev.so
 
 challoc: libchalloc.so
 
-check: challoc-dev tests/test.c tests/** | target
+check: challoc-dev tests/test.c tests/test_internal.c tests/** | target
 	$(MAKE) libchalloc_dev.so LEAKCHECK=true
+	$(CC) -o target/test_internal tests/test_internal.c $(LINK_DEV) -Wno-discarded-qualifiers
 	$(CC) -o target/test tests/test.c $(LINK_DEV) -Wno-discarded-qualifiers
 	$(EXEC_DEV) target/test
+	$(EXEC_DEV) target/test_internal
 	$(CC) -o target/leaker_inter tests/programs/leaker_inter.c $(LINK_INTER) -Wno-discarded-qualifiers -Og -g
 	$(CC) -o target/non_leaker_inter tests/programs/non_leaker_inter.c $(LINK_INTER) -Wno-discarded-qualifiers -Og -g
 	$(MAKE) libchalloc.so LEAKCHECK=true
@@ -52,7 +54,7 @@ unit_benchmarks: benchmarks/run_unit_benchs.c challoc-dev | target
 program_benchmarks: benchmarks/run_program_benchs.c challoc | target
 	$(CC) -o target/run_program_benchs benchmarks/run_program_benchs.c -Wno-discarded-qualifiers
 
-benchmarks: unit_benchmarks program_benchmarks | target
+benchmarks: libchalloc_dev.so libchalloc.so unit_benchmarks program_benchmarks | target
 	$(if $(LABEL),,$(error Please provide a name for a directory to store the benchmarks and figures with LABEL=<...>))
 	$(if $(wildcard benchmarks/results/$(LABEL)), $(error Directory benchmarks/results/$(LABEL) already exists. Don't want to overwrite.),)
 	mkdir -p benchmarks/results/$(LABEL)/{unit,program}

@@ -1,4 +1,5 @@
 #include "challoc.h"
+#include <assert.h>
 #include <execinfo.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -7,6 +8,229 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
+
+// Slab allocation for small memory blocks
+typedef struct {
+	uint8_t slab512_usage : 1;
+	uint8_t slab256_usage : 2;
+	uint8_t slab128_usage : 4;
+} Slab512x256x128Usage;
+
+__attribute__((aligned(4096))) typedef struct {
+	uint8_t slab512[1][512];
+	uint8_t slab256[2][256];
+	uint8_t slab128[4][128];
+	uint8_t slab64[8][64];
+	uint8_t slab32[16][32];
+	uint8_t slab16[32][16];
+	uint8_t slab8[64][8];
+	uint8_t slab_small[64][4];
+
+	uint64_t slab_small_usage;
+	uint64_t slab8_usage;
+	uint32_t slab16_usage;
+	uint16_t slab32_usage;
+	uint8_t slab64_usage;
+	Slab512x256x128Usage slab512x256x128_usage;
+} MiniSlab;
+
+MiniSlab challoc_minislab = {0};
+
+typedef struct {
+	bool is_close : 1;
+	uint8_t ceil_pow2 : 5; // 512 is the max power of two we can reach, 2^9 = 512, ceil(log2(512)) = 9
+} ClosePowerOfTwo;
+
+ClosePowerOfTwo is_close_to_power_of_two(size_t size) {
+	ClosePowerOfTwo false_result = {
+	    .is_close  = false,
+	    .ceil_pow2 = 0,
+	};
+
+	if (size == 0 || size > 512) {
+		return false_result;
+	}
+
+	if (size <= 4) {
+		return (ClosePowerOfTwo){
+		    .is_close  = true,
+		    .ceil_pow2 = 2,
+		};
+	}
+
+	size_t ceil_pow2 = 2 * 2;
+	size_t pow2	 = 2;
+	while (ceil_pow2 < size) {
+		ceil_pow2 *= 2;
+		pow2++;
+	}
+
+	if ((double)ceil_pow2 / (double)size <= 1.2) {
+		return (ClosePowerOfTwo){
+		    .is_close  = true,
+		    .ceil_pow2 = pow2,
+		};
+	}
+
+	return false_result;
+}
+
+size_t find_first_bit_at_0(uint64_t value) {
+	// go from the left to the right
+	for (size_t i = 0; i < 64; i++) {
+		if ((value & (1ULL << i)) == 0) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+void* minislab_alloc(ClosePowerOfTwo size) {
+	assert(size.is_close);
+	size_t ceil = size.ceil_pow2;
+	assert(ceil >= 2 && ceil <= 9);
+	switch (size.ceil_pow2) {
+		case 2: {
+			if (challoc_minislab.slab_small_usage == 0xFFFFFFFF) {
+				return NULL;
+			}
+			size_t index = find_first_bit_at_0(challoc_minislab.slab_small_usage);
+			challoc_minislab.slab_small_usage |= 1ULL << index;
+			return challoc_minislab.slab_small[index];
+		}
+		case 3: {
+			if (challoc_minislab.slab8_usage == 0xFFFFFFFF) {
+				return NULL;
+			}
+			size_t index = find_first_bit_at_0(challoc_minislab.slab8_usage);
+			challoc_minislab.slab8_usage |= 1ULL << index;
+			return challoc_minislab.slab8[index];
+		}
+		case 4: {
+			if (challoc_minislab.slab16_usage == 0xFFFF) {
+				return NULL;
+			}
+			size_t index = find_first_bit_at_0(challoc_minislab.slab16_usage);
+			challoc_minislab.slab16_usage |= 1UL << index;
+			return challoc_minislab.slab16[index];
+		}
+		case 5: {
+			if (challoc_minislab.slab32_usage == 0xFF) {
+				return NULL;
+			}
+			size_t index = find_first_bit_at_0(challoc_minislab.slab32_usage);
+			challoc_minislab.slab32_usage |= 1U << index;
+			return challoc_minislab.slab32[index];
+		}
+		case 6: {
+			if (challoc_minislab.slab64_usage == 0xF) {
+				return NULL;
+			}
+			size_t index = find_first_bit_at_0(challoc_minislab.slab64_usage);
+			challoc_minislab.slab64_usage |= 1U << index;
+			return challoc_minislab.slab64[index];
+		}
+		case 7: {
+			if (challoc_minislab.slab512x256x128_usage.slab128_usage == 0b1111) {
+				return NULL;
+			}
+			size_t index = find_first_bit_at_0(challoc_minislab.slab512x256x128_usage.slab128_usage);
+			challoc_minislab.slab512x256x128_usage.slab128_usage |= 1U << index;
+			return challoc_minislab.slab128[index];
+		}
+		case 8: {
+			if (challoc_minislab.slab512x256x128_usage.slab256_usage == 0b11) {
+				return NULL;
+			}
+			size_t index = find_first_bit_at_0(challoc_minislab.slab512x256x128_usage.slab256_usage);
+			challoc_minislab.slab512x256x128_usage.slab256_usage |= 1U << index;
+			return challoc_minislab.slab256[index];
+		}
+		case 9: {
+			if (challoc_minislab.slab512x256x128_usage.slab512_usage == 0b1) {
+				return NULL;
+			}
+			size_t index = find_first_bit_at_0(challoc_minislab.slab512x256x128_usage.slab512_usage);
+			challoc_minislab.slab512x256x128_usage.slab512_usage |= 1U << index;
+			return challoc_minislab.slab512[index];
+		}
+		default: {
+			assert(false);
+		}
+	}
+}
+
+bool ptr_comes_from_minislab(void* ptr) {
+	size_t minislab_begin = (size_t)&challoc_minislab;
+	size_t minislab_end   = minislab_begin + sizeof(MiniSlab);
+	size_t ptr_addr	      = (size_t)ptr;
+	return ptr_addr >= minislab_begin && ptr_addr < minislab_end;
+}
+
+size_t minislab_ptr_size(void* ptr) {
+	assert(ptr_comes_from_minislab(ptr));
+	ssize_t offset = (ssize_t)ptr - (ssize_t)&challoc_minislab;
+	if (offset >= 0 && offset < 512) {
+		return 512;
+	}
+	else if (offset >= 512 && offset < 1024) {
+		return 256;
+	}
+	else if (offset >= 1024 && offset < 1536) {
+		return 128;
+	}
+	else if (offset >= 1536 && offset < 2048) {
+		return 64;
+	}
+	else if (offset >= 2048 && offset < 2560) {
+		return 32;
+	}
+	else if (offset >= 2560 && offset < 3072) {
+		return 16;
+	}
+	else if (offset >= 3072 && offset < 3584) {
+		return 8;
+	}
+	else if (offset >= 3584 && offset < 4096) {
+		return 4;
+	}
+	else {
+		assert(false);
+	}
+}
+
+void minislab_free(void* ptr) {
+	assert(ptr_comes_from_minislab(ptr));
+
+	ssize_t offset = (ssize_t)ptr - (ssize_t)&challoc_minislab;
+	if (offset >= 0 && offset < 512) {
+		challoc_minislab.slab512x256x128_usage.slab512_usage &= ~(1U << offset);
+	}
+	else if (offset >= 512 && offset < 1024) {
+		challoc_minislab.slab512x256x128_usage.slab256_usage &= ~(1U << (offset - 512));
+	}
+	else if (offset >= 1024 && offset < 1536) {
+		challoc_minislab.slab512x256x128_usage.slab128_usage &= ~(1U << (offset - 1024));
+	}
+	else if (offset >= 1536 && offset < 2048) {
+		challoc_minislab.slab64_usage &= ~(1U << (offset - 1536));
+	}
+	else if (offset >= 2048 && offset < 2560) {
+		challoc_minislab.slab32_usage &= ~(1U << (offset - 2048));
+	}
+	else if (offset >= 2560 && offset < 3072) {
+		challoc_minislab.slab16_usage &= ~(1U << (offset - 2560));
+	}
+	else if (offset >= 3072 && offset < 3584) {
+		challoc_minislab.slab8_usage &= ~(1U << (offset - 3072));
+	}
+	else if (offset >= 3584 && offset < 4096) {
+		challoc_minislab.slab_small_usage &= ~(1U << (offset - 3584));
+	}
+	else {
+		assert(false);
+	}
+}
 
 typedef struct {
 	size_t size;
@@ -17,6 +241,15 @@ AllocMetadata* challoc_get_metadata(void* ptr) {
 }
 
 void* __chamalloc(size_t size) {
+	// Try to allocate from the minislab
+	ClosePowerOfTwo close_pow2 = is_close_to_power_of_two(size);
+	if (close_pow2.is_close) {
+		void* ptr = minislab_alloc(close_pow2);
+		if (ptr != NULL) {
+			return ptr;
+		}
+	}
+
 	// Allocate memory for the metadata + user data
 	size	  = size + sizeof(AllocMetadata);
 	void* ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -36,6 +269,12 @@ void* __chamalloc(size_t size) {
 }
 
 void __chafree(void* ptr) {
+	// Check if the pointer comes from the minislab
+	if (ptr_comes_from_minislab(ptr)) {
+		minislab_free(ptr);
+		return;
+	}
+
 	if (ptr == NULL) {
 		return;
 	}
@@ -67,13 +306,18 @@ void* __charealloc(void* ptr, size_t size) {
 
 	// Copy the old data without the metadata
 	if (new_ptr != NULL && ptr != NULL) {
-		AllocMetadata* metadata = challoc_get_metadata(ptr);
-		memcpy(new_ptr, ptr, metadata->size - sizeof(AllocMetadata));
+		if (ptr_comes_from_minislab(ptr)) {
+			size_t ptr_size = minislab_ptr_size(ptr);
+			memcpy(new_ptr, ptr, ptr_size);
+		}
+		else {
+			AllocMetadata* metadata = challoc_get_metadata(ptr);
+			memcpy(new_ptr, ptr, metadata->size - sizeof(AllocMetadata));
+		}
+
+		// Free the old memory
+		__chafree(ptr);
 	}
-
-	// Free the old memory
-	__chafree(ptr);
-
 	return new_ptr;
 }
 
