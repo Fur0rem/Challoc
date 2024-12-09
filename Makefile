@@ -3,6 +3,7 @@ LINK_DEV = -Ltarget -lchalloc_dev
 EXEC_DEV = LD_LIBRARY_PATH=target
 LINK_INTER = -Ltarget -lchalloc
 EXEC_INTER = LD_LIBRARY_PATH=target LD_PRELOAD=libchalloc.so
+PTHREAD = -lpthread
 
 target:
 	mkdir -p target
@@ -19,10 +20,10 @@ else
 endif
 
 libchalloc.so: src/challoc.c | target
-	$(CC) -fpic -shared -O4 -Wall -Wextra -o target/libchalloc.so src/challoc.c $(LEAKCHECK_FLAG) -DCHALLOC_INTERPOSING
+	$(CC) -fpic -shared -O4 -Wall -Wextra -o target/libchalloc.so src/challoc.c $(LEAKCHECK_FLAG) -DCHALLOC_INTERPOSING $(PTHREAD)
 
 libchalloc_dev.so: src/challoc.c | target
-	$(CC) -fpic -shared -O4 -Wall -Wextra -o target/libchalloc_dev.so src/challoc.c $(LEAKCHECK_FLAG) -DNDCHALLOC_INTERPOSING
+	$(CC) -fpic -shared -O4 -Wall -Wextra -o target/libchalloc_dev.so src/challoc.c $(LEAKCHECK_FLAG) -DNDCHALLOC_INTERPOSING $(PTHREAD)
 
 challoc-dev: libchalloc_dev.so
 
@@ -30,8 +31,8 @@ challoc: libchalloc.so
 
 check: challoc-dev tests/test.c tests/test_internal.c tests/** | target
 	$(MAKE) libchalloc_dev.so LEAKCHECK=true
-	$(CC) -o target/test_internal tests/test_internal.c $(LINK_DEV) -Wno-discarded-qualifiers
-	$(CC) -o target/test tests/test.c $(LINK_DEV) -Wno-discarded-qualifiers
+	$(CC) -o target/test_internal tests/test_internal.c $(LINK_DEV) -Wno-discarded-qualifiers -Og -g
+	$(CC) -o target/test tests/test.c $(LINK_DEV) -Wno-discarded-qualifiers -Og -g $(PTHREAD)
 	$(EXEC_DEV) target/test
 	$(EXEC_DEV) target/test_internal
 	$(CC) -o target/leaker_inter tests/programs/leaker_inter.c $(LINK_INTER) -Wno-discarded-qualifiers -Og -g

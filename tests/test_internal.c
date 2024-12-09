@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -63,20 +64,29 @@ int main() {
 	bool all_passed = true;
 
 	for (size_t i = 0; i < sizeof(tests) / sizeof(Test); i++) {
-		Test test   = tests[i];
+		Test test = tests[i];
+		printf("[Running] %s\n", test.name);
 		bool passed = test.test();
 
-		printf("[Running] %s\n", test.name);
 		// go back to the beginning of the line and clear it
 		printf("\033[1A\033[2K");
 
-		if (passed) {
+		bool has_no_errors = errno == 0;
+		if (passed && has_no_errors) {
 			printf(GREEN_BOLD "[  OK  ]" RESET " %s\n", test.name);
 		}
 		else {
-			printf(RED_BOLD "[FAILED]" RESET " %s\n", test.name);
+			printf(RED_BOLD "[FAILED]" RESET " %s", test.name);
+			if (!has_no_errors) {
+				printf(" | (errno: %d)", errno);
+			}
+			else {
+				printf(" | Failed logic test");
+			}
+			printf("\n");
 		}
 		all_passed &= passed;
+		all_passed &= has_no_errors;
 	}
 
 	if (all_passed) {

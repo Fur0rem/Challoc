@@ -238,6 +238,10 @@ Aussi, on ne peut pas observer d'impact conséquent sur les programmes réels, c
 			  b d
 			```
 
+- Support du multithreading
+	J'ai ajouté 2 Mutex pour protéger l'allocateur et la liste des pointeurs alloués pour la détection de fuites de mémoire.
+	J'ai protéger les sections critiques, rien de plus à dire, mais c'est toujours bien de le préciser.
+
 = Problèmes avec Rust
 Malgré le fait que Rust soit mon langage préféré et avec lequel je suis le plus à l'aise, j'ai rencontré des problèmes qui m'ont fait repassé en C pour ce projet.
 	- Beaucoup de boilerplate inutile pour pouvoir compiler le code puis l'interfacer avec du C. 
