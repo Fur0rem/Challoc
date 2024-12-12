@@ -72,7 +72,7 @@ void bench_malloc(BenchResult* allocator_result, void* (*alloc)(size_t), void (*
 		// Time the first one to estimate how many iterations we can do
 		uint64_t start			  = __rdtsc();
 		uint64_t end			  = start;
-		const int NB_ITERS_FOR_ESTIMATION = 5;
+		const int NB_ITERS_FOR_ESTIMATION = 1;
 
 		uint64_t worst_iter = 0;
 		while (end <= start) {
@@ -121,7 +121,7 @@ void bench_realloc(BenchResult* allocator_result, void* (*alloc)(size_t), void* 
 		// Time the first one to estimate how many iterations we can do
 		uint64_t start			  = __rdtsc();
 		uint64_t end			  = start;
-		const int NB_ITERS_FOR_ESTIMATION = 5;
+		const int NB_ITERS_FOR_ESTIMATION = 1;
 
 		uint64_t worst_iter = 0;
 		while (end <= start) {
@@ -171,7 +171,7 @@ void bench_calloc(BenchResult* allocator_result, void* (*calloc)(size_t, size_t)
 		// Time the first one to estimate how many iterations we can do
 		uint64_t start			  = __rdtsc();
 		uint64_t end			  = start;
-		const int NB_ITERS_FOR_ESTIMATION = 5;
+		const int NB_ITERS_FOR_ESTIMATION = 1;
 
 		uint64_t worst_iter = 0;
 		while (end <= start) {
@@ -251,13 +251,13 @@ int main(int argc, char** argv) {
 	write_results(libc, challoc, argv[1]);
 
 	libc.fn_name	= "realloc";
-	challoc.fn_name = "realloc";
+	challoc.fn_name = "charealloc";
 	bench_realloc(&libc, malloc, realloc, free, "realloc");
-	bench_realloc(&challoc, chamalloc, charealloc, chafree, "realloc");
+	bench_realloc(&challoc, chamalloc, charealloc, chafree, "charealloc");
 	write_results(libc, challoc, argv[1]);
 
 	libc.fn_name	= "calloc";
-	challoc.fn_name = "calloc";
+	challoc.fn_name = "chacalloc";
 	bench_calloc(&libc, calloc, free, "calloc");
 	bench_calloc(&challoc, chacalloc, chafree, "chacalloc");
 	write_results(libc, challoc, argv[1]);

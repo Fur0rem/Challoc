@@ -44,6 +44,164 @@ bool test_minislab_malloc() {
 	return true;
 }
 
+bool overlaps(volatile uint8_t* ptr1, size_t size1, volatile uint8_t* ptr2, size_t size2) {
+	size_t end1 = (size_t)ptr1 + size1;
+	size_t end2 = (size_t)ptr2 + size2;
+	return end1 > (size_t)ptr2 && end2 > (size_t)ptr1;
+}
+
+bool any_overlaps(void** ptrs, size_t* sizes, size_t nb_ptrs) {
+	for (size_t i = 0; i < nb_ptrs; i++) {
+		for (size_t j = 0; j < i; j++) {
+			if (overlaps(ptrs[i], sizes[i], ptrs[j], sizes[j])) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool test_fill_minislab() {
+	// Fill the minislab
+	void* all_alloced[4096 * 2];
+	size_t sizes[4096 * 2];
+	size_t all_alloced_size = 0;
+	size_t current_size	= 4;
+	while (current_size <= 512) {
+		bool comes_from_minislab = true;
+
+		while (comes_from_minislab) {
+			volatile uint8_t* ptr = chamalloc(current_size * sizeof(uint8_t));
+			if (ptr == NULL) {
+				printf("allocation with size %zu failed\n\n", current_size);
+				return false;
+			}
+			comes_from_minislab	      = ptr_comes_from_minislab(ptr);
+			all_alloced[all_alloced_size] = ptr;
+			sizes[all_alloced_size]	      = current_size;
+			all_alloced_size++;
+		}
+
+		current_size *= 2;
+	}
+
+	// Check that there are no overlaps
+	if (any_overlaps(all_alloced, sizes, all_alloced_size)) {
+		printf("overlaps detected\n\n");
+		for (size_t i = 0; i < all_alloced_size; i++) {
+			chafree(all_alloced[i]);
+		}
+		return false;
+	}
+
+	// Check that the minislab is full
+	volatile uint8_t* ptr = chamalloc(4 * sizeof(uint8_t));
+	if (ptr_comes_from_minislab(ptr)) {
+		printf("minislab is not full\n\n");
+		MiniSlab_print_usage(challoc_minislab);
+		chafree(ptr);
+		return false;
+	}
+
+	// Free all the blocks
+	for (size_t i = 0; i < all_alloced_size; i++) {
+		chafree(all_alloced[i]);
+	}
+
+	// Check that the minislab is empty
+	ptr = chamalloc(4 * sizeof(uint8_t));
+	if (!ptr_comes_from_minislab(ptr)) {
+		printf("minislab is not empty\n\n");
+		MiniSlab_print_usage(challoc_minislab);
+		chafree(ptr);
+		return false;
+	}
+
+	return true;
+}
+
+bool test_block_reusage() {
+	// Allocate a block
+	volatile uint8_t* ptr = chamalloc(1024 * sizeof(uint8_t));
+	if (ptr == NULL) {
+		printf("allocation with size 1024 failed\n");
+		return false;
+	}
+	if (ptr_comes_from_minislab(ptr)) {
+		printf("allocation with size 1024 comes from minislab\n");
+		chafree(ptr);
+		return false;
+	}
+
+	// Check that there is nothing in the freed list
+	printf("freed list has %zu elements\n", freed.size);
+	if (freed.size != 0) {
+		printf("freed list has %zu elements, expected 0\n", freed.size);
+		AllocMetadata* metadata = AllocMetadataList_get(&freed, 0);
+		printf("first element has TTL %zu\n", metadata->time_to_live);
+		printf("first element has size %zu\n", metadata->size);
+		chafree(ptr);
+		return false;
+	}
+
+	// Free the block
+	chafree(ptr);
+
+	// Check that there is one block in the freed list and not with a TTL of 0
+	if (freed.size != 1) {
+		printf("freed list has %zu elements, expected 1\n", freed.size);
+		return false;
+	}
+	AllocMetadata* metadata = AllocMetadataList_get(&freed, 0);
+	if (metadata->time_to_live == 0) {
+		printf("freed block has TTL of 0\n");
+		return false;
+	}
+
+	return true;
+}
+
+typedef void* (*thread_func)(void*);
+
+thread_func alloc_slab_thread(void* array_of_ptrs) {
+	for (size_t i = 0; i < 1024; i++) {
+		((void**)array_of_ptrs)[i] = chamalloc(4 * sizeof(uint8_t));
+	}
+	return NULL;
+}
+
+bool test_minislab_concurrent_usage() {
+	// Launch 8 threads that allocate from the minislab
+	// Check that there are no overlaps
+
+	pthread_t thread_id[8];
+	void* array_of_ptrs[8][1024];
+	for (size_t i = 0; i < 8; i++) {
+		pthread_create(&thread_id[i], NULL, (thread_func)alloc_slab_thread, array_of_ptrs[i]);
+	}
+
+	for (size_t i = 0; i < 8; i++) {
+		pthread_join(thread_id[i], NULL);
+	}
+
+	// Check that there are no overlaps
+	for (size_t i = 0; i < 8; i++) {
+		if (any_overlaps(array_of_ptrs[i], (size_t[1024]){4}, 1024)) {
+			printf("overlaps detected in thread %zu\n", i);
+			return false;
+		}
+	}
+
+	// Free all the blocks
+	for (size_t i = 0; i < 8; i++) {
+		for (size_t j = 0; j < 1024; j++) {
+			chafree(array_of_ptrs[i][j]);
+		}
+	}
+
+	return true;
+}
+
 typedef struct {
 	const char* name;
 	bool (*test)();
@@ -56,8 +214,11 @@ typedef struct {
 #define RESET	   "\033[0m"
 
 Test tests[] = {
+    TEST(test_block_reusage),
     TEST(test_minislab_fits_page),
     TEST(test_minislab_malloc),
+    TEST(test_fill_minislab),
+    TEST(test_minislab_concurrent_usage),
 };
 
 int main() {
@@ -68,11 +229,10 @@ int main() {
 		printf("[Running] %s\n", test.name);
 		bool passed = test.test();
 
-		// go back to the beginning of the line and clear it
-		printf("\033[1A\033[2K");
-
 		bool has_no_errors = errno == 0;
 		if (passed && has_no_errors) {
+			// go back to the beginning of the line and clear it
+			printf("\033[1A\033[2K");
 			printf(GREEN_BOLD "[  OK  ]" RESET " %s\n", test.name);
 		}
 		else {

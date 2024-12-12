@@ -10,10 +10,18 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-pthread_mutex_t challoc_mutex	 = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t alloc_list_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t challoc_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-// Slab allocation for small memory blocks
+#define MUTEX(code, mutex)                                                                                                                 \
+	pthread_mutex_lock(&(mutex));                                                                                                      \
+	code;                                                                                                                              \
+	pthread_mutex_unlock(&(mutex));
+
+#define CHALLOC_MUTEX(code) MUTEX(code, challoc_mutex)
+
+/// ------------------------------------------------
+/// Slab allocator
+/// ------------------------------------------------
 typedef struct {
 	uint8_t slab512_usage : 1;
 	uint8_t slab256_usage : 2;
@@ -37,6 +45,15 @@ __attribute__((aligned(4096))) typedef struct {
 	uint8_t slab64_usage;
 	Slab512x256x128Usage slab512x256x128_usage;
 } MiniSlab;
+
+void MiniSlab_print_usage(MiniSlab slab) {
+	printf("slab_small_usage: %lx\n", slab.slab_small_usage);
+	printf("slab8_usage: %lx\n", slab.slab8_usage);
+	printf("slab16_usage: %x\n", slab.slab16_usage);
+	printf("slab32_usage: %x\n", slab.slab32_usage);
+	printf("slab64_usage: %x\n", slab.slab64_usage);
+	printf("slab512x256x128_usage: %x\n", (uint8_t)slab.slab512x256x128_usage.slab512_usage);
+}
 
 MiniSlab challoc_minislab = {0};
 
@@ -93,75 +110,86 @@ void* minislab_alloc(ClosePowerOfTwo size) {
 	assert(size.is_close);
 	size_t ceil = size.ceil_pow2;
 	assert(ceil >= 2 && ceil <= 9);
+
+	void* ptr = NULL;
 	switch (size.ceil_pow2) {
 		case 2: {
 			if (challoc_minislab.slab_small_usage == 0xFFFFFFFF) {
-				return NULL;
+				break;
 			}
 			size_t index = find_first_bit_at_0(challoc_minislab.slab_small_usage);
 			challoc_minislab.slab_small_usage |= 1ULL << index;
-			return challoc_minislab.slab_small[index];
+			ptr = challoc_minislab.slab_small[index];
+			break;
 		}
 		case 3: {
 			if (challoc_minislab.slab8_usage == 0xFFFFFFFF) {
-				return NULL;
+				break;
 			}
 			size_t index = find_first_bit_at_0(challoc_minislab.slab8_usage);
 			challoc_minislab.slab8_usage |= 1ULL << index;
-			return challoc_minislab.slab8[index];
+			ptr = challoc_minislab.slab8[index];
+			break;
 		}
 		case 4: {
 			if (challoc_minislab.slab16_usage == 0xFFFF) {
-				return NULL;
+				break;
 			}
 			size_t index = find_first_bit_at_0(challoc_minislab.slab16_usage);
 			challoc_minislab.slab16_usage |= 1UL << index;
-			return challoc_minislab.slab16[index];
+			ptr = challoc_minislab.slab16[index];
+			break;
 		}
 		case 5: {
 			if (challoc_minislab.slab32_usage == 0xFF) {
-				return NULL;
+				break;
 			}
 			size_t index = find_first_bit_at_0(challoc_minislab.slab32_usage);
 			challoc_minislab.slab32_usage |= 1U << index;
-			return challoc_minislab.slab32[index];
+			ptr = challoc_minislab.slab32[index];
+			break;
 		}
 		case 6: {
 			if (challoc_minislab.slab64_usage == 0xF) {
-				return NULL;
+				break;
 			}
 			size_t index = find_first_bit_at_0(challoc_minislab.slab64_usage);
 			challoc_minislab.slab64_usage |= 1U << index;
-			return challoc_minislab.slab64[index];
+			ptr = challoc_minislab.slab64[index];
+			break;
 		}
 		case 7: {
 			if (challoc_minislab.slab512x256x128_usage.slab128_usage == 0b1111) {
-				return NULL;
+				break;
 			}
 			size_t index = find_first_bit_at_0(challoc_minislab.slab512x256x128_usage.slab128_usage);
 			challoc_minislab.slab512x256x128_usage.slab128_usage |= 1U << index;
-			return challoc_minislab.slab128[index];
+			ptr = challoc_minislab.slab128[index];
+			break;
 		}
 		case 8: {
 			if (challoc_minislab.slab512x256x128_usage.slab256_usage == 0b11) {
-				return NULL;
+				break;
 			}
 			size_t index = find_first_bit_at_0(challoc_minislab.slab512x256x128_usage.slab256_usage);
 			challoc_minislab.slab512x256x128_usage.slab256_usage |= 1U << index;
-			return challoc_minislab.slab256[index];
+			ptr = challoc_minislab.slab256[index];
+			break;
 		}
 		case 9: {
 			if (challoc_minislab.slab512x256x128_usage.slab512_usage == 0b1) {
-				return NULL;
+				break;
 			}
 			size_t index = find_first_bit_at_0(challoc_minislab.slab512x256x128_usage.slab512_usage);
 			challoc_minislab.slab512x256x128_usage.slab512_usage |= 1U << index;
-			return challoc_minislab.slab512[index];
+			ptr = challoc_minislab.slab512[index];
+			break;
 		}
 		default: {
 			assert(false);
 		}
 	}
+	return ptr;
 }
 
 bool ptr_comes_from_minislab(void* ptr) {
@@ -205,7 +233,6 @@ size_t minislab_ptr_size(void* ptr) {
 
 void minislab_free(void* ptr) {
 	assert(ptr_comes_from_minislab(ptr));
-
 	ssize_t offset = (ssize_t)ptr - (ssize_t)&challoc_minislab;
 	if (offset >= 0 && offset < 512) {
 		challoc_minislab.slab512x256x128_usage.slab512_usage &= ~(1U << offset);
@@ -236,76 +263,214 @@ void minislab_free(void* ptr) {
 	}
 }
 
+/// ------------------------------------------------
+/// Reuse allocations
+/// ------------------------------------------------
+
+typedef struct {
+	size_t size;		// Size of the allocation
+	bool freshly_allocated; // True if the allocation was just made
+	// bool freed;		// True if the allocation was freed
+	uint8_t time_to_live; // How many times do we call malloc of free before unmapping this allocation
+	void* mmap_addr;      // Address of the mmap
+} AllocMetadata;
+
 typedef struct {
 	size_t size;
-} AllocMetadata;
+	size_t capacity;
+	AllocMetadata** blocks;
+} AllocMetadataList;
+
+size_t ceil_to_4096multiple(size_t size) {
+	size_t remainder = size % 4096;
+	if (remainder == 0) {
+		return size;
+	}
+	return size + 4096 - remainder;
+}
+
+size_t time_to_live_with_size(size_t size) {
+	// the bigger the block, the less time we keep it alive
+	size_t ceil = ceil_to_4096multiple(size);
+	size_t log2 = 4096;
+	size_t ttl  = 5;
+	while (log2 < ceil) {
+		log2 *= 2;
+		ttl--;
+		if (ttl == 1) {
+			break;
+		}
+	}
+	return ttl;
+}
+
+void relive_allocation(AllocMetadata* metadata) {
+	// Reset the time to live
+	metadata->time_to_live = time_to_live_with_size(metadata->size);
+}
+
+AllocMetadataList AllocMetadataList_with_capacity(size_t capacity) {
+	return (AllocMetadataList){
+	    .blocks   = mmap(NULL, capacity * sizeof(AllocMetadata*), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0),
+	    .size     = 0,
+	    .capacity = capacity,
+	};
+}
+
+void AllocMetadataList_push_or_unmap(AllocMetadataList* list, AllocMetadata* metadata) {
+	if (list->size == list->capacity) {
+		// Just unmmap the metadata
+		if (munmap(metadata->mmap_addr, metadata->size) == -1) {
+			perror("munmap");
+		}
+		return;
+	}
+	// printf("Pushing a new block\n");
+	list->blocks[list->size] = metadata;
+	list->size++;
+	// printf("list->size: %zu\n", list->size);
+}
+
+AllocMetadata* AllocMetadataList_pop_at(AllocMetadataList* list, size_t index) {
+	assert(index < list->size);
+	AllocMetadata* metadata = list->blocks[index];
+	// Swap the last element with the one we want to remove
+	list->blocks[index] = list->blocks[list->size - 1];
+	list->size--;
+	return metadata;
+}
+
+void AllocMetadataList_remove_at(AllocMetadataList* list, size_t index) {
+	assert(index < list->size);
+	// Swap the last element with the one we want to remove, and unmap the last element
+	if (munmap(list->blocks[index]->mmap_addr, list->blocks[index]->size) == -1) {
+		perror("munmap");
+	}
+	list->blocks[index] = list->blocks[list->size - 1];
+	list->size--;
+}
+
+AllocMetadata* AllocMetadataList_get(AllocMetadataList* list, size_t index) {
+	assert(index < list->size);
+	return list->blocks[index];
+}
+
+void AllocMetadataList_decrement_TTL_and_unmap(AllocMetadataList* list) {
+	for (size_t i = 0; i < list->size; i++) {
+		AllocMetadata* metadata = AllocMetadataList_get(list, i);
+		// printf("metadata->time_to_live before: %d\n", metadata->time_to_live);
+		metadata->time_to_live--;
+		assert(metadata->time_to_live <= 10);
+		if (metadata->time_to_live == 0) {
+			AllocMetadataList_remove_at(list, i);
+			i--;
+		}
+	}
+}
+
+AllocMetadataList freed = {0};
+
+void AllocMetadataList_destroy(AllocMetadataList* list) {
+	munmap(list->blocks, list->capacity * sizeof(AllocMetadataList));
+}
 
 AllocMetadata* challoc_get_metadata(void* ptr) {
 	return (AllocMetadata*)(ptr - sizeof(AllocMetadata));
 }
 
+size_t AllocMetadata_get_size(AllocMetadata* metadata) {
+	return metadata->size;
+}
+
 void* __chamalloc(size_t size) {
+	if (size == 0) {
+		return NULL;
+	}
+
 	// Try to allocate from the minislab
 	ClosePowerOfTwo close_pow2 = is_close_to_power_of_two(size);
 	if (close_pow2.is_close) {
-		pthread_mutex_lock(&challoc_mutex);
 		void* ptr = minislab_alloc(close_pow2);
-		pthread_mutex_unlock(&challoc_mutex);
 		if (ptr != NULL) {
 			return ptr;
 		}
 	}
 
-	// Allocate memory for the metadata + user data
-	pthread_mutex_lock(&challoc_mutex);
-	size	  = size + sizeof(AllocMetadata);
-	void* ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	pthread_mutex_unlock(&challoc_mutex);
+	// Go through the list of freed allocations
+	for (size_t i = 0; i < freed.size; i++) {
+		AllocMetadata* metadata = AllocMetadataList_get(&freed, i);
+		if (metadata->size >= size) {
+			AllocMetadataList_pop_at(&freed, i);
+			relive_allocation(metadata);
+			// Decrement the time to live of the freed blocks
+			AllocMetadataList_decrement_TTL_and_unmap(&freed);
+			return metadata->mmap_addr + sizeof(AllocMetadata);
+		}
+	}
 
-	// Check for errors
-	if (ptr == MAP_FAILED) {
+	// Allocate a new block
+	void* mmap_addr = mmap(NULL, size + sizeof(AllocMetadata), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	if (mmap_addr == MAP_FAILED) {
 		perror("mmap");
 		return NULL;
 	}
+	// Write the metadata
+	AllocMetadata* metadata = (AllocMetadata*)mmap_addr;
+	*metadata		= (AllocMetadata){
+			  .size		     = size,
+			  .freshly_allocated = true,
+			  .time_to_live	     = time_to_live_with_size(size),
+			  .mmap_addr	     = mmap_addr,
+	      };
 
-	// Write the size of the memory block into the metadata	²
-	AllocMetadata* metadata = (AllocMetadata*)ptr;
-	metadata->size		= size;
+	AllocMetadataList_decrement_TTL_and_unmap(&freed);
 
-	// Return a pointer to the user data
-	return ptr + sizeof(AllocMetadata);
+	return metadata->mmap_addr + sizeof(AllocMetadata);
 }
 
 void __chafree(void* ptr) {
-	// Check if the pointer comes from the minislab
-	if (ptr_comes_from_minislab(ptr)) {
-		pthread_mutex_lock(&challoc_mutex);
-		minislab_free(ptr);
-		pthread_mutex_unlock(&challoc_mutex);
-		return;
-	}
-
 	if (ptr == NULL) {
 		return;
 	}
 
-	// Get the metadata
-	AllocMetadata* metadata = challoc_get_metadata(ptr);
+	AllocMetadataList_decrement_TTL_and_unmap(&freed);
 
-	// Free the memory
-	if (munmap(metadata, metadata->size) == -1) {
-		perror("munmap");
+	// Check if the pointer comes from the minislab
+	if (ptr_comes_from_minislab(ptr)) {
+		minislab_free(ptr);
+		return;
 	}
+
+	// Get the metadata
+	AllocMetadata* metadata	    = challoc_get_metadata(ptr);
+	metadata->freshly_allocated = false;
+
+	AllocMetadataList_push_or_unmap(&freed, metadata);
 }
 
 void* __chacalloc(size_t nmemb, size_t size) {
 	// Allocate memory
 	void* ptr = __chamalloc(nmemb * size);
+	if (ptr == NULL) {
+		return NULL;
+	}
+
+	if (ptr_comes_from_minislab(ptr)) {
+		memset(ptr, 0, nmemb * size);
+		return ptr;
+	}
+
+	// Check if it comes from a freshly allocated block
+	AllocMetadata* metadata = challoc_get_metadata(ptr);
+	if (metadata->freshly_allocated) {
+		// Don't need to set memory to zero, OS already does it
+		return ptr;
+	}
+
 	// Set memory to zero
 	if (ptr != NULL) {
 		memset(ptr, 0, nmemb * size);
 	}
-
 	return ptr;
 }
 
@@ -321,7 +486,7 @@ void* __charealloc(void* ptr, size_t new_size) {
 	}
 	else {
 		AllocMetadata* metadata = challoc_get_metadata(ptr);
-		old_size		= metadata->size - sizeof(AllocMetadata);
+		old_size		= metadata->size;
 	}
 
 	// Allocate new memory
@@ -330,25 +495,17 @@ void* __charealloc(void* ptr, size_t new_size) {
 		return NULL;
 	}
 
-	// Copy the old data
-	size_t min_size = old_size < new_size ? old_size : new_size;
-	memcpy(new_ptr, ptr, min_size);
+	// Copy the old data to the new allocation
+	size_t copy_size = old_size < new_size ? old_size : new_size;
+	memcpy(new_ptr, ptr, copy_size);
 
-	// Free the old memory
+	// Free the old allocation
 	__chafree(ptr);
 
 	return new_ptr;
 }
 
 #ifdef CHALLOC_LEAKCHECK
-
-void* __chamalloc_untracked(size_t size) {
-	return __chamalloc(size);
-}
-
-void __chafree_untracked(void* ptr) {
-	__chafree(ptr);
-}
 
 typedef struct {
 	void* ptr;
@@ -361,23 +518,23 @@ typedef struct {
 	AllocTrace* ptrs;
 	size_t size;
 	size_t capacity;
-} AllocList;
+} AllocLeakcheckTraceList;
 
-AllocList AllocList_with_capacity(size_t capacity) {
-	return (AllocList){
-	    .ptrs     = __chamalloc_untracked(capacity * sizeof(AllocTrace)),
+AllocLeakcheckTraceList AllocLeakcheckTraceList_with_capacity(size_t capacity) {
+	return (AllocLeakcheckTraceList){
+	    .ptrs     = mmap(NULL, capacity * sizeof(AllocTrace), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0),
 	    .size     = 0,
 	    .capacity = capacity,
 	};
 }
 
-void AllocList_push(AllocList* list, void* ptr, size_t ptr_size) {
-	pthread_mutex_lock(&alloc_list_mutex);
+void AllocLeakcheckTraceList_push(AllocLeakcheckTraceList* list, void* ptr, size_t ptr_size) {
 	if (list->size == list->capacity) {
 		list->capacity *= 2;
-		AllocTrace* new_ptrs = __chamalloc_untracked(list->capacity * sizeof(AllocTrace));
+		AllocTrace* new_ptrs =
+		    mmap(NULL, list->capacity * sizeof(AllocTrace), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 		memcpy(new_ptrs, list->ptrs, list->size * sizeof(AllocTrace));
-		__chafree_untracked(list->ptrs);
+		munmap(list->ptrs, list->size * sizeof(AllocTrace));
 		list->ptrs = new_ptrs;
 	}
 	list->ptrs[list->size] = (AllocTrace){
@@ -385,86 +542,99 @@ void AllocList_push(AllocList* list, void* ptr, size_t ptr_size) {
 	    .size = ptr_size,
 	};
 	list->size++;
-	pthread_mutex_unlock(&alloc_list_mutex);
 }
 
-void AllocList_remove_ptr(AllocList* list, void* ptr) {
-	pthread_mutex_lock(&alloc_list_mutex);
+void AllocLeakcheckTraceList_remove_ptr(AllocLeakcheckTraceList* list, void* ptr) {
 	for (size_t i = 0; i < list->size; i++) {
 		if (list->ptrs[i].ptr == ptr) {
 			list->ptrs[i] = list->ptrs[list->size - 1];
 			list->size--;
 			AllocTrace_free(list->ptrs[list->size]);
-			pthread_mutex_unlock(&alloc_list_mutex);
 			return;
 		}
 	}
-	pthread_mutex_unlock(&alloc_list_mutex);
 }
 
-void AllocList_free(AllocList* list) {
+void AllocLeakcheckTraceList_free(AllocLeakcheckTraceList* list) {
 	for (size_t i = 0; i < list->size; i++) {
 		AllocTrace_free(list->ptrs[i]);
 	}
-	__chafree_untracked(list->ptrs);
+	munmap(list->ptrs, list->size * sizeof(AllocTrace));
 }
 
-AllocList alloc_list = {0};
+AllocLeakcheckTraceList challoc_allocs = {0};
+#endif
 
 void __attribute__((constructor)) init() {
-	printf("challoc: checking for memory leaks\n");
-	alloc_list = AllocList_with_capacity(10);
+	freed = AllocMetadataList_with_capacity(10);
+#ifdef CHALLOC_LEAKCHECK
+	challoc_allocs = AllocLeakcheckTraceList_with_capacity(10);
+#endif
 }
 
 void __attribute__((destructor)) fini() {
-	if (alloc_list.size > 0) {
-		fprintf(stderr, "challoc: detected %zu memory leaks\n", alloc_list.size);
-		for (size_t i = 0; i < alloc_list.size; i++) {
-			fprintf(stderr, "Leaked memory at %p, Content: ", alloc_list.ptrs[i].ptr);
-			size_t ptr_size = alloc_list.ptrs[i].size;
+#ifdef CHALLOC_LEAKCHECK
+	if (challoc_allocs.size > 0) {
+		fprintf(stderr, "challoc: detected %zu memory leaks\n", challoc_allocs.size);
+		for (size_t i = 0; i < challoc_allocs.size; i++) {
+			fprintf(stderr, "Leaked memory at %p, Content: ", challoc_allocs.ptrs[i].ptr);
+			size_t ptr_size = challoc_allocs.ptrs[i].size;
 			for (size_t j = 0; j < ptr_size; j++) {
-				fprintf(stderr, "%02X ", ((uint8_t*)alloc_list.ptrs[i].ptr)[j]);
+				fprintf(stderr, "%02X ", ((uint8_t*)challoc_allocs.ptrs[i].ptr)[j]);
 			}
 			fprintf(stderr, "\n");
 		}
 		exit(EXIT_FAILURE);
 	}
+
 	printf("challoc: no memory leaks detected, congrats!\n");
 	printf(" /\\_/\\\n>(^w^)<\n  b d\n");
-	AllocList_free(&alloc_list);
+
+	AllocLeakcheckTraceList_free(&challoc_allocs);
+#endif
+	AllocMetadataList_destroy(&freed);
 }
 
-#endif
-
 void* chamalloc(size_t size) {
-	void* ptr = __chamalloc(size);
+	void* ptr;
+	CHALLOC_MUTEX({
+		ptr = __chamalloc(size);
 #ifdef CHALLOC_LEAKCHECK
-	AllocList_push(&alloc_list, ptr, size);
+		AllocLeakcheckTraceList_push(&challoc_allocs, ptr, size);
 #endif
+	})
 	return ptr;
 }
 
 void chafree(void* ptr) {
+	CHALLOC_MUTEX({
+		__chafree(ptr);
 #ifdef CHALLOC_LEAKCHECK
-	AllocList_remove_ptr(&alloc_list, ptr);
+		AllocLeakcheckTraceList_remove_ptr(&challoc_allocs, ptr);
 #endif
-	__chafree(ptr);
+	})
 }
 
 void* chacalloc(size_t nmemb, size_t size) {
-	void* ptr = __chacalloc(nmemb, size);
+	void* ptr;
+	CHALLOC_MUTEX({
+		ptr = __chacalloc(nmemb, size);
 #ifdef CHALLOC_LEAKCHECK
-	AllocList_push(&alloc_list, ptr, nmemb * size);
+		AllocLeakcheckTraceList_push(&challoc_allocs, ptr, nmemb * size);
 #endif
+	})
 	return ptr;
 }
 
 void* charealloc(void* ptr, size_t size) {
-	void* new_ptr = __charealloc(ptr, size);
+	void* new_ptr;
+	CHALLOC_MUTEX({
+		new_ptr = __charealloc(ptr, size);
 #ifdef CHALLOC_LEAKCHECK
-	AllocList_remove_ptr(&alloc_list, ptr);
-	AllocList_push(&alloc_list, new_ptr, size);
+		AllocLeakcheckTraceList_remove_ptr(&challoc_allocs, ptr);
+		AllocLeakcheckTraceList_push(&challoc_allocs, new_ptr, size);
 #endif
+	})
 	return new_ptr;
 }
 

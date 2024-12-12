@@ -219,9 +219,25 @@ On peut remarquer que les benchmarks unitaires pour des petites tailles sont bie
 Cependant, le reste de la courbe est similaire à l'allocateur minimal, car on n'utilise pas le slab pour des tailles de mémoire plus grandes.
 Aussi, on ne peut pas observer d'impact conséquent sur les programmes réels, car les allocations de petites tailles ne sont pas assez nombreuses pour que l'allocateur slab ait un impact significatif.
 
+
+== Réutilisation des blocs libérés
+Pour éviter de faire plein d'appels à mmap et munmap, j'ai rajouté un système de réutilisation des blocs libérés.
+J'ai utilisé un array dynamique de blocks libérés, et à chaque appel de free, j'ajoute le bloc libéré à cet array.
+Afin de ne pas consommer trop de mémoire, j'utilise un système inspiré du "most recently used scheduling", chaque bloc libéré possède un "temps de vie"
+que j'initialise à un nombre entre 1 et 10, et à chaque appel de malloc ou de free, je décrémente ce temps de vie, et si il atteint 0, je libère le bloc avec un appel à munmap.
+Les plus gros blocs ont un temps de vie plus faible pour éviter qu'ils consomment trop de ressources trop longtemps.
+
+Maintenant, les benchmarks de l'allocateur avec réutilisation des blocs libérés (en plus du slab).
+#bench_show("bench_results/slab_N_reusage")
+
+Sur les benchmarks unitaires, challoc réussit à dépasser la libc dans certains cas, mais je pense que le benchmark est biaisé car en faisant un malloc puis un free, on a de grandes chances de réallouer le même bloc juste après, et donc de le réutiliser.
+Pour certains programmes réels, on peut observer une amélioration du temps pour count_occurences : ~1.6s $arrow.r$ ~0.7s, et dijkstra : ~5.5s $arrow.r$ ~1.6s, cependant la consommation mémoire est légèrement plus élevée, mais reste dans des proportions raisonnables.
+Pour d'autres, comme double_linked_list ou small_allocs, le temps reste extrêmement lent par rapport à la libc, car il y a beaucoup de petites allocations qui restent longtemps en mémoire, et donc qui ne sont pas réutilisées ni fragmentées.
+
 = Fonctionnalités rajoutées
 
 - Detection de fuites de mémoire
+
 	#alloc_name est capable de détecter les fuites de mémoire en fin de programme.
 	Pour cela, j'ai crée un tableau dynamique de pointeurs alloués (à la manière de std::vector en C++, Vec en Rust, etc...).
 	Pour l'initialiser, j'utilise une fonction marquée avec ```c __attribute__((constructor))``` pour qu'elle soit appelée avant le main.
@@ -239,8 +255,9 @@ Aussi, on ne peut pas observer d'impact conséquent sur les programmes réels, c
 			```
 
 - Support du multithreading
-	J'ai ajouté 2 Mutex pour protéger l'allocateur et la liste des pointeurs alloués pour la détection de fuites de mémoire.
-	J'ai protéger les sections critiques, rien de plus à dire, mais c'est toujours bien de le préciser.
+
+	J'ai ajouté un Mutex pour protéger l'allocateur et la liste des pointeurs alloués pour la détection de fuites de mémoire.
+	J'ai protégé les sections critiques en lockant à chaque début de fonction, et en unlockant à la fin, la concurrence n'est pas optimale, mais au moins elle est possible.
 
 = Problèmes avec Rust
 Malgré le fait que Rust soit mon langage préféré et avec lequel je suis le plus à l'aise, j'ai rencontré des problèmes qui m'ont fait repassé en C pour ce projet.

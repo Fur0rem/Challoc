@@ -15,33 +15,64 @@ data_dir = sys.argv[1]
 where_to_save = sys.argv[2]
 
 # Function to format the y-axis ticks
-def time_formatter(x, pos):
-    if x == 0:
+def time_formatter_precise(x, pos):
+    # Keep 2 significant digits
+    if x <= 0:
         return "0"
-    log10 = np.log10(x)
-    if log10 < 0:
-        return f'{x:.0f}'
-    elif log10 < 3:
+    elif x < 10 ** 3:
+        if x < 10:
+            return f'{x:.2f} ns'
+        elif x < 100:
+            return f'{x:.1f} ns'
         return f'{x:.0f} ns'
-    elif log10 < 6:
-        return f'{x / 1000:.0f} µs'
-    elif log10 < 9:
-        return f'{x / 1000000:.0f} ms'
-    elif log10 < 12:
-        return f'{x / 1000000000:.0f} s'
+    elif x < 10 ** 6:
+        if x < 10 ** 3:
+            return f'{x / 10**3:.2f} µs'
+        elif x < 10 ** 4:
+            return f'{x / 10**3:.1f} µs'
+        return f'{x / 10**3:.0f} µs'
+    elif x < 10 ** 9:
+        if x < 10 ** 6:
+            return f'{x / 10**6:.2f} ms'
+        elif x < 10 ** 7:
+            return f'{x / 10**6:.1f} ms'
+        return f'{x / 10**6:.0f} ms'
+    elif x < 10 ** 12:
+        if x < 10 ** 9:
+            return f'{x / 10**9:.2f} s'
+        elif x < 10 ** 10:
+            return f'{x / 10**9:.1f} s'
+        return f'{x / 10**9:.0f} s'
+    return str(x)
+
+# Truncated version of the time_formatter_precise
+def time_formatter_truncated(x, pos):
+    if x <= 0:
+        return "0"
+    elif x < 10 ** 3:
+        return f'{x:.0f} ns'
+    elif x < 10 ** 6:
+        return f'{x / 10**3:.0f} µs'
+    elif x < 10 ** 9:  
+        return f'{x / 10**6:.0f} ms'
+    elif x < 10 ** 12:
+        return f'{x / 10**9:.0f} s'
+    return str(x)
     
 def bytes_formatter(x, pos):
     if x == 0:
         return "0 o"
-    log10 = np.log10(x)
-    if log10 < 3:
+    if x < 1024:
         return str(x) + " o"
-    elif log10 < 6:
-        return str(int(x) // 1024) + " ko"
-    elif log10 < 9:
-        return str(int(x) // (1024**2)) + " Mo"
-    elif log10 < 12:
-        return str(int(x) // (1024**3)) + " Go"
+    elif x < 1024**2:
+        return f'{x / 1024:.1f} Ko'
+    elif x < 1024**3:
+        return f'{x / (1024**2):.1f} Mo'
+    elif x < 1024**4:
+        return f'{x / (1024**3):.1f} Go'
+    elif x < 1024**5:
+        return f'{x / (1024**4):.1f} To'
+    return str(x)
         
 # Function to get the min, max, and average of the data
 def min_max_average(data):
@@ -71,11 +102,15 @@ for ub in units:
     plt.xscale('log', base=2)
     plt.yscale('log', base=10)
 
+    # Set y axis label
+    plt.ylabel("CPU Time (cycles)")
+    plt.xlabel("Size (bytes)")
+
     # set the axis ticks
     x_ticks = [sizes[i] for i in range(0, len(sizes), 6)]
     plt.xticks(x_ticks)
     plt.gca().xaxis.set_major_formatter(FuncFormatter(bytes_formatter))
-    plt.gca().yaxis.set_major_formatter(FuncFormatter(time_formatter))
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(time_formatter_truncated))
 
     # Initialize lists to store the mean times for plotting lines
     mean_libc_times_list = []
@@ -139,7 +174,7 @@ for prog in programs:
     plt.xticks([0, 1], ["libc", "challoc"])
 
     # Replace the y-axis ticks with the time_formatter function
-    plt.gca().yaxis.set_major_formatter(FuncFormatter(time_formatter))
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(time_formatter_precise))
     # Change prog title from snake_case to Normal Case
     prog = prog.replace(".json", "")
 

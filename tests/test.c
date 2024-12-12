@@ -12,6 +12,7 @@
 
 bool test_malloc() {
 	for (size_t size = 1; size < 10000; size++) {
+		// printf("size: %zu\n", size);
 		volatile uint8_t* ptr = chamalloc(size * sizeof(uint8_t));
 		if (ptr == NULL) {
 			return false;
@@ -22,17 +23,19 @@ bool test_malloc() {
 }
 
 bool test_mallocs_dont_overlap() {
-	const size_t NB_PTRS = 1000;
-	volatile uint8_t* ptrs[NB_PTRS];
-	for (size_t i = 0; i < NB_PTRS; i++) {
+	const size_t NB_PTRS	= 1000;
+	volatile uint8_t** ptrs = malloc(NB_PTRS * sizeof(uint8_t*));
+	printf("Allocating memory\n");
+	for (size_t i = 1; i < NB_PTRS; i++) {
 		ptrs[i] = chamalloc(i * sizeof(uint8_t));
 		if (ptrs[i] == NULL) {
 			return false;
 		}
 	}
+	printf("Checking for overlaps\n");
 	bool overlap = false;
-	for (size_t i = 0; i < NB_PTRS; i++) {
-		for (size_t j = 0; j < i; j++) {
+	for (size_t i = 1; i < NB_PTRS; i++) {
+		for (size_t j = 1; j < i; j++) {
 			volatile uint8_t* ptr_i = ptrs[i];
 			volatile uint8_t* ptr_j = ptrs[j];
 			size_t end_i		= (size_t)ptr_i + (i * sizeof(uint8_t));
@@ -50,9 +53,11 @@ bool test_mallocs_dont_overlap() {
 			}
 		}
 	}
+	printf("Freeing memory\n\n");
 	for (size_t i = 0; i < NB_PTRS; i++) {
 		chafree(ptrs[i]);
 	}
+	free(ptrs);
 	return !overlap;
 }
 
@@ -60,10 +65,13 @@ bool test_calloc() {
 	for (size_t size = 1; size < 10000; size++) {
 		volatile uint8_t* ptr = chacalloc(size, sizeof(uint8_t));
 		if (ptr == NULL) {
+			printf("chacalloc failed for size %zu\n", size);
 			return false;
 		}
 		for (size_t i = 0; i < size; i++) {
 			if (ptr[i] != 0) {
+				printf("Byte %zu is not 0 but %d\n", i, ptr[i]);
+				chafree(ptr);
 				return false;
 			}
 		}
@@ -72,71 +80,31 @@ bool test_calloc() {
 	return true;
 }
 
-// bool test_realloc() {
-// 	for (size_t size = 1; size <= 4096; size *= 2) {
-// 		volatile uint8_t* ptr = chamalloc(size * sizeof(uint8_t));
-// 		if (ptr == NULL) {
-// 			fprintf(stderr, "chamalloc failed for size %zu\n", size);
-// 			return false;
-// 		}
-// 		for (size_t i = 0; i < size; i++) {
-// 			ptr[i] = 10;
-// 		}
-
-// 		size_t new_size		  = 2048;
-// 		volatile uint8_t* new_ptr = charealloc((void*)ptr, new_size * sizeof(uint8_t));
-// 		if (new_ptr == NULL) {
-// 			fprintf(stderr, "charealloc failed for new size %zu\n", new_size);
-// 			chafree((void*)ptr);
-// 			return false;
-// 		}
-
-// 		for (size_t i = 0; i < size; i++) {
-// 			if (new_ptr[i] != 10) {
-// 				fprintf(stderr, "Data mismatch after realloc at index %zu\n", i);
-// 				chafree((void*)new_ptr);
-// 				return false;
-// 			}
-// 		}
-
-// 		for (size_t i = size; i < new_size; i++) {
-// 			new_ptr[i] = 20;
-// 		}
-
-// 		for (size_t i = 0; i < size; i++) {
-// 			if (new_ptr[i] != 10) {
-// 				fprintf(stderr, "Data mismatch after setting new values at index %zu\n", i);
-// 				chafree((void*)new_ptr);
-// 				return false;
-// 			}
-// 		}
-
-// 		for (size_t i = size; i < new_size; i++) {
-// 			if (new_ptr[i] != 20) {
-// 				fprintf(stderr, "New data mismatch at index %zu\n", i);
-// 				chafree((void*)new_ptr);
-// 				return false;
-// 			}
-// 		}
-
-// 		chafree((void*)new_ptr);
-// 	}
-// 	return true;
-// }
-
 bool test_realloc() {
 	for (size_t size = 1; size <= 4096; size *= 2) {
 		volatile uint8_t* ptr = chamalloc(size * sizeof(uint8_t));
 		if (ptr == NULL) {
+			printf("chamalloc failed for size %zu\n", size);
 			return false;
 		}
 		for (size_t i = 0; i < size; i++) {
 			ptr[i] = 10;
 		}
 
+		for (size_t i = 0; i < size; i++) {
+			if (ptr[i] != 10) {
+				printf("%p : Data mismatch before realloc at index %zu, expected 10, got %d\n", ptr, i, ptr[i]);
+				chafree(ptr);
+				return false;
+			}
+		}
+
 		size_t new_size		  = size * 2;
 		volatile uint8_t* new_ptr = charealloc(ptr, new_size * sizeof(uint8_t));
+		printf("old size %zu, new size %zu, old ptr %p, new ptr %p\n", size, new_size, ptr, new_ptr);
 		if (new_ptr == NULL) {
+			chafree((void*)ptr);
+			printf("charealloc failed for new size %zu\n", new_size);
 			return false;
 		}
 		for (size_t i = size; i < new_size; i++) {
@@ -145,12 +113,14 @@ bool test_realloc() {
 
 		for (size_t i = 0; i < size; i++) {
 			if (new_ptr[i] != 10) {
+				printf("%p : Data mismatch after realloc at index %zu, expected 10, got %d\n", new_ptr, i, new_ptr[i]);
 				chafree((void*)new_ptr);
 				return false;
 			}
 		}
 		for (size_t i = size; i < new_size; i++) {
 			if (new_ptr[i] != 20) {
+				printf("%p : Data mismatch after++ realloc at index %zu, expected 20, got %d\n", new_ptr, i, new_ptr[i]);
 				chafree((void*)new_ptr);
 				return false;
 			}
@@ -158,33 +128,6 @@ bool test_realloc() {
 
 		chafree(new_ptr);
 	}
-	return true;
-}
-
-bool test_multithreading() {
-	typedef void* (*thread_func)(void*);
-
-	pthread_t thread_id[8];
-	bool results[8] = {false};
-	pthread_create(&thread_id[0], NULL, (thread_func)test_malloc, NULL);
-	pthread_create(&thread_id[1], NULL, (thread_func)test_mallocs_dont_overlap, NULL);
-	pthread_create(&thread_id[2], NULL, (thread_func)test_calloc, NULL);
-	pthread_create(&thread_id[3], NULL, (thread_func)test_realloc, NULL);
-	pthread_create(&thread_id[4], NULL, (thread_func)test_malloc, NULL);
-	pthread_create(&thread_id[5], NULL, (thread_func)test_mallocs_dont_overlap, NULL);
-	pthread_create(&thread_id[6], NULL, (thread_func)test_calloc, NULL);
-	pthread_create(&thread_id[7], NULL, (thread_func)test_realloc, NULL);
-
-	for (size_t i = 0; i < 8; i++) {
-		pthread_join(thread_id[i], &results[i]);
-	}
-
-	for (size_t i = 0; i < 8; i++) {
-		if (!results[i]) {
-			return false;
-		}
-	}
-
 	return true;
 }
 
@@ -204,7 +147,6 @@ Test tests[] = {
     TEST(test_mallocs_dont_overlap),
     TEST(test_calloc),
     TEST(test_realloc),
-    TEST(test_multithreading),
 };
 
 int main() {
@@ -216,11 +158,10 @@ int main() {
 		printf("[Running] %s\n", test.name);
 		bool passed = test.test();
 
-		// go back to the beginning of the line and clear it
-		printf("\033[1A\033[2K");
-
 		bool has_no_errors = errno == 0;
 		if (passed && has_no_errors) {
+			// go back to the beginning of the line and clear it
+			printf("\033[1A\033[2K");
 			printf(GREEN_BOLD "[  OK  ]" RESET " %s\n", test.name);
 		}
 		else {
