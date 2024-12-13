@@ -1,0 +1,87 @@
+\chapter{Challoc}
+\hypertarget{md_README}{}\label{md_README}\index{Challoc@{Challoc}}
+\label{md_README_autotoc_md0}%
+\Hypertarget{md_README_autotoc_md0}%
+ Challoc est un projet d\textquotesingle{}allocateur mémoire simple en C pour l\textquotesingle{}UE AISE du master CHPS de Paris-\/\+Saclay. Il contient les fonctions suivantes avec la même signature que celles de la libc \+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ challoc(\textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ chafree(\textcolor{keywordtype}{void}*\ ptr);}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ charealloc(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ chacalloc(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size);}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md1}{}\doxysection{\texorpdfstring{Architecture du code}{Architecture du code}}\label{md_README_autotoc_md1}
+Le code est structuré de la manière suivante \+:
+\begin{DoxyItemize}
+\item {\ttfamily src/} contient les fichiers sources de l\textquotesingle{}allocateur mémoire.
+\item {\ttfamily docs/} contient la documentation du code.
+\item {\ttfamily tests/} pour les tests, vérifiant le bon fonctionnement de l\textquotesingle{}allocateur, de la détection de fuites mémoires, et de l\textquotesingle{}interposition des fonctions de la libc.
+\item {\ttfamily benchmarks/} pour les fichiers des benchmarks, des programmes C à utiliser pour comparer la performance par rapport à d\textquotesingle{}autres allocateurs, ainsi que leur résultats.
+\item {\ttfamily rapport/} contient les fichiers du rapport.
+\item {\ttfamily target/} contient les fichiers compilés.
+\item {\ttfamily Makefile} pour compiler le projet.
+\item {\ttfamily .clang-\/format et .clang-\/tidy} pour formatter et analyser le code.
+\item {\ttfamily Doxyfile} pour générer la documentation.
+\item {\ttfamily default.\+nix} pour les utilisateurs du gestionnaire de paquets Nix.
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md2}{}\doxysection{\texorpdfstring{Compilation}{Compilation}}\label{md_README_autotoc_md2}
+Tout est dans le Makefile \+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{libchalloc.so}
+
+\end{DoxyCode}
+ pour compiler la bibliothèque partagée avec interposition des fonctions de la libc 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{libchalloc\_dev.so}
+
+\end{DoxyCode}
+ pour compiler la bibliothèque partagée sans interposition et avec des assertions en plus. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{check}
+
+\end{DoxyCode}
+ pour lancer les tests. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{benchmarks\ LABEL=<label>}
+
+\end{DoxyCode}
+ pour lancer les benchmarks temps et mémoire qui seront stockés dans le dossier {\ttfamily benchmarks/label/} avec le label spécifié puis mis en image dans le dossier {\ttfamily rapport/bench\+\_\+results/label/}. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{doc}
+
+\end{DoxyCode}
+ pour générer la documentation. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{rapport}
+
+\end{DoxyCode}
+ pour générer le rapport fait en Typst. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{clean}
+
+\end{DoxyCode}
+ pour nettoyer les fichiers compilés.
+
+Lors de la compilation, la variable LEAKCHECK peut être définie (à 1, true, ou t) pour activer la vérification de fuites mémoires, ex \+: {\ttfamily make libchalloc.\+so LEAKCHECK=true}.
+
+D\textquotesingle{}ailleurs, je vous invite à lire le rapport pour plus des informations sur le projet. \hypertarget{md_README_autotoc_md3}{}\doxysection{\texorpdfstring{Utilisation}{Utilisation}}\label{md_README_autotoc_md3}
+Voici comment utiliser Challoc dans votre projet \+:
+
+
+\begin{DoxyEnumerate}
+\item Incluez le fichier d\textquotesingle{}en-\/tête {\ttfamily \texorpdfstring{$<$}{<}stdlib.\+h\texorpdfstring{$>$}{>}} dans votre fichier source, ou le fichier d\textquotesingle{}en-\/tête {\ttfamily challoc.\+h} si souhaitez utiliser challoc sans interposition.
+\item Compilez votre programme avec la bibliothèque partagée {\ttfamily libchalloc.\+so} ou {\ttfamily libchalloc\+\_\+dev.\+so} (selon si vous souhaitez interposer les fonctions de la libc ou non).
+\item Lancez votre programme avec LD\+\_\+\+PRELOAD pour charger la bibliothèque partagée. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{make\ libchalloc.so}
+\DoxyCodeLine{LD\_PRELOAD=./libchalloc.so\ ./votre\_programme}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}\hypertarget{md_README_autotoc_md4}{}\doxysection{\texorpdfstring{Implémentation}{Implémentation}}\label{md_README_autotoc_md4}
+L\textquotesingle{}allocateur se base sur mmap. Il utilise un vecteur de blocs alloués via mmap, et chaque bloc est utilisé en sous-\/allouant des blocs plus petits via une double liste chaînée en algorithmes first-\/fit. Les blocs mmap complètement libérés sont stockés temporairement dans un vecteur de blocs libres afin de les réutiliser si possible. L\textquotesingle{}allocateur possède aussi un petit allocateur en slab pour les petites allocations de 512 octets ou moins, la slab fait une taille totale de 4Mo (1 page), séparée en 1 cache de 512 octets, 2 caches de 256 octets, 4 caches de 128 octets, ect...\hypertarget{md_README_autotoc_md5}{}\doxysection{\texorpdfstring{Features}{Features}}\label{md_README_autotoc_md5}
+
+\begin{DoxyItemize}
+\item Support en multithreading
+\item Détection de fuites mémoires
+\item Interposition des fonctions de la libc 
+\end{DoxyItemize}

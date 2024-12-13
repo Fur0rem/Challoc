@@ -1,0 +1,66 @@
+\doxysection{Challoc Unit Benchmarks}
+\hypertarget{group__Challoc__prog__benchmarks}{}\label{group__Challoc__prog__benchmarks}\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structBenchResult}{Bench\+Result}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga79d10e672abb49ad63eeaa8aaef57c38}\label{group__Challoc__prog__benchmarks_ga79d10e672abb49ad63eeaa8aaef57c38} 
+\#define {\bfseries BLUE}~"{}\textbackslash{}033\mbox{[}34m"{}
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_gab702106cf3b3e96750b6845ded4e0299}\label{group__Challoc__prog__benchmarks_gab702106cf3b3e96750b6845ded4e0299} 
+\#define {\bfseries RESET}~"{}\textbackslash{}033\mbox{[}0m"{}
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga26cdbb1a00213c810caccf21cd33a631}\label{group__Challoc__prog__benchmarks_ga26cdbb1a00213c810caccf21cd33a631} 
+\#define {\bfseries BOLD}~"{}\textbackslash{}033\mbox{[}1m"{}
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga0592dba56693fad79136250c11e5a7fe}\label{group__Challoc__prog__benchmarks_ga0592dba56693fad79136250c11e5a7fe} 
+\#define {\bfseries MAX\+\_\+\+SIZE}~30
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d}\label{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d} 
+enum {\bfseries Allocator} \{ {\bfseries LIBC}
+, {\bfseries CHALLOC}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga41278a9376382c9fbe0057911fe1e3f6}\label{group__Challoc__prog__benchmarks_ga41278a9376382c9fbe0057911fe1e3f6} 
+void {\bfseries warmup\+\_\+clock} ()
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga140ff00997818659e12a386342ca5f82}\label{group__Challoc__prog__benchmarks_ga140ff00997818659e12a386342ca5f82} 
+uint64\+\_\+t {\bfseries cpu\+\_\+frequency} ()
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_gaa840894e554c6de34f56ae8ccd49835d}\label{group__Challoc__prog__benchmarks_gaa840894e554c6de34f56ae8ccd49835d} 
+void {\bfseries touch\+\_\+memory} (volatile uint8\+\_\+t \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size\+\_\+requested)
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga9dbb8185be5a4480fa46f8c236908d54}\label{group__Challoc__prog__benchmarks_ga9dbb8185be5a4480fa46f8c236908d54} 
+void {\bfseries bench\+\_\+malloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga887e6d8c6aa883a79e94014f7f190d15}\label{group__Challoc__prog__benchmarks_ga887e6d8c6aa883a79e94014f7f190d15} 
+void {\bfseries bench\+\_\+realloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}realloc)(void \texorpdfstring{$\ast$}{*}, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga0cffb8302e3fc20dc9f11a2298831f3d}\label{group__Challoc__prog__benchmarks_ga0cffb8302e3fc20dc9f11a2298831f3d} 
+void {\bfseries bench\+\_\+calloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}calloc)(size\+\_\+t, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_gaac150bd544dae3a8824dbbb744a2232e}\label{group__Challoc__prog__benchmarks_gaac150bd544dae3a8824dbbb744a2232e} 
+void {\bfseries write\+\_\+results} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} libc, \mbox{\hyperlink{structBenchResult}{Bench\+Result}} challoc, char \texorpdfstring{$\ast$}{*}output\+\_\+dir)
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga3c04138a5bfe5d72780bb7e82a18e627}\label{group__Challoc__prog__benchmarks_ga3c04138a5bfe5d72780bb7e82a18e627} 
+int {\bfseries main} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_ga350bc7c6c9db1b215778b34b0d15ff10}\label{group__Challoc__prog__benchmarks_ga350bc7c6c9db1b215778b34b0d15ff10} 
+uint64\+\_\+t {\bfseries cpu\+\_\+freq} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}

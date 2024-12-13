@@ -1,3 +1,8 @@
+/**
+ * @file tests/programs/leaker_inter.c
+ * @brief A program that leaks memory and uses the interposing feature
+ */
+
 #include <stdint.h>
 #include <stdlib.h>
 

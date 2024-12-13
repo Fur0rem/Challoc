@@ -1,11 +1,14 @@
-#include <stdio.h>
+/**
+ * @file benchmarks/programs/basic/mixed_allocs.c
+ * @brief A program that does a lot of small and big allocations alternately
+ */
+
 #include <stdlib.h>
 
 int main() {
 	const int NB_ELEMS = 20000;
 	volatile int** ptr = malloc(NB_ELEMS * sizeof(int*));
 	for (int i = 0; i < NB_ELEMS; i += 20) {
-		// printf("i = %d\n", i);
 		// Alternate small and big allocations
 		ptr[i + 0]  = (volatile int*)malloc((895 + (i % 8)) * sizeof(int));
 		ptr[i + 1]  = (volatile int*)malloc((121259 + i * 2) * sizeof(int));
@@ -31,13 +34,10 @@ int main() {
 
 	// Touch the memory to make sure it's allocated
 	for (int i = 0; i < NB_ELEMS; i++) {
-		ptr[i][0] = 42;
+		*ptr[i] = 42;
 	}
 
-	// printf("Freeing memory\n");
-
 	for (int i = 0; i < NB_ELEMS; i++) {
-		// printf("Freeing %d\n", i);
 		free(ptr[i]);
 	}
 	free(ptr);

@@ -1,3 +1,8 @@
+/**
+ * @file benchmarks/programs/complex/count_occurences.c
+ * @brief A program that counts the occurences of words in a text
+ */
+
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>

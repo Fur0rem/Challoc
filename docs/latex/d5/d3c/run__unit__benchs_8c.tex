@@ -1,0 +1,67 @@
+\doxysection{benchmarks/run\+\_\+unit\+\_\+benchs.c File Reference}
+\hypertarget{run__unit__benchs_8c}{}\label{run__unit__benchs_8c}\index{benchmarks/run\_unit\_benchs.c@{benchmarks/run\_unit\_benchs.c}}
+
+
+Compare the performance of challoc and libc of standalone function calls.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$x86intrin.\+h$>$}\newline
+{\ttfamily \#include "{}../src/challoc.\+h"{}}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structBenchResult}{Bench\+Result}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries BLUE}~"{}\textbackslash{}033\mbox{[}34m"{}
+\item 
+\#define {\bfseries RESET}~"{}\textbackslash{}033\mbox{[}0m"{}
+\item 
+\#define {\bfseries BOLD}~"{}\textbackslash{}033\mbox{[}1m"{}
+\item 
+\#define {\bfseries MAX\+\_\+\+SIZE}~30
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d}\label{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d} 
+enum {\bfseries Allocator} \{ {\bfseries LIBC}
+, {\bfseries CHALLOC}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries warmup\+\_\+clock} ()
+\item 
+uint64\+\_\+t {\bfseries cpu\+\_\+frequency} ()
+\item 
+void {\bfseries touch\+\_\+memory} (volatile uint8\+\_\+t \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size\+\_\+requested)
+\item 
+void {\bfseries bench\+\_\+malloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\item 
+void {\bfseries bench\+\_\+realloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}realloc)(void \texorpdfstring{$\ast$}{*}, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\item 
+void {\bfseries bench\+\_\+calloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}calloc)(size\+\_\+t, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\item 
+void {\bfseries write\+\_\+results} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} libc, \mbox{\hyperlink{structBenchResult}{Bench\+Result}} challoc, char \texorpdfstring{$\ast$}{*}output\+\_\+dir)
+\item 
+int {\bfseries main} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint64\+\_\+t {\bfseries cpu\+\_\+freq} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Compare the performance of challoc and libc of standalone function calls. 
+

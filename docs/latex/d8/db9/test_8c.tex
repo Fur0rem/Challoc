@@ -1,0 +1,83 @@
+\doxysection{tests/test.c File Reference}
+\hypertarget{test_8c}{}\label{test_8c}\index{tests/test.c@{tests/test.c}}
+
+
+Tests for the challoc library as a user would use it.  
+
+
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$error.\+h$>$}\newline
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include "{}../src/challoc.\+h"{}}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structTest}{Test}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{test_8c_a45feb1f37ce559e49baf8655d769ef85}\label{test_8c_a45feb1f37ce559e49baf8655d769ef85} 
+\#define {\bfseries TEST}(name)~\{\#name, name\}
+\item 
+\Hypertarget{test_8c_af97b3ad73526a0fa8fd97081fa88c14d}\label{test_8c_af97b3ad73526a0fa8fd97081fa88c14d} 
+\#define {\bfseries RED\+\_\+\+BOLD}~"{}\textbackslash{}033\mbox{[}1;31m"{}
+\item 
+\Hypertarget{test_8c_a0214e7db0d113f1c621e92a802b0e57d}\label{test_8c_a0214e7db0d113f1c621e92a802b0e57d} 
+\#define {\bfseries GREEN\+\_\+\+BOLD}~"{}\textbackslash{}033\mbox{[}1;32m"{}
+\item 
+\Hypertarget{test_8c_ab702106cf3b3e96750b6845ded4e0299}\label{test_8c_ab702106cf3b3e96750b6845ded4e0299} 
+\#define {\bfseries RESET}~"{}\textbackslash{}033\mbox{[}0m"{}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{test_8c_a8b3df982939b867e6d16eb3b800d3a0c}\label{test_8c_a8b3df982939b867e6d16eb3b800d3a0c} 
+bool {\bfseries test\+\_\+chamalloc} ()
+\item 
+\Hypertarget{test_8c_a1efe75e08a65d31b1b0e542e4493f1af}\label{test_8c_a1efe75e08a65d31b1b0e542e4493f1af} 
+bool {\bfseries test\+\_\+chamallocs\+\_\+dont\+\_\+overlap} ()
+\item 
+\Hypertarget{test_8c_a6b81c1b02c7edf78ff39ba189ed5dbc4}\label{test_8c_a6b81c1b02c7edf78ff39ba189ed5dbc4} 
+bool {\bfseries test\+\_\+chacalloc} ()
+\item 
+\Hypertarget{test_8c_a672ca9fa3ee303afb47170bac8a052c9}\label{test_8c_a672ca9fa3ee303afb47170bac8a052c9} 
+bool {\bfseries test\+\_\+charealloc} ()
+\item 
+\Hypertarget{test_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{test_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int {\bfseries main} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structTest}{Test}} \mbox{\hyperlink{test_8c_ac9db2ce84ccc4310b8c47d2e4be6052f}{tests}} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Tests for the challoc library as a user would use it. 
+
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{test_8c_ac9db2ce84ccc4310b8c47d2e4be6052f}\label{test_8c_ac9db2ce84ccc4310b8c47d2e4be6052f} 
+\index{test.c@{test.c}!tests@{tests}}
+\index{tests@{tests}!test.c@{test.c}}
+\doxysubsubsection{\texorpdfstring{tests}{tests}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structTest}{Test}} tests\mbox{[}$\,$\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ TEST(test\_chamalloc),}
+\DoxyCodeLine{\ \ \ \ TEST(test\_chamallocs\_dont\_overlap),}
+\DoxyCodeLine{\ \ \ \ TEST(test\_chacalloc),}
+\DoxyCodeLine{\ \ \ \ TEST(test\_charealloc),}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}

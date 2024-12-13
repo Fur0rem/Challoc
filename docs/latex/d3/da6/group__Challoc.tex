@@ -1,0 +1,92 @@
+\doxysection{Challoc Internal API}
+\hypertarget{group__Challoc}{}\label{group__Challoc}\index{Challoc Internal API@{Challoc Internal API}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\+\_\+\+\_\+chamalloc}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocates memory. Should never be called by the user directly. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}{\+\_\+\+\_\+chafree}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free memory. Should never be called by the user directly. Assumes the pointer comes from challoc. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc_gacc7f10a0cbff8b9fa73601f58c7b1d04}{\+\_\+\+\_\+chacalloc}} (size\+\_\+t nmemb, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocate memory and set it to zero. Should never be called by the user directly. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc_ga11dcaa5b91481a23168776d350d28b44}{\+\_\+\+\_\+charealloc}} (void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t new\+\_\+size)
+\begin{DoxyCompactList}\small\item\em Reallocate memory. Should never be called by the user directly. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\DoxyHorRuler{0}
+ \hypertarget{group__Challoc_autotoc_md3}{}\doxysubsubsection{\texorpdfstring{Challoc Internal API}{Challoc Internal API}}\label{group__Challoc_autotoc_md3}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{group__Challoc_gacc7f10a0cbff8b9fa73601f58c7b1d04}\label{group__Challoc_gacc7f10a0cbff8b9fa73601f58c7b1d04} 
+\index{Challoc Internal API@{Challoc Internal API}!\_\_chacalloc@{\_\_chacalloc}}
+\index{\_\_chacalloc@{\_\_chacalloc}!Challoc Internal API@{Challoc Internal API}}
+\doxysubsubsection{\texorpdfstring{\_\_chacalloc()}{\_\_chacalloc()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} \+\_\+\+\_\+chacalloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{nmemb,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Allocate memory and set it to zero. Should never be called by the user directly. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The size of the memory to allocate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the allocated memory 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}\label{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f} 
+\index{Challoc Internal API@{Challoc Internal API}!\_\_chafree@{\_\_chafree}}
+\index{\_\_chafree@{\_\_chafree}!Challoc Internal API@{Challoc Internal API}}
+\doxysubsubsection{\texorpdfstring{\_\_chafree()}{\_\_chafree()}}
+{\footnotesize\ttfamily void \+\_\+\+\_\+chafree (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Free memory. Should never be called by the user directly. Assumes the pointer comes from challoc. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to the memory to free \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}\label{group__Challoc_ga961960f0cc9ae134385d1c5b28209936} 
+\index{Challoc Internal API@{Challoc Internal API}!\_\_chamalloc@{\_\_chamalloc}}
+\index{\_\_chamalloc@{\_\_chamalloc}!Challoc Internal API@{Challoc Internal API}}
+\doxysubsubsection{\texorpdfstring{\_\_chamalloc()}{\_\_chamalloc()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} \+\_\+\+\_\+chamalloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Allocates memory. Should never be called by the user directly. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The size of the memory to allocate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the allocated memory 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc_ga11dcaa5b91481a23168776d350d28b44}\label{group__Challoc_ga11dcaa5b91481a23168776d350d28b44} 
+\index{Challoc Internal API@{Challoc Internal API}!\_\_charealloc@{\_\_charealloc}}
+\index{\_\_charealloc@{\_\_charealloc}!Challoc Internal API@{Challoc Internal API}}
+\doxysubsubsection{\texorpdfstring{\_\_charealloc()}{\_\_charealloc()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} \+\_\+\+\_\+charealloc (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr,  }\item[{size\+\_\+t}]{new\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Reallocate memory. Should never be called by the user directly. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to the memory to reallocate \\
+\hline
+{\em new\+\_\+size} & The new size of the memory \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the reallocated memory 
+\end{DoxyReturn}

@@ -1,0 +1,34 @@
+\doxysection{challoc.\+h}
+\hypertarget{challoc_8h_source}{}\label{challoc_8h_source}\index{src/challoc.h@{src/challoc.h}}
+\mbox{\hyperlink{challoc_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifndef\ CHALLOC\_H}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ CHALLOC\_H}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stddef.h>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ If\ the\ interposing\ feature\ is\ enabled,\ have\ the\ same\ API\ as\ the\ standard\ library}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_INTERPOSING}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{void}*\ malloc(\textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ free(\textcolor{keywordtype}{void}*\ ptr);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}*\ calloc(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}*\ realloc(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}{chamalloc}}(\textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}{chafree}}(\textcolor{keywordtype}{void}*\ ptr);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}{chacalloc}}(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}{charealloc}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CHALLOC\_H}}
+
+\end{DoxyCode}

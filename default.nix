@@ -16,6 +16,7 @@ in pkgs.mkShell {
 		pythonEnv
 		time
 		typst
+		doxygen
     	];
 	shellHook = ''
 		echo "Using GNU time utility"

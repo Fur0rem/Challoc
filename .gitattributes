@@ -2,3 +2,4 @@
 rapport/** linguist-generated=true
 benchmarks/results/** linguist-generated=true
 benchmarks/programs/complex/poems.txt linguist-generated=true
+docs/** linguist-generated=true

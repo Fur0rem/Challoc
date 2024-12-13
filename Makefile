@@ -8,6 +8,9 @@ PTHREAD = -lpthread
 target:
 	mkdir -p target
 
+docs:
+	mkdir -p docs
+
 LEAKCHECK ?= false
 ifeq ($(filter $(LEAKCHECK),true t 1),)
     ifeq ($(filter $(LEAKCHECK),false f 0),)
@@ -69,3 +72,6 @@ clean:
 
 rapport: rapport/*.typ rapport/images/* rapport/bench_results/** | target
 	typst compile rapport/rapport.typ rapport/rapport.pdf
+
+doc: src/*.c src/*.h tests/** benchmarks/** .doxyfile | docs
+	doxygen .doxyfile

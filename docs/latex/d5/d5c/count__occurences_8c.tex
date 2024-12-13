@@ -1,0 +1,76 @@
+\doxysection{benchmarks/programs/complex/count\+\_\+occurences.c File Reference}
+\hypertarget{count__occurences_8c}{}\label{count__occurences_8c}\index{benchmarks/programs/complex/count\_occurences.c@{benchmarks/programs/complex/count\_occurences.c}}
+
+
+A program that counts the occurences of words in a text.  
+
+
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structString}{String}}
+\item 
+struct \mbox{\hyperlink{structWordOccurence}{Word\+Occurence}}
+\item 
+struct \mbox{\hyperlink{structWordOccurenceList}{Word\+Occurence\+List}}
+\item 
+struct \mbox{\hyperlink{structHashTable}{Hash\+Table}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{count__occurences_8c_aa1ca65bb1c1c091cfda31288be9203d6}\label{count__occurences_8c_aa1ca65bb1c1c091cfda31288be9203d6} 
+size\+\_\+t {\bfseries String\+\_\+hash} (const \mbox{\hyperlink{structString}{String}} \texorpdfstring{$\ast$}{*}str)
+\item 
+\Hypertarget{count__occurences_8c_ad2d35495045c1498dc5d74cdc01b35d4}\label{count__occurences_8c_ad2d35495045c1498dc5d74cdc01b35d4} 
+\mbox{\hyperlink{structString}{String}} {\bfseries String\+\_\+clone} (const \mbox{\hyperlink{structString}{String}} \texorpdfstring{$\ast$}{*}str)
+\item 
+\Hypertarget{count__occurences_8c_a9d6e5f30c8456bc927c410916f6149d9}\label{count__occurences_8c_a9d6e5f30c8456bc927c410916f6149d9} 
+\mbox{\hyperlink{structString}{String}} {\bfseries from\+\_\+trimmed} (const char \texorpdfstring{$\ast$}{*}str)
+\item 
+\Hypertarget{count__occurences_8c_a7cae516d4dee36f997fd91a1009b35be}\label{count__occurences_8c_a7cae516d4dee36f997fd91a1009b35be} 
+void {\bfseries String\+\_\+free} (\mbox{\hyperlink{structString}{String}} str)
+\item 
+\Hypertarget{count__occurences_8c_a848c08b1a9b88acafea79b8a010634a8}\label{count__occurences_8c_a848c08b1a9b88acafea79b8a010634a8} 
+\mbox{\hyperlink{structWordOccurenceList}{Word\+Occurence\+List}} {\bfseries Word\+Occurence\+List\+\_\+create} (size\+\_\+t capacity)
+\item 
+\Hypertarget{count__occurences_8c_aea8742057c560cc137fd9687241b6b85}\label{count__occurences_8c_aea8742057c560cc137fd9687241b6b85} 
+void {\bfseries Word\+Occurence\+List\+\_\+push} (\mbox{\hyperlink{structWordOccurenceList}{Word\+Occurence\+List}} \texorpdfstring{$\ast$}{*}list, const \mbox{\hyperlink{structWordOccurence}{Word\+Occurence}} occurence)
+\item 
+\Hypertarget{count__occurences_8c_a5958d3bd6b8b399404c5944585fee959}\label{count__occurences_8c_a5958d3bd6b8b399404c5944585fee959} 
+void {\bfseries Word\+Occurence\+List\+\_\+insert\+\_\+or\+\_\+increment} (\mbox{\hyperlink{structWordOccurenceList}{Word\+Occurence\+List}} \texorpdfstring{$\ast$}{*}list, const \mbox{\hyperlink{structString}{String}} str)
+\item 
+\Hypertarget{count__occurences_8c_a00d5a8c7c0c5273884b5b48e4833db50}\label{count__occurences_8c_a00d5a8c7c0c5273884b5b48e4833db50} 
+void {\bfseries Word\+Occurence\+List\+\_\+free} (\mbox{\hyperlink{structWordOccurenceList}{Word\+Occurence\+List}} list)
+\item 
+\Hypertarget{count__occurences_8c_a2a00759b93c1c5bf72e791d11d456e7b}\label{count__occurences_8c_a2a00759b93c1c5bf72e791d11d456e7b} 
+\mbox{\hyperlink{structHashTable}{Hash\+Table}} {\bfseries Hash\+Table\+\_\+create} (size\+\_\+t nb\+\_\+buckets)
+\item 
+\Hypertarget{count__occurences_8c_a28c674d97c794b6fc0954fa742f37c93}\label{count__occurences_8c_a28c674d97c794b6fc0954fa742f37c93} 
+void {\bfseries Hash\+Table\+\_\+insert} (\mbox{\hyperlink{structHashTable}{Hash\+Table}} \texorpdfstring{$\ast$}{*}table, const \mbox{\hyperlink{structString}{String}} word)
+\item 
+\Hypertarget{count__occurences_8c_aa5d8c3ccbd58cdbca4a184c40080c740}\label{count__occurences_8c_aa5d8c3ccbd58cdbca4a184c40080c740} 
+void {\bfseries Hash\+Table\+\_\+free} (\mbox{\hyperlink{structHashTable}{Hash\+Table}} table)
+\item 
+\Hypertarget{count__occurences_8c_a8b819d749da8d2532a9aeb13b7e54f0c}\label{count__occurences_8c_a8b819d749da8d2532a9aeb13b7e54f0c} 
+int {\bfseries compare\+\_\+word\+\_\+occurences} (const void \texorpdfstring{$\ast$}{*}a, const void \texorpdfstring{$\ast$}{*}b)
+\item 
+\Hypertarget{count__occurences_8c_a9906193abee76593d38a4208e547bf2e}\label{count__occurences_8c_a9906193abee76593d38a4208e547bf2e} 
+\mbox{\hyperlink{structWordOccurenceList}{Word\+Occurence\+List}} {\bfseries Hash\+Table\+\_\+sort\+\_\+entries} (const \mbox{\hyperlink{structHashTable}{Hash\+Table}} \texorpdfstring{$\ast$}{*}table)
+\item 
+\Hypertarget{count__occurences_8c_a6e19a13e1587a3596e629dda3db7461a}\label{count__occurences_8c_a6e19a13e1587a3596e629dda3db7461a} 
+bool {\bfseries is\+\_\+only\+\_\+whitespace} (const char \texorpdfstring{$\ast$}{*}str)
+\item 
+\Hypertarget{count__occurences_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{count__occurences_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int {\bfseries main} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A program that counts the occurences of words in a text. 
+

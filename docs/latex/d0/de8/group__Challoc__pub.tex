@@ -1,0 +1,94 @@
+\doxysection{Challoc Public API}
+\hypertarget{group__Challoc__pub}{}\label{group__Challoc__pub}\index{Challoc Public API@{Challoc Public API}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}{chamalloc}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocate memory. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}{chafree}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free memory. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}{chacalloc}} (size\+\_\+t nmemb, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocate memory and set it to zero. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}{charealloc}} (void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Reallocate memory. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\DoxyHorRuler{0}
+ \hypertarget{group__Challoc__pub_autotoc_md5}{}\doxysubsubsection{\texorpdfstring{Challoc Public API}{Challoc Public API}}\label{group__Challoc__pub_autotoc_md5}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}\label{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f} 
+\index{Challoc Public API@{Challoc Public API}!chacalloc@{chacalloc}}
+\index{chacalloc@{chacalloc}!Challoc Public API@{Challoc Public API}}
+\doxysubsubsection{\texorpdfstring{chacalloc()}{chacalloc()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} chacalloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{nmemb,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Allocate memory and set it to zero. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nmemb} & The number of elements to allocate \\
+\hline
+{\em size} & The size of each element \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the allocated memory 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}\label{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52} 
+\index{Challoc Public API@{Challoc Public API}!chafree@{chafree}}
+\index{chafree@{chafree}!Challoc Public API@{Challoc Public API}}
+\doxysubsubsection{\texorpdfstring{chafree()}{chafree()}}
+{\footnotesize\ttfamily void chafree (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Free memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to the memory to free \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}\label{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3} 
+\index{Challoc Public API@{Challoc Public API}!chamalloc@{chamalloc}}
+\index{chamalloc@{chamalloc}!Challoc Public API@{Challoc Public API}}
+\doxysubsubsection{\texorpdfstring{chamalloc()}{chamalloc()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} chamalloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Allocate memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The size of the memory to allocate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the allocated memory 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}\label{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0} 
+\index{Challoc Public API@{Challoc Public API}!charealloc@{charealloc}}
+\index{charealloc@{charealloc}!Challoc Public API@{Challoc Public API}}
+\doxysubsubsection{\texorpdfstring{charealloc()}{charealloc()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} charealloc (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr,  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Reallocate memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to the memory to reallocate \\
+\hline
+{\em size} & The new size of the memory \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the reallocated memory 
+\end{DoxyReturn}

@@ -1,0 +1,211 @@
+\doxysection{Minislab Allocator}
+\hypertarget{group__Challoc__minislab}{}\label{group__Challoc__minislab}\index{Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structSlab512x256x128Usage}{Slab512x256x128\+Usage}}
+\begin{DoxyCompactList}\small\item\em Compact representation of the usage of the 512, 256 and 128 bytes slabs. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structClosePowerOfTwo}{Close\+Power\+Of\+Two}}
+\begin{DoxyCompactList}\small\item\em Structure to represent if a size is close to a power of two up to 512, and contains that power of two if it is. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__minislab_gae33da5e5863421d5bb762cd8a3bf0d6a}\label{group__Challoc__minislab_gae33da5e5863421d5bb762cd8a3bf0d6a} 
+\#define {\bfseries ALL\+\_\+\+ONES}(type)~(type) \texorpdfstring{$\sim$}{\string~}(type)0
+\begin{DoxyCompactList}\small\item\em Helper macro to set all bits to 1 in a value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{group__Challoc__minislab_gae5bd43ddfa01d13ff845185ef27200b7}{\+\_\+\+\_\+attribute\+\_\+\+\_\+}} ((aligned(4096)))
+\begin{DoxyCompactList}\small\item\em Minislab to allocate small memory regions It contains 512, 256, 128, 64, 32, 16, 8 and 4 bytes layers and keeps track of the usage of each layer using bitmasks. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__minislab_gac49ba40615eb8fef916aca5777a52efb}{minislab\+\_\+print\+\_\+usage}} (Mini\+Slab slab)
+\begin{DoxyCompactList}\small\item\em Print the usage of the minislab allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structClosePowerOfTwo}{Close\+Power\+Of\+Two}} \mbox{\hyperlink{group__Challoc__minislab_gadaf947726269a4d97ccbc1ae1cfe2ce5}{is\+\_\+close\+\_\+to\+\_\+power\+\_\+of\+\_\+two}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Check if a size is close to a power of two. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{group__Challoc__minislab_ga00733f4ddaf7d01cc3c88cc673212599}{find\+\_\+first\+\_\+bit\+\_\+at\+\_\+0}} (uint64\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Find the first bit set to 0 in a 64-\/bit value from left to right. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__minislab_ga6db6301bc314956b20209d058964c5b9}{minislab\+\_\+alloc}} (\mbox{\hyperlink{structClosePowerOfTwo}{Close\+Power\+Of\+Two}} size)
+\begin{DoxyCompactList}\small\item\em Allocate memory from the minislab allocator. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}{ptr\+\_\+comes\+\_\+from\+\_\+minislab}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Check if a pointer comes from the minislab allocator. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{group__Challoc__minislab_ga9c67b6c17635a949a08545f27d7e74b4}{minislab\+\_\+ptr\+\_\+size}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Get the size of a pointer allocated from the minislab allocator. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__minislab_ga21d2366abcfe647d32a12bcd204d5074}{minislab\+\_\+free}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free a pointer allocated from the minislab allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__minislab_gaa03cde7afd12470eb767d879471547b3}\label{group__Challoc__minislab_gaa03cde7afd12470eb767d879471547b3} 
+{\bfseries Mini\+Slab}
+\item 
+\Hypertarget{group__Challoc__minislab_gaf83d4ad2c1ec73d0f8c650ced69f6703}\label{group__Challoc__minislab_gaf83d4ad2c1ec73d0f8c650ced69f6703} 
+Mini\+Slab {\bfseries challoc\+\_\+minislab} = \{0\}
+\begin{DoxyCompactList}\small\item\em Global minislab allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\DoxyHorRuler{0}
+ \hypertarget{group__Challoc__minislab_autotoc_md1}{}\doxysubsubsection{\texorpdfstring{Slab allocator}{Slab allocator}}\label{group__Challoc__minislab_autotoc_md1}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{group__Challoc__minislab_gae5bd43ddfa01d13ff845185ef27200b7}\label{group__Challoc__minislab_gae5bd43ddfa01d13ff845185ef27200b7} 
+\index{Minislab Allocator@{Minislab Allocator}!\_\_attribute\_\_@{\_\_attribute\_\_}}
+\index{\_\_attribute\_\_@{\_\_attribute\_\_}!Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection{\texorpdfstring{\_\_attribute\_\_()}{\_\_attribute\_\_()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+attribute\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{(aligned(4096))}]{ }\end{DoxyParamCaption})}
+
+
+
+Minislab to allocate small memory regions It contains 512, 256, 128, 64, 32, 16, 8 and 4 bytes layers and keeps track of the usage of each layer using bitmasks. 
+
+Chunks of memory
+
+\texorpdfstring{$<$}{<} 1 chunk of 512 bytes
+
+\texorpdfstring{$<$}{<} 2 chunks of 256 bytes
+
+\texorpdfstring{$<$}{<} 4 chunks of 128 bytes
+
+\texorpdfstring{$<$}{<} 8 chunks of 64 bytes
+
+\texorpdfstring{$<$}{<} 16 chunks of 32 bytes
+
+\texorpdfstring{$<$}{<} 32 chunks of 16 bytes
+
+\texorpdfstring{$<$}{<} 64 chunks of 8 bytes
+
+\texorpdfstring{$<$}{<} 64 chunks of 4 bytes
+
+Bitmasks to keep track of the usage of each layer
+
+\texorpdfstring{$<$}{<} Usage bitmask of 4 bytes chunks
+
+\texorpdfstring{$<$}{<} Usage bitmask of 8 bytes chunks
+
+\texorpdfstring{$<$}{<} Usage bitmask of 16 bytes chunks
+
+\texorpdfstring{$<$}{<} Usage bitmask of 32 bytes chunks
+
+\texorpdfstring{$<$}{<} Usage bitmask of 64 bytes chunks
+
+\texorpdfstring{$<$}{<} Usage bitmask of 512, 256 and 128 bytes chunks combined for compactness\Hypertarget{group__Challoc__minislab_ga00733f4ddaf7d01cc3c88cc673212599}\label{group__Challoc__minislab_ga00733f4ddaf7d01cc3c88cc673212599} 
+\index{Minislab Allocator@{Minislab Allocator}!find\_first\_bit\_at\_0@{find\_first\_bit\_at\_0}}
+\index{find\_first\_bit\_at\_0@{find\_first\_bit\_at\_0}!Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection{\texorpdfstring{find\_first\_bit\_at\_0()}{find\_first\_bit\_at\_0()}}
+{\footnotesize\ttfamily size\+\_\+t find\+\_\+first\+\_\+bit\+\_\+at\+\_\+0 (\begin{DoxyParamCaption}\item[{uint64\+\_\+t}]{value }\end{DoxyParamCaption})}
+
+
+
+Find the first bit set to 0 in a 64-\/bit value from left to right. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The value to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The index of the first bit set to 0 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__minislab_gadaf947726269a4d97ccbc1ae1cfe2ce5}\label{group__Challoc__minislab_gadaf947726269a4d97ccbc1ae1cfe2ce5} 
+\index{Minislab Allocator@{Minislab Allocator}!is\_close\_to\_power\_of\_two@{is\_close\_to\_power\_of\_two}}
+\index{is\_close\_to\_power\_of\_two@{is\_close\_to\_power\_of\_two}!Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection{\texorpdfstring{is\_close\_to\_power\_of\_two()}{is\_close\_to\_power\_of\_two()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structClosePowerOfTwo}{Close\+Power\+Of\+Two}} is\+\_\+close\+\_\+to\+\_\+power\+\_\+of\+\_\+two (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Check if a size is close to a power of two. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The size to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A \doxylink{structClosePowerOfTwo}{Close\+Power\+Of\+Two} structure indicating if the size is close to a power of two and the power of two if it is 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__minislab_ga6db6301bc314956b20209d058964c5b9}\label{group__Challoc__minislab_ga6db6301bc314956b20209d058964c5b9} 
+\index{Minislab Allocator@{Minislab Allocator}!minislab\_alloc@{minislab\_alloc}}
+\index{minislab\_alloc@{minislab\_alloc}!Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection{\texorpdfstring{minislab\_alloc()}{minislab\_alloc()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} minislab\+\_\+alloc (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structClosePowerOfTwo}{Close\+Power\+Of\+Two}}}]{size }\end{DoxyParamCaption})}
+
+
+
+Allocate memory from the minislab allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The size to allocate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the allocated memory 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__minislab_ga21d2366abcfe647d32a12bcd204d5074}\label{group__Challoc__minislab_ga21d2366abcfe647d32a12bcd204d5074} 
+\index{Minislab Allocator@{Minislab Allocator}!minislab\_free@{minislab\_free}}
+\index{minislab\_free@{minislab\_free}!Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection{\texorpdfstring{minislab\_free()}{minislab\_free()}}
+{\footnotesize\ttfamily void minislab\+\_\+free (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Free a pointer allocated from the minislab allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to free \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__minislab_gac49ba40615eb8fef916aca5777a52efb}\label{group__Challoc__minislab_gac49ba40615eb8fef916aca5777a52efb} 
+\index{Minislab Allocator@{Minislab Allocator}!minislab\_print\_usage@{minislab\_print\_usage}}
+\index{minislab\_print\_usage@{minislab\_print\_usage}!Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection{\texorpdfstring{minislab\_print\_usage()}{minislab\_print\_usage()}}
+{\footnotesize\ttfamily void minislab\+\_\+print\+\_\+usage (\begin{DoxyParamCaption}\item[{Mini\+Slab}]{slab }\end{DoxyParamCaption})}
+
+
+
+Print the usage of the minislab allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em slab} & The minislab allocator \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__minislab_ga9c67b6c17635a949a08545f27d7e74b4}\label{group__Challoc__minislab_ga9c67b6c17635a949a08545f27d7e74b4} 
+\index{Minislab Allocator@{Minislab Allocator}!minislab\_ptr\_size@{minislab\_ptr\_size}}
+\index{minislab\_ptr\_size@{minislab\_ptr\_size}!Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection{\texorpdfstring{minislab\_ptr\_size()}{minislab\_ptr\_size()}}
+{\footnotesize\ttfamily size\+\_\+t minislab\+\_\+ptr\+\_\+size (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Get the size of a pointer allocated from the minislab allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The size of the allocation 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}\label{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340} 
+\index{Minislab Allocator@{Minislab Allocator}!ptr\_comes\_from\_minislab@{ptr\_comes\_from\_minislab}}
+\index{ptr\_comes\_from\_minislab@{ptr\_comes\_from\_minislab}!Minislab Allocator@{Minislab Allocator}}
+\doxysubsubsection{\texorpdfstring{ptr\_comes\_from\_minislab()}{ptr\_comes\_from\_minislab()}}
+{\footnotesize\ttfamily bool ptr\+\_\+comes\+\_\+from\+\_\+minislab (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Check if a pointer comes from the minislab allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the pointer comes from the minislab allocator, false otherwise 
+\end{DoxyReturn}

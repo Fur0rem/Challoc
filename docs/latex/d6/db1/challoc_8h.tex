@@ -1,0 +1,24 @@
+\doxysection{src/challoc.h File Reference}
+\hypertarget{challoc_8h}{}\label{challoc_8h}\index{src/challoc.h@{src/challoc.h}}
+
+
+Header file which contains the declaration of the functions that are used to allocate and free memory. It should be included if you don\textquotesingle{}t want to use the interposing feature.  
+
+
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}{chamalloc}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocate memory. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}{chafree}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free memory. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}{chacalloc}} (size\+\_\+t nmemb, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocate memory and set it to zero. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}{charealloc}} (void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Reallocate memory. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Header file which contains the declaration of the functions that are used to allocate and free memory. It should be included if you don\textquotesingle{}t want to use the interposing feature. 
+

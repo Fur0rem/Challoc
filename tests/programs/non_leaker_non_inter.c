@@ -1,3 +1,8 @@
+/**
+ * @file tests/programs/non_leaker_non_inter.c
+ * @brief A program that doesn't leak memory and doesn't the interposing feature
+ */
+
 #include "../../src/challoc.h"
 #include <stdint.h>
 #include <stdlib.h>

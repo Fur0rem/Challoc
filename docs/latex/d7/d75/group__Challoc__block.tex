@@ -1,0 +1,349 @@
+\doxysection{Fragmented Block Allocator}
+\hypertarget{group__Challoc__block}{}\label{group__Challoc__block}\index{Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}}
+\item 
+struct \mbox{\hyperlink{structBlock}{Block}}
+\begin{DoxyCompactList}\small\item\em Structure to represent a block of memory allocated with mmap. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBlockList}{Block\+List}}
+\begin{DoxyCompactList}\small\item\em List of blocks as a dynamic array. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}\label{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99} 
+typedef struct Alloc\+Metadata {\bfseries Alloc\+Metadata}
+\begin{DoxyCompactList}\small\item\em Double linked list metadata for the fragmented block allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{group__Challoc__block_ga1a91eb64127dd63e6633d5e42fba165e}{allocmetadata\+\_\+print}} (\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}metadata)
+\begin{DoxyCompactList}\small\item\em Print the metadata of an allocation. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\+\_\+get\+\_\+metadata}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Get the metadata of an allocation from the pointer. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\+\_\+to\+\_\+4096multiple}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Get the time to live of a block based on its size. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{group__Challoc__block_ga1f3ce2d2f34f49f2e12a0f1a561bcda6}{time\+\_\+to\+\_\+live\+\_\+with\+\_\+size}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Get the time to live of a block based on its size, the bigger the block, the less time we keep it alive. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structBlockList}{Block\+List}} \mbox{\hyperlink{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}{blocklist\+\_\+with\+\_\+capacity}} (size\+\_\+t capacity)
+\begin{DoxyCompactList}\small\item\em Create a new block list with a given capacity. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}{blocklist\+\_\+destroy}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list)
+\begin{DoxyCompactList}\small\item\em Destroy a block list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga85a4ff078b5da234a2f713ff07d314a8}{blocklist\+\_\+allocate\+\_\+new\+\_\+block}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, size\+\_\+t size\+\_\+requested)
+\begin{DoxyCompactList}\small\item\em Allocate a new block in the block list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_gaf0325e3cda75a17b82fa7c8bf9e097b3}{block\+\_\+print}} (\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}block)
+\begin{DoxyCompactList}\small\item\em Print a block. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga0e4e55eb1cb628b044b42847350b1388}{blocklist\+\_\+print}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list)
+\begin{DoxyCompactList}\small\item\em Print a block list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_gaea5de1c86431322ce809cd6ea3e8cca5}{blocklist\+\_\+push}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, \mbox{\hyperlink{structBlock}{Block}} block)
+\begin{DoxyCompactList}\small\item\em Push a block to the block list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga980660e55ff5572dadb47e4efd321eae}{blocklist\+\_\+push\+\_\+or\+\_\+remove}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, \mbox{\hyperlink{structBlock}{Block}} block)
+\begin{DoxyCompactList}\small\item\em Remove a block from the block list. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{block\+\_\+has\+\_\+enough\+\_\+space}} (\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}block, size\+\_\+t size\+\_\+requested)
+\begin{DoxyCompactList}\small\item\em Checks if a block has potentially enough free space to allocate a given size. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_gade5f736c6073fb5c7780633828d8bf03}{blocklist\+\_\+peek}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, size\+\_\+t block\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Peek a block from the block list. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\+\_\+try\+\_\+allocate}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, size\+\_\+t block\+\_\+idx, size\+\_\+t size\+\_\+requested)
+\begin{DoxyCompactList}\small\item\em Tries to allocate within a block. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8}{block\+\_\+free}} (\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}block, \mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free an allocation from a block. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_gaaad9cd52194179549f0f48fdb4f5d82f}{blocklist\+\_\+free}} (\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free an allocation from a blocklist. \end{DoxyCompactList}\item 
+\Hypertarget{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}\label{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f} 
+void {\bfseries decrease\+\_\+ttl\+\_\+and\+\_\+unmap} ()
+\begin{DoxyCompactList}\small\item\em Decrease the time to live of the blocks and unmap the ones which have reached 0. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}\label{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6} 
+\mbox{\hyperlink{structBlockList}{Block\+List}} {\bfseries challoc\+\_\+blocks\+\_\+in\+\_\+use} = \{0\}
+\begin{DoxyCompactList}\small\item\em List of blocks in use. \end{DoxyCompactList}\item 
+\Hypertarget{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}\label{group__Challoc__block_ga91342243d26d851e14c33337961c30d1} 
+\mbox{\hyperlink{structBlockList}{Block\+List}} {\bfseries challoc\+\_\+freed\+\_\+blocks} = \{0\}
+\begin{DoxyCompactList}\small\item\em List of freed blocks. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\DoxyHorRuler{0}
+ \hypertarget{group__Challoc__block_autotoc_md2}{}\doxysubsubsection{\texorpdfstring{Fragmented Block Allocator}{Fragmented Block Allocator}}\label{group__Challoc__block_autotoc_md2}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{group__Challoc__block_ga1a91eb64127dd63e6633d5e42fba165e}\label{group__Challoc__block_ga1a91eb64127dd63e6633d5e42fba165e} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!allocmetadata\_print@{allocmetadata\_print}}
+\index{allocmetadata\_print@{allocmetadata\_print}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{allocmetadata\_print()}{allocmetadata\_print()}}
+{\footnotesize\ttfamily void allocmetadata\+\_\+print (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}}]{metadata }\end{DoxyParamCaption})}
+
+
+
+Print the metadata of an allocation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em metadata} & The metadata to print \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8}\label{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!block\_free@{block\_free}}
+\index{block\_free@{block\_free}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{block\_free()}{block\_free()}}
+{\footnotesize\ttfamily void block\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}}]{block,  }\item[{\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Free an allocation from a block. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em block} & The block to free from \\
+\hline
+{\em ptr} & The pointer to the allocated memory \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_gab661e17a10034ffc577490bec6459418}\label{group__Challoc__block_gab661e17a10034ffc577490bec6459418} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!block\_has\_enough\_space@{block\_has\_enough\_space}}
+\index{block\_has\_enough\_space@{block\_has\_enough\_space}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{block\_has\_enough\_space()}{block\_has\_enough\_space()}}
+{\footnotesize\ttfamily bool block\+\_\+has\+\_\+enough\+\_\+space (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}}]{block,  }\item[{size\+\_\+t}]{size\+\_\+requested }\end{DoxyParamCaption})}
+
+
+
+Checks if a block has potentially enough free space to allocate a given size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em block} & The block to check \\
+\hline
+{\em size\+\_\+requested} & The size requested \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the block has potentially enough free space, false otherwise 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__block_gaf0325e3cda75a17b82fa7c8bf9e097b3}\label{group__Challoc__block_gaf0325e3cda75a17b82fa7c8bf9e097b3} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!block\_print@{block\_print}}
+\index{block\_print@{block\_print}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{block\_print()}{block\_print()}}
+{\footnotesize\ttfamily void block\+\_\+print (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}}]{block }\end{DoxyParamCaption})}
+
+
+
+Print a block. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em block} & The block to print \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}\label{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!block\_try\_allocate@{block\_try\_allocate}}
+\index{block\_try\_allocate@{block\_try\_allocate}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{block\_try\_allocate()}{block\_try\_allocate()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} block\+\_\+try\+\_\+allocate (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}}]{list,  }\item[{size\+\_\+t}]{block\+\_\+idx,  }\item[{size\+\_\+t}]{size\+\_\+requested }\end{DoxyParamCaption})}
+
+
+
+Tries to allocate within a block. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The block list \\
+\hline
+{\em block\+\_\+idx} & The index of the block to allocate from \\
+\hline
+{\em size\+\_\+requested} & The size requested \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the allocated memory, or NULL if the block is full 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__block_ga85a4ff078b5da234a2f713ff07d314a8}\label{group__Challoc__block_ga85a4ff078b5da234a2f713ff07d314a8} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!blocklist\_allocate\_new\_block@{blocklist\_allocate\_new\_block}}
+\index{blocklist\_allocate\_new\_block@{blocklist\_allocate\_new\_block}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{blocklist\_allocate\_new\_block()}{blocklist\_allocate\_new\_block()}}
+{\footnotesize\ttfamily void blocklist\+\_\+allocate\+\_\+new\+\_\+block (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}}]{list,  }\item[{size\+\_\+t}]{size\+\_\+requested }\end{DoxyParamCaption})}
+
+
+
+Allocate a new block in the block list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The block list \\
+\hline
+{\em size\+\_\+requested} & The size requested for the block \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}\label{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!blocklist\_destroy@{blocklist\_destroy}}
+\index{blocklist\_destroy@{blocklist\_destroy}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{blocklist\_destroy()}{blocklist\_destroy()}}
+{\footnotesize\ttfamily void blocklist\+\_\+destroy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}}]{list }\end{DoxyParamCaption})}
+
+
+
+Destroy a block list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The block list to destroy \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_gaaad9cd52194179549f0f48fdb4f5d82f}\label{group__Challoc__block_gaaad9cd52194179549f0f48fdb4f5d82f} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!blocklist\_free@{blocklist\_free}}
+\index{blocklist\_free@{blocklist\_free}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{blocklist\_free()}{blocklist\_free()}}
+{\footnotesize\ttfamily void blocklist\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Free an allocation from a blocklist. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to the allocated memory \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_gade5f736c6073fb5c7780633828d8bf03}\label{group__Challoc__block_gade5f736c6073fb5c7780633828d8bf03} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!blocklist\_peek@{blocklist\_peek}}
+\index{blocklist\_peek@{blocklist\_peek}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{blocklist\_peek()}{blocklist\_peek()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*} blocklist\+\_\+peek (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}}]{list,  }\item[{size\+\_\+t}]{block\+\_\+idx }\end{DoxyParamCaption})}
+
+
+
+Peek a block from the block list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The block list \\
+\hline
+{\em block\+\_\+idx} & The index of the block to peek \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The block at the given index 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__block_ga0e4e55eb1cb628b044b42847350b1388}\label{group__Challoc__block_ga0e4e55eb1cb628b044b42847350b1388} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!blocklist\_print@{blocklist\_print}}
+\index{blocklist\_print@{blocklist\_print}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{blocklist\_print()}{blocklist\_print()}}
+{\footnotesize\ttfamily void blocklist\+\_\+print (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}}]{list }\end{DoxyParamCaption})}
+
+
+
+Print a block list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The block list to print \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_gaea5de1c86431322ce809cd6ea3e8cca5}\label{group__Challoc__block_gaea5de1c86431322ce809cd6ea3e8cca5} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!blocklist\_push@{blocklist\_push}}
+\index{blocklist\_push@{blocklist\_push}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{blocklist\_push()}{blocklist\_push()}}
+{\footnotesize\ttfamily void blocklist\+\_\+push (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}}]{list,  }\item[{\mbox{\hyperlink{structBlock}{Block}}}]{block }\end{DoxyParamCaption})}
+
+
+
+Push a block to the block list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The block list \\
+\hline
+{\em block} & The block to push \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_ga980660e55ff5572dadb47e4efd321eae}\label{group__Challoc__block_ga980660e55ff5572dadb47e4efd321eae} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!blocklist\_push\_or\_remove@{blocklist\_push\_or\_remove}}
+\index{blocklist\_push\_or\_remove@{blocklist\_push\_or\_remove}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{blocklist\_push\_or\_remove()}{blocklist\_push\_or\_remove()}}
+{\footnotesize\ttfamily void blocklist\+\_\+push\+\_\+or\+\_\+remove (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}}]{list,  }\item[{\mbox{\hyperlink{structBlock}{Block}}}]{block }\end{DoxyParamCaption})}
+
+
+
+Remove a block from the block list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The block list \\
+\hline
+{\em block\+\_\+idx} & The index of the block to remove \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}\label{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!blocklist\_with\_capacity@{blocklist\_with\_capacity}}
+\index{blocklist\_with\_capacity@{blocklist\_with\_capacity}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{blocklist\_with\_capacity()}{blocklist\_with\_capacity()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structBlockList}{Block\+List}} blocklist\+\_\+with\+\_\+capacity (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{capacity }\end{DoxyParamCaption})}
+
+
+
+Create a new block list with a given capacity. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em capacity} & The initial capacity of the block list \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The newly created block list 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}\label{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!ceil\_to\_4096multiple@{ceil\_to\_4096multiple}}
+\index{ceil\_to\_4096multiple@{ceil\_to\_4096multiple}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{ceil\_to\_4096multiple()}{ceil\_to\_4096multiple()}}
+{\footnotesize\ttfamily size\+\_\+t ceil\+\_\+to\+\_\+4096multiple (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Get the time to live of a block based on its size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The size of the block \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The time to live of the block 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}\label{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!challoc\_get\_metadata@{challoc\_get\_metadata}}
+\index{challoc\_get\_metadata@{challoc\_get\_metadata}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{challoc\_get\_metadata()}{challoc\_get\_metadata()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*} challoc\+\_\+get\+\_\+metadata (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Get the metadata of an allocation from the pointer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to the allocated memory \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The metadata of the allocation 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__block_ga1f3ce2d2f34f49f2e12a0f1a561bcda6}\label{group__Challoc__block_ga1f3ce2d2f34f49f2e12a0f1a561bcda6} 
+\index{Fragmented Block Allocator@{Fragmented Block Allocator}!time\_to\_live\_with\_size@{time\_to\_live\_with\_size}}
+\index{time\_to\_live\_with\_size@{time\_to\_live\_with\_size}!Fragmented Block Allocator@{Fragmented Block Allocator}}
+\doxysubsubsection{\texorpdfstring{time\_to\_live\_with\_size()}{time\_to\_live\_with\_size()}}
+{\footnotesize\ttfamily size\+\_\+t time\+\_\+to\+\_\+live\+\_\+with\+\_\+size (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Get the time to live of a block based on its size, the bigger the block, the less time we keep it alive. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The size of the block \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The time to live of the block 
+\end{DoxyReturn}

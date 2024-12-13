@@ -1,0 +1,32 @@
+\doxysection{Multithreading support}
+\hypertarget{group__Challoc__multithreading}{}\label{group__Challoc__multithreading}\index{Multithreading support@{Multithreading support}}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\+\_\+\+MUTEX}}(code)
+\begin{DoxyCompactList}\small\item\em Execute code while holding the challoc mutex. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\DoxyHorRuler{0}
+ \hypertarget{group__Challoc__multithreading_autotoc_md0}{}\doxysubsubsection{\texorpdfstring{Multithreading}{Multithreading}}\label{group__Challoc__multithreading_autotoc_md0}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}\label{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8} 
+\index{Multithreading support@{Multithreading support}!CHALLOC\_MUTEX@{CHALLOC\_MUTEX}}
+\index{CHALLOC\_MUTEX@{CHALLOC\_MUTEX}!Multithreading support@{Multithreading support}}
+\doxysubsubsection{\texorpdfstring{CHALLOC\_MUTEX}{CHALLOC\_MUTEX}}
+{\footnotesize\ttfamily \#define CHALLOC\+\_\+\+MUTEX(\begin{DoxyParamCaption}\item[{}]{code }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ pthread\_mutex\_lock(\&challoc\_mutex);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ code;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ pthread\_mutex\_unlock(\&challoc\_mutex);}
+
+\end{DoxyCode}
+
+
+Execute code while holding the challoc mutex. 
+

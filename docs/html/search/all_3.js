@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['capacity_0',['capacity',['../df/d9e/structBlockList.html#a1340d84d9895c868354d64a5d3e6f3b7',1,'BlockList::capacity'],['../d2/d29/structLeakcheckTraceList.html#a8110a1895e5740fc3886f7820a2593d0',1,'LeakcheckTraceList::capacity']]],
+  ['ceil_5fpow2_1',['ceil_pow2',['../d7/d04/structClosePowerOfTwo.html#a9fc70421019dcf81b0aff9f18c3f3f96',1,'ClosePowerOfTwo']]],
+  ['ceil_5fto_5f4096multiple_2',['ceil_to_4096multiple',['../d7/d75/group__Challoc__block.html#gaa352cda03b947b55c02cbeb6c1254d08',1,'challoc.c']]],
+  ['chacalloc_3',['chacalloc',['../d0/de8/group__Challoc__pub.html#gab3bdaf331b155010f7388e05cac82c3f',1,'chacalloc(size_t nmemb, size_t size):&#160;challoc.c'],['../d0/de8/group__Challoc__pub.html#gab3bdaf331b155010f7388e05cac82c3f',1,'chacalloc(size_t nmemb, size_t size):&#160;challoc.c']]],
+  ['chafree_4',['chafree',['../d0/de8/group__Challoc__pub.html#ga4c54a44dfe34e217f00b08dcb7e13d52',1,'chafree(void *ptr):&#160;challoc.c'],['../d0/de8/group__Challoc__pub.html#ga4c54a44dfe34e217f00b08dcb7e13d52',1,'chafree(void *ptr):&#160;challoc.c']]],
+  ['challoc_20internal_20api_5',['Challoc Internal API',['../d3/da6/group__Challoc.html',1,'Challoc Internal API'],['../d3/da6/group__Challoc.html#autotoc_md3',1,'Challoc Internal API']]],
+  ['challoc_20leakcheck_6',['Challoc Leakcheck',['../d8/de8/group__Challoc__leakcheck.html',1,'Challoc Leakcheck'],['../d8/de8/group__Challoc__leakcheck.html#autotoc_md4',1,'Challoc_leakcheck Challoc Leakcheck']]],
+  ['challoc_20program_20benchmarks_7',['Challoc Program Benchmarks',['../d5/d5a/group__Challoc__unit__benchmarks.html',1,'']]],
+  ['challoc_20public_20api_8',['Challoc Public API',['../d0/de8/group__Challoc__pub.html',1,'Challoc Public API'],['../d0/de8/group__Challoc__pub.html#autotoc_md5',1,'Challoc Public API']]],
+  ['challoc_20unit_20benchmarks_9',['Challoc Unit Benchmarks',['../d5/db5/group__Challoc__prog__benchmarks.html',1,'']]],
+  ['challoc_2ec_10',['challoc.c',['../df/dad/challoc_8c.html',1,'']]],
+  ['challoc_2eh_11',['challoc.h',['../d6/db1/challoc_8h.html',1,'']]],
+  ['challoc_5fblocks_5fin_5fuse_12',['challoc_blocks_in_use',['../d7/d75/group__Challoc__block.html#ga372c0cf6a369cd74e3ef75f5852403b6',1,'challoc.c']]],
+  ['challoc_5ffreed_5fblocks_13',['challoc_freed_blocks',['../d7/d75/group__Challoc__block.html#ga91342243d26d851e14c33337961c30d1',1,'challoc.c']]],
+  ['challoc_5fget_5fmetadata_14',['challoc_get_metadata',['../d7/d75/group__Challoc__block.html#gaa6e534661329ac09709b4559fdacb760',1,'challoc.c']]],
+  ['challoc_5fleakcheck_20challoc_20leakcheck_15',['Challoc_leakcheck Challoc Leakcheck',['../d8/de8/group__Challoc__leakcheck.html#autotoc_md4',1,'']]],
+  ['challoc_5fleaktracker_16',['challoc_leaktracker',['../d8/de8/group__Challoc__leakcheck.html#gaafef467767e8a3b2ee524dee8fcf4e2a',1,'challoc.c']]],
+  ['challoc_5fminislab_17',['challoc_minislab',['../d9/dab/group__Challoc__minislab.html#gaf83d4ad2c1ec73d0f8c650ced69f6703',1,'challoc.c']]],
+  ['challoc_5fmutex_18',['CHALLOC_MUTEX',['../dc/dc5/group__Challoc__multithreading.html#ga9bdf3671ffe7e14d63bf6416fd6139e8',1,'challoc.c']]],
+  ['chamalloc_19',['chamalloc',['../d0/de8/group__Challoc__pub.html#ga9f3b6167b237941d8c574b363ec2c5d3',1,'chamalloc(size_t size):&#160;challoc.c'],['../d0/de8/group__Challoc__pub.html#ga9f3b6167b237941d8c574b363ec2c5d3',1,'chamalloc(size_t size):&#160;challoc.c']]],
+  ['charealloc_20',['charealloc',['../d0/de8/group__Challoc__pub.html#ga856dcc755d8babdc7dfcb5545f1f22e0',1,'charealloc(void *ptr, size_t size):&#160;challoc.c'],['../d0/de8/group__Challoc__pub.html#ga856dcc755d8babdc7dfcb5545f1f22e0',1,'charealloc(void *ptr, size_t size):&#160;challoc.c']]],
+  ['closepoweroftwo_21',['ClosePowerOfTwo',['../d7/d04/structClosePowerOfTwo.html',1,'']]],
+  ['count_5foccurences_2ec_22',['count_occurences.c',['../d5/d5c/count__occurences_8c.html',1,'']]]
+];

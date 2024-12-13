@@ -1,3 +1,8 @@
+/**
+ * @file tests/test.c
+ * @brief Tests for the challoc library as a user would use it
+ */
+
 #include <errno.h>
 #include <error.h>
 #include <pthread.h>

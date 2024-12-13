@@ -1,0 +1,36 @@
+\doxysection{Close\+Power\+Of\+Two Struct Reference}
+\hypertarget{structClosePowerOfTwo}{}\label{structClosePowerOfTwo}\index{ClosePowerOfTwo@{ClosePowerOfTwo}}
+
+
+Structure to represent if a size is close to a power of two up to 512, and contains that power of two if it is.  
+
+
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structClosePowerOfTwo_aae1d8b42e5038cf6424169c63aef82bc}\label{structClosePowerOfTwo_aae1d8b42e5038cf6424169c63aef82bc} 
+bool {\bfseries is\+\_\+close}\+: 1
+\begin{DoxyCompactList}\small\item\em 1 if the size is close to a power of two \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structClosePowerOfTwo_a9fc70421019dcf81b0aff9f18c3f3f96}{ceil\+\_\+pow2}}\+: 5
+\begin{DoxyCompactList}\small\item\em we use 5 bits because 2\texorpdfstring{$^\wedge$}{\string^}9 = 512, ceil(log2(512)) = 9 \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure to represent if a size is close to a power of two up to 512, and contains that power of two if it is. 
+
+\doxysubsection{Field Documentation}
+\Hypertarget{structClosePowerOfTwo_a9fc70421019dcf81b0aff9f18c3f3f96}\label{structClosePowerOfTwo_a9fc70421019dcf81b0aff9f18c3f3f96} 
+\index{ClosePowerOfTwo@{ClosePowerOfTwo}!ceil\_pow2@{ceil\_pow2}}
+\index{ceil\_pow2@{ceil\_pow2}!ClosePowerOfTwo@{ClosePowerOfTwo}}
+\doxysubsubsection{\texorpdfstring{ceil\_pow2}{ceil\_pow2}}
+{\footnotesize\ttfamily uint8\+\_\+t Close\+Power\+Of\+Two\+::ceil\+\_\+pow2}
+
+
+
+we use 5 bits because 2\texorpdfstring{$^\wedge$}{\string^}9 = 512, ceil(log2(512)) = 9 
+
+The power of two if the size is close to one, 512 is the max power of two we can reach 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{challoc_8c}{challoc.\+c}}\end{DoxyCompactItemize}

@@ -1,6 +1,10 @@
+/**
+ * @file benchmarks/programs/complex/dijkstra.c
+ * @brief A program that finds all of the shortest paths in a graph using Dijkstra's algorithm
+ */
+
 #include <limits.h>
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 

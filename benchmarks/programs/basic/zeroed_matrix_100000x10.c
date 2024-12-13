@@ -1,3 +1,8 @@
+/**
+ * @file benchmarks/programs/basic/zeroed_matrix_100000x10.c
+ * @brief A program that allocates a 100000x10 matrix (100000 rows of 10 elements) and sets it to zero
+ */
+
 #include <stdlib.h>
 
 int main() {

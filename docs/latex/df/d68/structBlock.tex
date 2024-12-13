@@ -1,0 +1,39 @@
+\doxysection{Block Struct Reference}
+\hypertarget{structBlock}{}\label{structBlock}\index{Block@{Block}}
+
+
+Structure to represent a block of memory allocated with mmap.  
+
+
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{structBlock_af029d738bbb692feb5a930cf6f5906c3}\label{structBlock_af029d738bbb692feb5a930cf6f5906c3} 
+size\+\_\+t {\bfseries size}
+\begin{DoxyCompactList}\small\item\em Size of the mmap block. \end{DoxyCompactList}\item 
+\Hypertarget{structBlock_a0dd176c9ec08558ee9d812fd562a7951}\label{structBlock_a0dd176c9ec08558ee9d812fd562a7951} 
+size\+\_\+t {\bfseries free\+\_\+space}
+\begin{DoxyCompactList}\small\item\em Space left in the mmap block. \end{DoxyCompactList}\item 
+\Hypertarget{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}\label{structBlock_a1f269c14b750eace5ccbe6b77b8545b9} 
+\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*} {\bfseries head}
+\begin{DoxyCompactList}\small\item\em Head of the linked list. \end{DoxyCompactList}\item 
+\Hypertarget{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}\label{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f} 
+\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*} {\bfseries tail}
+\begin{DoxyCompactList}\small\item\em Tail of the linked list. \end{DoxyCompactList}\item 
+\Hypertarget{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89}\label{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89} 
+void \texorpdfstring{$\ast$}{*} {\bfseries mmap\+\_\+ptr}
+\begin{DoxyCompactList}\small\item\em Pointer to the mmap block. \end{DoxyCompactList}\item 
+\Hypertarget{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}\label{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8} 
+uint8\+\_\+t {\bfseries time\+\_\+to\+\_\+live}
+\begin{DoxyCompactList}\small\item\em Number of mallocs in which this block wasn\textquotesingle{}t reused before it is truly unmapped. \end{DoxyCompactList}\item 
+\Hypertarget{structBlock_a81bc33e367816c5a25450f1481937b55}\label{structBlock_a81bc33e367816c5a25450f1481937b55} 
+bool {\bfseries freshly\+\_\+allocated}
+\begin{DoxyCompactList}\small\item\em True if the block was just allocated (and therefore full of 0) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure to represent a block of memory allocated with mmap. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{challoc_8c}{challoc.\+c}}\end{DoxyCompactItemize}

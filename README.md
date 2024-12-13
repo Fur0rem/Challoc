@@ -30,11 +30,15 @@ Tout est dans le Makefile :
 ```make libchalloc_dev.so``` pour compiler la bibliothèque partagée sans interposition et avec des assertions en plus.
 ```make check``` pour lancer les tests.
 ```make benchmarks LABEL=<label>``` pour lancer les benchmarks temps et mémoire qui seront stockés dans le dossier `benchmarks/label/` avec le label spécifié puis mis en image dans le dossier `rapport/bench_results/label/`.
-```make doc``` pour générer la documentation.
+```make doc``` pour générer la documentation avec doxygen.
 ```make rapport``` pour générer le rapport fait en Typst.
 ```make clean``` pour nettoyer les fichiers compilés.
 
 Lors de la compilation, la variable LEAKCHECK peut être définie (à 1, true, ou t) pour activer la vérification de fuites mémoires, ex : ```make libchalloc.so LEAKCHECK=true```.
+
+## Dépendances
+
+Un compilateur C, doxygen pour générer la documentation, clang-format et clang-tidy pour formatter et analyser le code, Typst pour générer le rapport, python et matplotlin pour générer les figures.
 
 D'ailleurs, je vous invite à lire le rapport pour plus des informations sur le projet.
 ## Utilisation

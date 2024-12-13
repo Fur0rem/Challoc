@@ -1,0 +1,61 @@
+\doxysection{benchmarks/programs/complex/double\+\_\+linked\+\_\+list.c File Reference}
+\hypertarget{double__linked__list_8c}{}\label{double__linked__list_8c}\index{benchmarks/programs/complex/double\_linked\_list.c@{benchmarks/programs/complex/double\_linked\_list.c}}
+
+
+A program that manipulates a double linked list.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structNode}{Node}}
+\item 
+struct \mbox{\hyperlink{structLinkedList}{Linked\+List}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{double__linked__list_8c_a3b09f37e675bcd48a01bf22155996872}\label{double__linked__list_8c_a3b09f37e675bcd48a01bf22155996872} 
+typedef struct Node {\bfseries Node}
+\item 
+\Hypertarget{double__linked__list_8c_a44ddc92df57836b0340ed4213598da2c}\label{double__linked__list_8c_a44ddc92df57836b0340ed4213598da2c} 
+typedef struct Linked\+List {\bfseries Linked\+List}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{double__linked__list_8c_a13b97eaf08c20e859b5524283f96a335}\label{double__linked__list_8c_a13b97eaf08c20e859b5524283f96a335} 
+\mbox{\hyperlink{structNode}{Node}} \texorpdfstring{$\ast$}{*} {\bfseries create\+\_\+node} (uint64\+\_\+t data)
+\item 
+\Hypertarget{double__linked__list_8c_ad84bd5793d7d59509ad84ce61a640156}\label{double__linked__list_8c_ad84bd5793d7d59509ad84ce61a640156} 
+\mbox{\hyperlink{structLinkedList}{Linked\+List}} {\bfseries create\+\_\+linked\+\_\+list} ()
+\item 
+\Hypertarget{double__linked__list_8c_a88520baf5c1016c1f25bf58ab8b539a6}\label{double__linked__list_8c_a88520baf5c1016c1f25bf58ab8b539a6} 
+void {\bfseries free\+\_\+list} (\mbox{\hyperlink{structLinkedList}{Linked\+List}} list)
+\item 
+\Hypertarget{double__linked__list_8c_a8e7d3b9c23b522e27c04982261ccddc3}\label{double__linked__list_8c_a8e7d3b9c23b522e27c04982261ccddc3} 
+void {\bfseries insert\+First} (\mbox{\hyperlink{structLinkedList}{Linked\+List}} \texorpdfstring{$\ast$}{*}list, uint64\+\_\+t data)
+\item 
+\Hypertarget{double__linked__list_8c_a5ec069b06904509061ee8dd05a522211}\label{double__linked__list_8c_a5ec069b06904509061ee8dd05a522211} 
+void {\bfseries insert\+\_\+last} (\mbox{\hyperlink{structLinkedList}{Linked\+List}} \texorpdfstring{$\ast$}{*}list, uint64\+\_\+t data)
+\item 
+\Hypertarget{double__linked__list_8c_a38f8362c96b6a8442800445e447e85a0}\label{double__linked__list_8c_a38f8362c96b6a8442800445e447e85a0} 
+void {\bfseries delete\+\_\+node} (\mbox{\hyperlink{structLinkedList}{Linked\+List}} \texorpdfstring{$\ast$}{*}list, \mbox{\hyperlink{structNode}{Node}} \texorpdfstring{$\ast$}{*}node)
+\item 
+\Hypertarget{double__linked__list_8c_a6fad4f0671af265c048cd00f64aa258c}\label{double__linked__list_8c_a6fad4f0671af265c048cd00f64aa258c} 
+void {\bfseries pop\+\_\+at\+\_\+index} (\mbox{\hyperlink{structLinkedList}{Linked\+List}} \texorpdfstring{$\ast$}{*}list, int index)
+\item 
+\Hypertarget{double__linked__list_8c_a114cb128b9e61459b7d79ccbb68710b0}\label{double__linked__list_8c_a114cb128b9e61459b7d79ccbb68710b0} 
+void {\bfseries insert\+\_\+at\+\_\+index} (\mbox{\hyperlink{structLinkedList}{Linked\+List}} \texorpdfstring{$\ast$}{*}list, uint64\+\_\+t data, int index)
+\item 
+\Hypertarget{double__linked__list_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{double__linked__list_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int {\bfseries main} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A program that manipulates a double linked list. 
+

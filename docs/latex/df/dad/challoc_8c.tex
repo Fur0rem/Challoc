@@ -1,0 +1,151 @@
+\doxysection{src/challoc.c File Reference}
+\hypertarget{challoc_8c}{}\label{challoc_8c}\index{src/challoc.c@{src/challoc.c}}
+
+
+Implementation of the challoc library.  
+
+
+{\ttfamily \#include "{}challoc.\+h"{}}\newline
+{\ttfamily \#include "{}sys/types.\+h"{}}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$execinfo.\+h$>$}\newline
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sys/mman.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structSlab512x256x128Usage}{Slab512x256x128\+Usage}}
+\begin{DoxyCompactList}\small\item\em Compact representation of the usage of the 512, 256 and 128 bytes slabs. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structClosePowerOfTwo}{Close\+Power\+Of\+Two}}
+\begin{DoxyCompactList}\small\item\em Structure to represent if a size is close to a power of two up to 512, and contains that power of two if it is. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}}
+\item 
+struct \mbox{\hyperlink{structBlock}{Block}}
+\begin{DoxyCompactList}\small\item\em Structure to represent a block of memory allocated with mmap. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBlockList}{Block\+List}}
+\begin{DoxyCompactList}\small\item\em List of blocks as a dynamic array. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structAllocTrace}{Alloc\+Trace}}
+\begin{DoxyCompactList}\small\item\em Structure to trace memory allocations for leak checking. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}}
+\begin{DoxyCompactList}\small\item\em Dynamic list of allocation traces. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\+\_\+\+MUTEX}}(code)
+\begin{DoxyCompactList}\small\item\em Execute code while holding the challoc mutex. \end{DoxyCompactList}\item 
+\#define {\bfseries ALL\+\_\+\+ONES}(type)~(type) \texorpdfstring{$\sim$}{\string~}(type)0
+\begin{DoxyCompactList}\small\item\em Helper macro to set all bits to 1 in a value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct Alloc\+Metadata {\bfseries Alloc\+Metadata}
+\begin{DoxyCompactList}\small\item\em Double linked list metadata for the fragmented block allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{group__Challoc__minislab_gae5bd43ddfa01d13ff845185ef27200b7}{\+\_\+\+\_\+attribute\+\_\+\+\_\+}} ((aligned(4096)))
+\begin{DoxyCompactList}\small\item\em Minislab to allocate small memory regions It contains 512, 256, 128, 64, 32, 16, 8 and 4 bytes layers and keeps track of the usage of each layer using bitmasks. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__minislab_gac49ba40615eb8fef916aca5777a52efb}{minislab\+\_\+print\+\_\+usage}} (Mini\+Slab slab)
+\begin{DoxyCompactList}\small\item\em Print the usage of the minislab allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structClosePowerOfTwo}{Close\+Power\+Of\+Two}} \mbox{\hyperlink{group__Challoc__minislab_gadaf947726269a4d97ccbc1ae1cfe2ce5}{is\+\_\+close\+\_\+to\+\_\+power\+\_\+of\+\_\+two}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Check if a size is close to a power of two. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{group__Challoc__minislab_ga00733f4ddaf7d01cc3c88cc673212599}{find\+\_\+first\+\_\+bit\+\_\+at\+\_\+0}} (uint64\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Find the first bit set to 0 in a 64-\/bit value from left to right. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__minislab_ga6db6301bc314956b20209d058964c5b9}{minislab\+\_\+alloc}} (\mbox{\hyperlink{structClosePowerOfTwo}{Close\+Power\+Of\+Two}} size)
+\begin{DoxyCompactList}\small\item\em Allocate memory from the minislab allocator. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}{ptr\+\_\+comes\+\_\+from\+\_\+minislab}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Check if a pointer comes from the minislab allocator. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{group__Challoc__minislab_ga9c67b6c17635a949a08545f27d7e74b4}{minislab\+\_\+ptr\+\_\+size}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Get the size of a pointer allocated from the minislab allocator. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__minislab_ga21d2366abcfe647d32a12bcd204d5074}{minislab\+\_\+free}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free a pointer allocated from the minislab allocator. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga1a91eb64127dd63e6633d5e42fba165e}{allocmetadata\+\_\+print}} (\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}metadata)
+\begin{DoxyCompactList}\small\item\em Print the metadata of an allocation. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\+\_\+get\+\_\+metadata}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Get the metadata of an allocation from the pointer. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\+\_\+to\+\_\+4096multiple}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Get the time to live of a block based on its size. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{group__Challoc__block_ga1f3ce2d2f34f49f2e12a0f1a561bcda6}{time\+\_\+to\+\_\+live\+\_\+with\+\_\+size}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Get the time to live of a block based on its size, the bigger the block, the less time we keep it alive. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structBlockList}{Block\+List}} \mbox{\hyperlink{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}{blocklist\+\_\+with\+\_\+capacity}} (size\+\_\+t capacity)
+\begin{DoxyCompactList}\small\item\em Create a new block list with a given capacity. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}{blocklist\+\_\+destroy}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list)
+\begin{DoxyCompactList}\small\item\em Destroy a block list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga85a4ff078b5da234a2f713ff07d314a8}{blocklist\+\_\+allocate\+\_\+new\+\_\+block}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, size\+\_\+t size\+\_\+requested)
+\begin{DoxyCompactList}\small\item\em Allocate a new block in the block list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_gaf0325e3cda75a17b82fa7c8bf9e097b3}{block\+\_\+print}} (\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}block)
+\begin{DoxyCompactList}\small\item\em Print a block. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga0e4e55eb1cb628b044b42847350b1388}{blocklist\+\_\+print}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list)
+\begin{DoxyCompactList}\small\item\em Print a block list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_gaea5de1c86431322ce809cd6ea3e8cca5}{blocklist\+\_\+push}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, \mbox{\hyperlink{structBlock}{Block}} block)
+\begin{DoxyCompactList}\small\item\em Push a block to the block list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga980660e55ff5572dadb47e4efd321eae}{blocklist\+\_\+push\+\_\+or\+\_\+remove}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, \mbox{\hyperlink{structBlock}{Block}} block)
+\begin{DoxyCompactList}\small\item\em Remove a block from the block list. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{block\+\_\+has\+\_\+enough\+\_\+space}} (\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}block, size\+\_\+t size\+\_\+requested)
+\begin{DoxyCompactList}\small\item\em Checks if a block has potentially enough free space to allocate a given size. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_gade5f736c6073fb5c7780633828d8bf03}{blocklist\+\_\+peek}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, size\+\_\+t block\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Peek a block from the block list. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\+\_\+try\+\_\+allocate}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, size\+\_\+t block\+\_\+idx, size\+\_\+t size\+\_\+requested)
+\begin{DoxyCompactList}\small\item\em Tries to allocate within a block. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8}{block\+\_\+free}} (\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}block, \mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free an allocation from a block. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__block_gaaad9cd52194179549f0f48fdb4f5d82f}{blocklist\+\_\+free}} (\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free an allocation from a blocklist. \end{DoxyCompactList}\item 
+void {\bfseries decrease\+\_\+ttl\+\_\+and\+\_\+unmap} ()
+\begin{DoxyCompactList}\small\item\em Decrease the time to live of the blocks and unmap the ones which have reached 0. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\+\_\+\+\_\+chamalloc}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocates memory. Should never be called by the user directly. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}{\+\_\+\+\_\+chafree}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free memory. Should never be called by the user directly. Assumes the pointer comes from challoc. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc_gacc7f10a0cbff8b9fa73601f58c7b1d04}{\+\_\+\+\_\+chacalloc}} (size\+\_\+t nmemb, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocate memory and set it to zero. Should never be called by the user directly. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc_ga11dcaa5b91481a23168776d350d28b44}{\+\_\+\+\_\+charealloc}} (void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t new\+\_\+size)
+\begin{DoxyCompactList}\small\item\em Reallocate memory. Should never be called by the user directly. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}{alloctrace\+\_\+free}} (\mbox{\hyperlink{structAllocTrace}{Alloc\+Trace}} trace)
+\begin{DoxyCompactList}\small\item\em Frees an allocation trace. Doesn\textquotesingle{}t do anything for now because nothing needs to be stored dynamically. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \mbox{\hyperlink{group__Challoc__leakcheck_ga427c47cea9b2b311c3986539750dc982}{leakcheck\+\_\+list\+\_\+with\+\_\+capacity}} (size\+\_\+t capacity)
+\begin{DoxyCompactList}\small\item\em Create a new leakcheck trace list with a given capacity. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\+\_\+list\+\_\+push}} (\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}list, void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t ptr\+\_\+size)
+\begin{DoxyCompactList}\small\item\em Push a pointer to the leakcheck trace list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}{leakcheck\+\_\+list\+\_\+remove\+\_\+ptr}} (\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}list, void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Remove a pointer from the leakcheck trace list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__leakcheck_gaf393beb1b581581052541e163eb886a5}{leakcheck\+\_\+list\+\_\+free}} (\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}list)
+\begin{DoxyCompactList}\small\item\em Free a leakcheck trace list. \end{DoxyCompactList}\item 
+\Hypertarget{challoc_8c_afd02bb0f6a745c39d5e3417493995c71}\label{challoc_8c_afd02bb0f6a745c39d5e3417493995c71} 
+void {\bfseries \+\_\+\+\_\+attribute\+\_\+\+\_\+} ((constructor))
+\item 
+\Hypertarget{challoc_8c_ad7e5f5c14ff8ad42e10651503200880c}\label{challoc_8c_ad7e5f5c14ff8ad42e10651503200880c} 
+void {\bfseries \+\_\+\+\_\+attribute\+\_\+\+\_\+} ((destructor))
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}{chamalloc}} (size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocate memory. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}{chafree}} (void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Free memory. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}{chacalloc}} (size\+\_\+t nmemb, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Allocate memory and set it to zero. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}{charealloc}} (void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Reallocate memory. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Mini\+Slab}
+\item 
+Mini\+Slab {\bfseries challoc\+\_\+minislab} = \{0\}
+\begin{DoxyCompactList}\small\item\em Global minislab allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structBlockList}{Block\+List}} {\bfseries challoc\+\_\+blocks\+\_\+in\+\_\+use} = \{0\}
+\begin{DoxyCompactList}\small\item\em List of blocks in use. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structBlockList}{Block\+List}} {\bfseries challoc\+\_\+freed\+\_\+blocks} = \{0\}
+\begin{DoxyCompactList}\small\item\em List of freed blocks. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} {\bfseries challoc\+\_\+leaktracker} = \{0\}
+\begin{DoxyCompactList}\small\item\em List of allocations for leak checking. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of the challoc library. 
+

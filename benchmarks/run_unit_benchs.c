@@ -1,10 +1,18 @@
-#include <math.h>
+/**
+ * @file benchmarks/run_unit_benchs.c
+ * @brief Compare the performance of challoc and libc of standalone function calls
+ */
+
+/** \addtogroup Challoc_prog_benchmarks Challoc Unit Benchmarks
+ *  @{
+ */
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-// rdtsc
+// For rdtsc
 #ifdef _MSC_VER
 #	include <intrin.h>
 #else
@@ -264,3 +272,5 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+
+/** @} */

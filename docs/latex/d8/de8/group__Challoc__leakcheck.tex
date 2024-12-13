@@ -1,0 +1,120 @@
+\doxysection{Challoc Leakcheck}
+\hypertarget{group__Challoc__leakcheck}{}\label{group__Challoc__leakcheck}\index{Challoc Leakcheck@{Challoc Leakcheck}}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structAllocTrace}{Alloc\+Trace}}
+\begin{DoxyCompactList}\small\item\em Structure to trace memory allocations for leak checking. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}}
+\begin{DoxyCompactList}\small\item\em Dynamic list of allocation traces. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}{alloctrace\+\_\+free}} (\mbox{\hyperlink{structAllocTrace}{Alloc\+Trace}} trace)
+\begin{DoxyCompactList}\small\item\em Frees an allocation trace. Doesn\textquotesingle{}t do anything for now because nothing needs to be stored dynamically. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \mbox{\hyperlink{group__Challoc__leakcheck_ga427c47cea9b2b311c3986539750dc982}{leakcheck\+\_\+list\+\_\+with\+\_\+capacity}} (size\+\_\+t capacity)
+\begin{DoxyCompactList}\small\item\em Create a new leakcheck trace list with a given capacity. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\+\_\+list\+\_\+push}} (\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}list, void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t ptr\+\_\+size)
+\begin{DoxyCompactList}\small\item\em Push a pointer to the leakcheck trace list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}{leakcheck\+\_\+list\+\_\+remove\+\_\+ptr}} (\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}list, void \texorpdfstring{$\ast$}{*}ptr)
+\begin{DoxyCompactList}\small\item\em Remove a pointer from the leakcheck trace list. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__leakcheck_gaf393beb1b581581052541e163eb886a5}{leakcheck\+\_\+list\+\_\+free}} (\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}list)
+\begin{DoxyCompactList}\small\item\em Free a leakcheck trace list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}\label{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a} 
+\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} {\bfseries challoc\+\_\+leaktracker} = \{0\}
+\begin{DoxyCompactList}\small\item\em List of allocations for leak checking. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\DoxyHorRuler{0}
+ \hypertarget{group__Challoc__leakcheck_autotoc_md4}{}\doxysubsubsection{\texorpdfstring{Challoc\+\_\+leakcheck Challoc Leakcheck}{Challoc\+\_\+leakcheck Challoc Leakcheck}}\label{group__Challoc__leakcheck_autotoc_md4}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}\label{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624} 
+\index{Challoc Leakcheck@{Challoc Leakcheck}!alloctrace\_free@{alloctrace\_free}}
+\index{alloctrace\_free@{alloctrace\_free}!Challoc Leakcheck@{Challoc Leakcheck}}
+\doxysubsubsection{\texorpdfstring{alloctrace\_free()}{alloctrace\_free()}}
+{\footnotesize\ttfamily void alloctrace\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structAllocTrace}{Alloc\+Trace}}}]{trace }\end{DoxyParamCaption})}
+
+
+
+Frees an allocation trace. Doesn\textquotesingle{}t do anything for now because nothing needs to be stored dynamically. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em trace} & The trace to free \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__leakcheck_gaf393beb1b581581052541e163eb886a5}\label{group__Challoc__leakcheck_gaf393beb1b581581052541e163eb886a5} 
+\index{Challoc Leakcheck@{Challoc Leakcheck}!leakcheck\_list\_free@{leakcheck\_list\_free}}
+\index{leakcheck\_list\_free@{leakcheck\_list\_free}!Challoc Leakcheck@{Challoc Leakcheck}}
+\doxysubsubsection{\texorpdfstring{leakcheck\_list\_free()}{leakcheck\_list\_free()}}
+{\footnotesize\ttfamily void leakcheck\+\_\+list\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}}]{list }\end{DoxyParamCaption})}
+
+
+
+Free a leakcheck trace list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The trace list to free \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}\label{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236} 
+\index{Challoc Leakcheck@{Challoc Leakcheck}!leakcheck\_list\_push@{leakcheck\_list\_push}}
+\index{leakcheck\_list\_push@{leakcheck\_list\_push}!Challoc Leakcheck@{Challoc Leakcheck}}
+\doxysubsubsection{\texorpdfstring{leakcheck\_list\_push()}{leakcheck\_list\_push()}}
+{\footnotesize\ttfamily void leakcheck\+\_\+list\+\_\+push (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}}]{list,  }\item[{void \texorpdfstring{$\ast$}{*}}]{ptr,  }\item[{size\+\_\+t}]{ptr\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Push a pointer to the leakcheck trace list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The trace list \\
+\hline
+{\em ptr} & The pointer to push \\
+\hline
+{\em ptr\+\_\+size} & The size of the pointer \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}\label{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92} 
+\index{Challoc Leakcheck@{Challoc Leakcheck}!leakcheck\_list\_remove\_ptr@{leakcheck\_list\_remove\_ptr}}
+\index{leakcheck\_list\_remove\_ptr@{leakcheck\_list\_remove\_ptr}!Challoc Leakcheck@{Challoc Leakcheck}}
+\doxysubsubsection{\texorpdfstring{leakcheck\_list\_remove\_ptr()}{leakcheck\_list\_remove\_ptr()}}
+{\footnotesize\ttfamily void leakcheck\+\_\+list\+\_\+remove\+\_\+ptr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} \texorpdfstring{$\ast$}{*}}]{list,  }\item[{void \texorpdfstring{$\ast$}{*}}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Remove a pointer from the leakcheck trace list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & The trace list \\
+\hline
+{\em ptr} & The pointer to remove \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__leakcheck_ga427c47cea9b2b311c3986539750dc982}\label{group__Challoc__leakcheck_ga427c47cea9b2b311c3986539750dc982} 
+\index{Challoc Leakcheck@{Challoc Leakcheck}!leakcheck\_list\_with\_capacity@{leakcheck\_list\_with\_capacity}}
+\index{leakcheck\_list\_with\_capacity@{leakcheck\_list\_with\_capacity}!Challoc Leakcheck@{Challoc Leakcheck}}
+\doxysubsubsection{\texorpdfstring{leakcheck\_list\_with\_capacity()}{leakcheck\_list\_with\_capacity()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structLeakcheckTraceList}{Leakcheck\+Trace\+List}} leakcheck\+\_\+list\+\_\+with\+\_\+capacity (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{capacity }\end{DoxyParamCaption})}
+
+
+
+Create a new leakcheck trace list with a given capacity. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em capacity} & The initial capacity of the trace list \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The newly created trace list 
+\end{DoxyReturn}

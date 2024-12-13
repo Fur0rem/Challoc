@@ -1,3 +1,8 @@
+/**
+ * @file benchmarks/programs/basic/big_allocs.c
+ * @brief A program that does a lot of big allocations
+ */
+
 #include <stdlib.h>
 
 int main() {
@@ -28,7 +33,7 @@ int main() {
 
 	// Touch the memory to make sure it's allocated
 	for (int i = 0; i < NB_ELEMS; i++) {
-		ptr[i][0] = 42;
+		*ptr[i] = 42;
 	}
 
 	for (int i = 0; i < NB_ELEMS; i++) {

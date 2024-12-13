@@ -1,0 +1,80 @@
+\doxysection{benchmarks/programs/complex/dijkstra.c File Reference}
+\hypertarget{dijkstra_8c}{}\label{dijkstra_8c}\index{benchmarks/programs/complex/dijkstra.c@{benchmarks/programs/complex/dijkstra.c}}
+
+
+A program that finds all of the shortest paths in a graph using Dijkstra\textquotesingle{}s algorithm.  
+
+
+{\ttfamily \#include $<$limits.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structHeapNode}{Heap\+Node}}
+\item 
+struct \mbox{\hyperlink{structMinHeap}{Min\+Heap}}
+\item 
+struct \mbox{\hyperlink{structNeighbor}{Neighbor}}
+\item 
+struct \mbox{\hyperlink{structNeighbors}{Neighbors}}
+\item 
+struct \mbox{\hyperlink{structGraph}{Graph}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{dijkstra_8c_a854af25a143035e4ba492b5b83d5aaed}\label{dijkstra_8c_a854af25a143035e4ba492b5b83d5aaed} 
+\mbox{\hyperlink{structMinHeap}{Min\+Heap}} \texorpdfstring{$\ast$}{*} {\bfseries create\+\_\+min\+\_\+heap} (size\+\_\+t capacity)
+\item 
+\Hypertarget{dijkstra_8c_a02e5ca7608570fb579c002b197fee4d9}\label{dijkstra_8c_a02e5ca7608570fb579c002b197fee4d9} 
+void {\bfseries free\+\_\+min\+\_\+heap} (\mbox{\hyperlink{structMinHeap}{Min\+Heap}} \texorpdfstring{$\ast$}{*}heap)
+\item 
+\Hypertarget{dijkstra_8c_aeaf923dca09e700ec541e1f08e250821}\label{dijkstra_8c_aeaf923dca09e700ec541e1f08e250821} 
+void {\bfseries swap} (\mbox{\hyperlink{structHeapNode}{Heap\+Node}} \texorpdfstring{$\ast$}{*}a, \mbox{\hyperlink{structHeapNode}{Heap\+Node}} \texorpdfstring{$\ast$}{*}b)
+\item 
+\Hypertarget{dijkstra_8c_ab859dbbbaeab15014c106641e6415300}\label{dijkstra_8c_ab859dbbbaeab15014c106641e6415300} 
+void {\bfseries min\+\_\+heapify} (\mbox{\hyperlink{structMinHeap}{Min\+Heap}} \texorpdfstring{$\ast$}{*}heap, size\+\_\+t idx)
+\item 
+\Hypertarget{dijkstra_8c_afb896ad284956bbb1a28c76bfe07fcce}\label{dijkstra_8c_afb896ad284956bbb1a28c76bfe07fcce} 
+\mbox{\hyperlink{structHeapNode}{Heap\+Node}} {\bfseries extract\+\_\+min} (\mbox{\hyperlink{structMinHeap}{Min\+Heap}} \texorpdfstring{$\ast$}{*}heap)
+\item 
+\Hypertarget{dijkstra_8c_a51f3803ba99e0865612f372e4c5baf68}\label{dijkstra_8c_a51f3803ba99e0865612f372e4c5baf68} 
+void {\bfseries decrease\+\_\+key} (\mbox{\hyperlink{structMinHeap}{Min\+Heap}} \texorpdfstring{$\ast$}{*}heap, size\+\_\+t node, int distance)
+\item 
+\Hypertarget{dijkstra_8c_a7647c73beb844fed5400fbdad978e47e}\label{dijkstra_8c_a7647c73beb844fed5400fbdad978e47e} 
+bool {\bfseries is\+\_\+in\+\_\+min\+\_\+heap} (\mbox{\hyperlink{structMinHeap}{Min\+Heap}} \texorpdfstring{$\ast$}{*}heap, size\+\_\+t node)
+\item 
+\Hypertarget{dijkstra_8c_a758523e58362c563eec7f55cd142b88c}\label{dijkstra_8c_a758523e58362c563eec7f55cd142b88c} 
+\mbox{\hyperlink{structNeighbors}{Neighbors}} \texorpdfstring{$\ast$}{*} {\bfseries create\+\_\+neighbors} (size\+\_\+t capacity)
+\item 
+\Hypertarget{dijkstra_8c_a07250b7750d86da7d17af0dea3ebc7fe}\label{dijkstra_8c_a07250b7750d86da7d17af0dea3ebc7fe} 
+void {\bfseries free\+\_\+neighbors} (\mbox{\hyperlink{structNeighbors}{Neighbors}} \texorpdfstring{$\ast$}{*}neighbors)
+\item 
+\Hypertarget{dijkstra_8c_a895f70d920f9f426e4737243acb028b9}\label{dijkstra_8c_a895f70d920f9f426e4737243acb028b9} 
+void {\bfseries add\+\_\+neighbor} (\mbox{\hyperlink{structNeighbors}{Neighbors}} \texorpdfstring{$\ast$}{*}neighbors, size\+\_\+t node, size\+\_\+t distance)
+\item 
+\Hypertarget{dijkstra_8c_ab5a5aafac858796e9fef9a17b90abb93}\label{dijkstra_8c_ab5a5aafac858796e9fef9a17b90abb93} 
+\mbox{\hyperlink{structGraph}{Graph}} \texorpdfstring{$\ast$}{*} {\bfseries create\+\_\+graph} (size\+\_\+t capacity)
+\item 
+\Hypertarget{dijkstra_8c_aae200c11ba4c066ae719ac2fe6b376c3}\label{dijkstra_8c_aae200c11ba4c066ae719ac2fe6b376c3} 
+void {\bfseries free\+\_\+graph} (\mbox{\hyperlink{structGraph}{Graph}} \texorpdfstring{$\ast$}{*}graph)
+\item 
+\Hypertarget{dijkstra_8c_aa546c79acb6386a1355e7f5e69a18963}\label{dijkstra_8c_aa546c79acb6386a1355e7f5e69a18963} 
+void {\bfseries add\+\_\+edge} (\mbox{\hyperlink{structGraph}{Graph}} \texorpdfstring{$\ast$}{*}graph, size\+\_\+t node1, size\+\_\+t node2, size\+\_\+t distance)
+\item 
+\Hypertarget{dijkstra_8c_a8eeab4b9440f0a93684cba0ef55e17df}\label{dijkstra_8c_a8eeab4b9440f0a93684cba0ef55e17df} 
+void {\bfseries dijkstra} (\mbox{\hyperlink{structGraph}{Graph}} \texorpdfstring{$\ast$}{*}graph, size\+\_\+t start, size\+\_\+t end, size\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}min\+\_\+distances)
+\item 
+\Hypertarget{dijkstra_8c_ad6fda79350ed254f5aa42493006631d4}\label{dijkstra_8c_ad6fda79350ed254f5aa42493006631d4} 
+int {\bfseries hash} (int key, int capacity)
+\item 
+\Hypertarget{dijkstra_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{dijkstra_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int {\bfseries main} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A program that finds all of the shortest paths in a graph using Dijkstra\textquotesingle{}s algorithm. 
+

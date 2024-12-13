@@ -1,3 +1,8 @@
+/**
+ * @file tests/programs/non_leaker_inter.c
+ * @brief A program doesn't memory and uses the interposing feature
+ */
+
 #include <stdint.h>
 #include <stdlib.h>
 

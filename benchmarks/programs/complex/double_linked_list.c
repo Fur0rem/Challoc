@@ -1,3 +1,8 @@
+/**
+ * @file benchmarks/programs/complex/double_linked_list.c
+ * @brief A program that manipulates a double linked list
+ */
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

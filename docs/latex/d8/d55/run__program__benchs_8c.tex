@@ -1,0 +1,74 @@
+\doxysection{benchmarks/run\+\_\+program\+\_\+benchs.c File Reference}
+\hypertarget{run__program__benchs_8c}{}\label{run__program__benchs_8c}\index{benchmarks/run\_program\_benchs.c@{benchmarks/run\_program\_benchs.c}}
+
+
+Compare the performance of challoc and libc using real programs.  
+
+
+{\ttfamily \#include $<$dirent.\+h$>$}\newline
+{\ttfamily \#include $<$libgen.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$sys/stat.\+h$>$}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+{\ttfamily \#include $<$sys/wait.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$x86intrin.\+h$>$}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structBenchResult}{Bench\+Result}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bfseries BLUE}~"{}\textbackslash{}033\mbox{[}34m"{}
+\item 
+\#define {\bfseries RESET}~"{}\textbackslash{}033\mbox{[}0m"{}
+\item 
+\#define {\bfseries BOLD}~"{}\textbackslash{}033\mbox{[}1m"{}
+\item 
+\#define {\bfseries MAX\+\_\+\+PATH}~1024
+\item 
+\#define {\bfseries MAX\+\_\+\+COMMAND}~2048
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group__Challoc__unit__benchmarks_gafec31286e9f74b9225e8905730bfb67d}\label{group__Challoc__unit__benchmarks_gafec31286e9f74b9225e8905730bfb67d} 
+enum {\bfseries Allocator} \{ {\bfseries LIBC}
+, {\bfseries CHALLOC}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+uint64\+\_\+t {\bfseries cpu\+\_\+frequency} ()
+\item 
+void {\bfseries recursively\+\_\+list\+\_\+all\+\_\+files} (const char \texorpdfstring{$\ast$}{*}dir\+\_\+name, char files\mbox{[}$\,$\mbox{]}\mbox{[}MAX\+\_\+\+PATH\mbox{]}, int \texorpdfstring{$\ast$}{*}count)
+\item 
+void {\bfseries compile\+\_\+benchmark} (const char \texorpdfstring{$\ast$}{*}source\+\_\+file, const char \texorpdfstring{$\ast$}{*}output\+\_\+file, const char \texorpdfstring{$\ast$}{*}flags)
+\item 
+void {\bfseries run\+\_\+benchmark} (const char \texorpdfstring{$\ast$}{*}command, \mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}result, char \texorpdfstring{$\ast$}{*}command\+\_\+preload)
+\item 
+char \texorpdfstring{$\ast$}{*} {\bfseries clone\+\_\+and\+\_\+remove\+\_\+extension} (char \texorpdfstring{$\ast$}{*}filename)
+\item 
+void {\bfseries write\+\_\+results} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} libc, \mbox{\hyperlink{structBenchResult}{Bench\+Result}} challoc, char \texorpdfstring{$\ast$}{*}output\+\_\+dir)
+\item 
+void {\bfseries free\+\_\+results} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}result)
+\item 
+int {\bfseries main} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint64\+\_\+t {\bfseries cpu\+\_\+freq} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Compare the performance of challoc and libc using real programs. 
+
