@@ -60,6 +60,13 @@ Il utilise un vecteur de blocs alloués via mmap, et chaque bloc est utilisé en
 Les blocs mmap complètement libérés sont stockés temporairement dans un vecteur de blocs libres afin de les réutiliser si possible.
 L'allocateur possède aussi un petit allocateur en slab pour les petites allocations de 512 octets ou moins, la slab fait une taille totale de 4Mo (1 page), séparée en 1 cache de 512 octets, 2 caches de 256 octets, 4 caches de 128 octets, ect...
 
+## Optimisations faites
+- Segmentation en classes de tailles.
+- Recyclage des blocs libérés.
+- Coalescence des blocs libres.
+- Gestion multi-thread avec des locks.
+- Détection de fuites mémoires.
+
 ## Features
 - Support en multithreading
 - Détection de fuites mémoires
