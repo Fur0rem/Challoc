@@ -27,10 +27,12 @@ bool test_minislab_malloc() {
 			chafree(ptr);
 			return false;
 		}
+
 		chafree(ptr);
 	}
 
 	volatile uint8_t* ptr = chamalloc(513 * sizeof(uint8_t));
+
 	if (ptr == NULL) {
 		printf("allocation with size 513 failed\n");
 		return false;
@@ -40,6 +42,8 @@ bool test_minislab_malloc() {
 		chafree(ptr);
 		return false;
 	}
+
+	chafree(ptr);
 
 	return true;
 }
@@ -81,6 +85,7 @@ bool test_fill_minislab() {
 			sizes[all_alloced_size]	      = current_size;
 			all_alloced_size++;
 		}
+		MmapBlockList_print(&challoc_mmap_blocks);
 
 		current_size *= 2;
 	}
@@ -95,12 +100,14 @@ bool test_fill_minislab() {
 	}
 
 	// Check that the minislab is full
-	volatile uint8_t* ptr = chamalloc(4 * sizeof(uint8_t));
-	if (ptr_comes_from_minislab(ptr)) {
-		printf("minislab is not full\n\n");
-		MiniSlab_print_usage(challoc_minislab);
-		chafree(ptr);
-		return false;
+	for (size_t pow = 2; pow <= 512; pow *= 2) {
+		volatile uint8_t* ptr = chamalloc(pow * sizeof(uint8_t));
+		if (ptr_comes_from_minislab(ptr)) {
+			printf("minislab is not full\n\n");
+			MiniSlab_print_usage(challoc_minislab);
+			chafree(ptr);
+			return false;
+		}
 	}
 
 	// Free all the blocks
@@ -109,7 +116,7 @@ bool test_fill_minislab() {
 	}
 
 	// Check that the minislab is empty
-	ptr = chamalloc(4 * sizeof(uint8_t));
+	void* ptr = chamalloc(4 * sizeof(uint8_t));
 	if (!ptr_comes_from_minislab(ptr)) {
 		printf("minislab is not empty\n\n");
 		MiniSlab_print_usage(challoc_minislab);
@@ -134,12 +141,10 @@ bool test_block_reusage() {
 	}
 
 	// Check that there is nothing in the freed list
-	printf("freed list has %zu elements\n", freed.size);
-	if (freed.size != 0) {
-		printf("freed list has %zu elements, expected 0\n", freed.size);
-		AllocMetadata* metadata = AllocMetadataList_get(&freed, 0);
-		printf("first element has TTL %zu\n", metadata->time_to_live);
-		printf("first element has size %zu\n", metadata->size);
+	if (challoc_freed_blocks.size != 0) {
+		printf("challoc_freed_blocks list has %zu elements, expected 0\n", challoc_freed_blocks.size);
+		MmapBlock* block = &challoc_freed_blocks.blocks[0];
+		MmapBlock_print(block);
 		chafree(ptr);
 		return false;
 	}
@@ -148,16 +153,35 @@ bool test_block_reusage() {
 	chafree(ptr);
 
 	// Check that there is one block in the freed list and not with a TTL of 0
-	if (freed.size != 1) {
-		printf("freed list has %zu elements, expected 1\n", freed.size);
+	if (challoc_freed_blocks.size != 1) {
+		printf("freed list has %zu elements, expected 1\n", challoc_freed_blocks.size);
 		return false;
 	}
-	AllocMetadata* metadata = AllocMetadataList_get(&freed, 0);
-	if (metadata->time_to_live == 0) {
+	MmapBlock* block = MmapBlockList_peek(&challoc_freed_blocks, 0);
+	if (block->time_to_live == 0) {
 		printf("freed block has TTL of 0\n");
 		return false;
 	}
 
+	return true;
+}
+
+bool test_unmap_a_block() {
+	for (size_t size = 1; size < 10000; size++) {
+		volatile uint8_t* ptr = chacalloc(size, sizeof(uint8_t));
+		if (ptr == NULL) {
+			printf("chacalloc failed for size %zu\n", size);
+			return false;
+		}
+		for (size_t i = 0; i < size; i++) {
+			if (ptr[i] != 0) {
+				printf("Byte %zu is not 0 but %d\n", i, ptr[i]);
+				chafree(ptr);
+				return false;
+			}
+		}
+		chafree(ptr);
+	}
 	return true;
 }
 
@@ -172,8 +196,6 @@ thread_func alloc_slab_thread(void* array_of_ptrs) {
 
 bool test_minislab_concurrent_usage() {
 	// Launch 8 threads that allocate from the minislab
-	// Check that there are no overlaps
-
 	pthread_t thread_id[8];
 	void* array_of_ptrs[8][1024];
 	for (size_t i = 0; i < 8; i++) {
@@ -202,6 +224,78 @@ bool test_minislab_concurrent_usage() {
 	return true;
 }
 
+bool test_block_fragmentation() {
+	void* ptr1 = chamalloc(1001);
+	void* ptr2 = chamalloc(1002);
+	void* ptr3 = chamalloc(1003);
+
+	// MmapBlockList_print(&challoc_mmap_blocks);
+	if (ptr_comes_from_minislab(ptr1)) {
+		printf("ptr1 comes from minislab\n");
+		return false;
+	}
+	if (ptr_comes_from_minislab(ptr2)) {
+		printf("ptr2 comes from minislab\n");
+		return false;
+	}
+	if (ptr_comes_from_minislab(ptr3)) {
+		printf("ptr3 comes from minislab\n");
+		return false;
+	}
+
+	AllocMetadata* metadata_ptr1 = challoc_get_metadata(ptr1);
+	AllocMetadata* metadata_ptr2 = challoc_get_metadata(ptr2);
+	AllocMetadata* metadata_ptr3 = challoc_get_metadata(ptr3);
+	MmapBlock* block	     = MmapBlockList_peek(&challoc_mmap_blocks, metadata_ptr1->block_idx);
+
+	if (block->head != metadata_ptr1) {
+		printf("ptr1 should have been the head\n");
+		MmapBlock_print(block);
+		return false;
+	}
+	if (metadata_ptr1->next != metadata_ptr2) {
+		printf("ptr2 should have the next of ptr1\n");
+		MmapBlock_print(block);
+		return false;
+	}
+	if (metadata_ptr2->next != metadata_ptr3) {
+		printf("ptr2 should have the next of ptr1\n");
+		MmapBlock_print(block);
+		return false;
+	}
+
+	chafree(ptr1);
+
+	if (block->head != metadata_ptr2) {
+		printf("ptr2 should have been the head\n");
+		MmapBlock_print(block);
+		return false;
+	}
+	if (metadata_ptr2->next != metadata_ptr3) {
+		printf("ptr2 should have the next of ptr1\n");
+		MmapBlock_print(block);
+		return false;
+	}
+
+	chafree(ptr3);
+
+	if (block->head != metadata_ptr2) {
+		printf("ptr2 should have been the head\n");
+		MmapBlock_print(block);
+		return false;
+	}
+
+	chafree(ptr2);
+
+	if (block->head != NULL) {
+		printf("head should be NULL\n");
+		MmapBlock_print(block);
+		return false;
+	}
+
+	return true;
+}
+
 typedef struct {
 	const char* name;
 	bool (*test)();
@@ -214,10 +308,12 @@ typedef struct {
 #define RESET	   "\033[0m"
 
 Test tests[] = {
+    TEST(test_block_fragmentation),
     TEST(test_block_reusage),
     TEST(test_minislab_fits_page),
     TEST(test_minislab_malloc),
     TEST(test_fill_minislab),
+    TEST(test_unmap_a_block),
     TEST(test_minislab_concurrent_usage),
 };
 

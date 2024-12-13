@@ -19,12 +19,15 @@ size_t String_hash(const String* str) {
 }
 
 String String_clone(const String* str) {
-	String clone = {
-	    .str      = strndup(str->str, str->length),
-	    .length   = str->length,
-	    .capacity = str->length,
-	};
-	return clone;
+	char* clone = malloc(str->length + 1);
+	strncpy(clone, str->str, str->length);
+	clone[str->length] = '\0';
+	String result	   = {
+		 .str	   = clone,
+		 .length   = str->length,
+		 .capacity = str->length,
+	     };
+	return result;
 }
 
 String from_trimmed(const char* str) {
@@ -37,9 +40,12 @@ String from_trimmed(const char* str) {
 	while (end > start && !isalnum(str[end - 1])) {
 		end--;
 	}
+	char* dup = malloc(end - start + 1);
+	strncpy(dup, str + start, end - start);
+	dup[end - start] = '\0';
 	// Copy the trimmed string
 	String result = {
-	    .str      = strndup(str + start, end - start),
+	    .str      = dup,
 	    .length   = end - start,
 	    .capacity = end - start,
 	};
@@ -47,6 +53,7 @@ String from_trimmed(const char* str) {
 }
 
 void String_free(String str) {
+	// printf("freeing string internal %p\n", str.str);
 	free(str.str);
 }
 
@@ -95,6 +102,7 @@ void WordOccurenceList_insert_or_increment(WordOccurenceList* list, const String
 
 void WordOccurenceList_free(WordOccurenceList list) {
 	for (size_t i = 0; i < list.size; i++) {
+		// printf("freeing string 2 %p\n", list.data[i].str.str);
 		String_free(list.data[i].str);
 	}
 	free(list.data);
@@ -124,6 +132,7 @@ void HashTable_insert(HashTable* table, const String word) {
 void HashTable_free(HashTable table) {
 	for (size_t i = 0; i < table.nb_buckets; i++) {
 		for (size_t j = 0; j < table.buckets[i].size; j++) {
+			// printf("freeing string %p\n", table.buckets[i].data[j].str.str);
 			String_free(table.buckets[i].data[j].str);
 		}
 		free(table.buckets[i].data);
@@ -175,11 +184,13 @@ int main() {
 	HashTable table = HashTable_create(100);
 
 	// Read the file line by line
-	char* line = NULL;
+	// char* line = NULL;
 	size_t len = 0;
-	while (getline(&line, &len, file) != -1) {
-		// Split the line into words
-		char* word = strtok(line, " ");
+	// while (getline(&line, &len, file) != -1) {
+	char buffer[1024];
+	while (fgets(buffer, 1024, file) != NULL) {
+		// Split into words
+		char* word = strtok(buffer, " ");
 		while (word != NULL) {
 			if (is_only_whitespace(word)) {
 				word = strtok(NULL, " ");
@@ -195,9 +206,11 @@ int main() {
 	WordOccurenceList sorted_entries    = HashTable_sort_entries(&table);
 	volatile String* most_occuring_word = &sorted_entries.data[0].str;
 
+	// printf("freeing table : %p\n", table.buckets);
 	HashTable_free(table);
 	WordOccurenceList_free(sorted_entries);
-	free(line);
+	// printf("freeing line : %p\n", line);
+	// free(line);
 	fclose(file);
 	exit(EXIT_SUCCESS);
 }

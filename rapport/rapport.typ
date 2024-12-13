@@ -85,7 +85,7 @@ struct AllocMetadata {
 void* malloc(size_t size) {
 	// On ajoute de l'espace pour les meta-données
 	size = size + sizeof(AllocMetadata);
-	void* ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0); // Appel à mmap
+	void* ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 	// On vérifie que l'allocation a marché
 	if (ptr == MAP_FAILED) {
 		return NULL;
@@ -173,6 +173,7 @@ On peut aussi le voir car les programmes réels utilisant beaucoup de petites al
 = Optimisations faites
 
 == Allocateur slab pour les petites allocations
+
 Pour des allocations de < 512 octets, j'utilise un allocateur slab sur une pag de 4Ko, puis le découpe en 1*512 + 2*256 + 4*128 + ... + 64*8 + 64*4.
 Chaque palier possède un champ de bits pour savoir quels blocs sont en cours d'utilisation.
 #code_snippet(code: "
@@ -221,11 +222,13 @@ Aussi, on ne peut pas observer d'impact conséquent sur les programmes réels, c
 
 
 == Réutilisation des blocs libérés
+
 Pour éviter de faire plein d'appels à mmap et munmap, j'ai rajouté un système de réutilisation des blocs libérés.
 J'ai utilisé un array dynamique de blocks libérés, et à chaque appel de free, j'ajoute le bloc libéré à cet array.
 Afin de ne pas consommer trop de mémoire, j'utilise un système inspiré du "most recently used scheduling", chaque bloc libéré possède un "temps de vie"
-que j'initialise à un nombre entre 1 et 10, et à chaque appel de malloc ou de free, je décrémente ce temps de vie, et si il atteint 0, je libère le bloc avec un appel à munmap.
+que j'initialise à un nombre entre 1 et 10, et à chaque appel de malloc, je décrémente ce temps de vie, et si il atteint 0, je libère le bloc avec un appel à munmap.
 Les plus gros blocs ont un temps de vie plus faible pour éviter qu'ils consomment trop de ressources trop longtemps.
+En bonus, j'ai pu optimiser calloc car j'ai dû marqué les blocs comme fraîchement alloués ou non, donc autant ne pas les initialiser à 0 si l'OS vient de le faire.
 
 Maintenant, les benchmarks de l'allocateur avec réutilisation des blocs libérés (en plus du slab).
 #bench_show("bench_results/slab_N_reusage")
@@ -233,6 +236,112 @@ Maintenant, les benchmarks de l'allocateur avec réutilisation des blocs libér�
 Sur les benchmarks unitaires, challoc réussit à dépasser la libc dans certains cas, mais je pense que le benchmark est biaisé car en faisant un malloc puis un free, on a de grandes chances de réallouer le même bloc juste après, et donc de le réutiliser.
 Pour certains programmes réels, on peut observer une amélioration du temps pour count_occurences : ~1.6s $arrow.r$ ~0.7s, et dijkstra : ~5.5s $arrow.r$ ~1.6s, cependant la consommation mémoire est légèrement plus élevée, mais reste dans des proportions raisonnables.
 Pour d'autres, comme double_linked_list ou small_allocs, le temps reste extrêmement lent par rapport à la libc, car il y a beaucoup de petites allocations qui restent longtemps en mémoire, et donc qui ne sont pas réutilisées ni fragmentées.
+
+
+== Fragmentation des blocs
+
+Maintenant, transformons notre bloc alloué par mmap en un sous-allocateur grâce à une double liste chainée.
+J'ai désormais un second array dynamique pour tous les blocs alloués encore utilisés.
+Chaque bloc est transformé en sous-allocateur par un système de double liste chainée des pointeurs.
+#code_snippet(code: "
+// Méta-données d'une allocation sous forme de double liste chainée
+struct AllocMetadata {
+	size_t size;	     // Taille de la mémoire allouée
+	AllocMetadata* next; // Avant de la liste
+	AllocMetadata* prev; // Arrière de la liste
+	size_t block_idx;    // L'index du bloc dans lequel cette allocation se situe
+};
+
+struct MmapBlock {
+	size_t size;		// Taille du bloc
+	size_t free_space;	// Espace encore utilisable
+	AllocMetadata* head;	// Tête de la liste
+	AllocMetadata* tail;	// Queue de la liste
+	void* mmap_ptr;		// Pointeur du bloc que mmap a donner.
+	uint8_t time_to_live;	// Temps de vie avant de le unmap
+	bool freshly_allocated; // Vrai si le bloc vient d'être alloué par mmap
+};
+")
+
+Lors d'un appel à malloc, je regarde dans tous mes blocs s'il y en a un qui possède assez de place.
+Si oui, je tente d'allouer dans ce bloc, et je renvoie le pointeur.
+Si non, je regarde dans les blocs libérés mais pas encore unmappés pour voir s'il y en a un de bonne taille, et je le récupère si j'en trouve un.
+Enfin, j'alloue un nouveau bloc.
+
+Et lors du free, je vérifie si le pointeur vient du mini-slab, puis ensuite je le libère du bloc, et si le bloc est vide je l'envoie dans la liste des blocs libérés.
+
+En pseudo-code, cela ressemblerait à ça :
+#pagebreak(weak:true)
+#code_snippet(code: "
+malloc(size) {
+	if minislab.can_fit(size) {
+		ptr = minislab.alloc(size);
+		if (alloc_sucess(ptr)) {
+			return ptr;
+		}
+	}
+
+	for block in used_blocks {
+		if (block.can_fit(size)) {
+			ptr = block.alloc(size);
+			if (alloc_sucess(ptr)) {
+				return ptr;
+			}
+		}
+	}
+
+	for block in free_blocks {
+		if block.can_fit(size) {
+			ptr = block.alloc(size);
+			if (alloc_sucess(ptr)) {
+				free_blocks.remove(block);
+				used_blocks.add(block);
+				return ptr;
+			}
+		}
+	}
+
+	Block block = create_block(size);
+	ptr = block.alloc(size);
+	used_blocks.add(block);
+	return ptr;
+}
+
+free(ptr) {
+	if (ptr.comes_from_minislab) {
+		minislab.flip_bit_at(ptr);
+	}
+	else {
+		bloc = used_blocks[ptr.block_idx]
+		bloc.free(ptr);
+		if (bloc.is_empty()) {
+			used_blocks.remove(bloc);
+			free_blocks.add(bloc);
+		}
+	}
+}
+")
+
+Je me suis rendu compte que mon implémentation n'est pas la manière classique de le faire, car au lieu d'avoir des blocs chainés entre eux,
+j'ai des blocs qui gèrent leur propre liste chainée, et pour savoir si j'ai assez de place contigüe, je regarde l'espace entre le pointeur courant et son prochain, au lieu d'avoir un booléen pour savoir si cet espace est pris ou non.
+Cette méthode possède l'avantage que la coalescence des blocs est faite par défaut.
+
+Maintenant, comparons les benchmarks avec cette nouvelle fragmentation.
+#pagebreak(weak: true)
+#bench_show("bench_results/slab_N_reusage_N_frag")
+
+En temps, on peut voir que pour les benchmarks unitaires, cela n'a pas changé grand chose, mais pour les programmes, on peut noter des différences majeures:
+	- dijkstra: 1.6s $arrow.r$ 700ms
+	- small_allocs: 400ms $arrow.r$ 150ms
+	- zeroed_matrix_100000x10: 750ms $arrow.r$ 170ms
+	- double_linked_list: 1.5s $arrow.r$ 450ms
+	Cependant pour big_allocs et mixed_allocs, on observe une légère baisse de performance, et pour count_occurences, on passe de 700ms à 1s.
+
+Pour la mémoire, la différence est flagrente, sur certaines figures #alloc_name n'est plus tellement gourmand que le plot de la libc n'est même pas visible.
+Par exemple, double_linked_list est passée de 820Mo à 12Mo, et les autres programmes faisant des allocations plus petites observent une évolution similaire.
+
+
+Bien sûr, #alloc_name n'est pas au niveau de la libc car il reste plein de pistes à explorer, et que les optimisations deviennent moins évidentes, mais nous avons des performances bien meilleures qu'un mmap basique.
 
 = Fonctionnalités rajoutées
 
@@ -287,3 +396,9 @@ Mais bon, j'ai quand même appris quelques trucs comme l'utilisation de Criterio
 Je pense que Rust reste le meilleur langage pour tout ce qui est software, mais pour tout ce qui se rapproche plus de l'OS, vu qu'ils sont encore tous écrits en C, il vaut mieux rester sur ce langage malgré ses défauts et son manque d'outillage accessible dûs à son âge.
 
 = Conclusion
+Ce projet m'a permis de mieux comprendre comment fonctionne un allocateur mémoire, et de voir les problèmes que l'on peut rencontrer en essayant de le faire soi-même.
+Je note qu'il est difficile de débugguer un projet comme ça, car valgrind et gdb interposent aussi leur allocateur, et donc on ne peut pas voir les erreurs de segmentation, les fuites de mémoire, etc...
+Certaines fonctions de la librairie standard peuvent aussi utiliser malloc dans leur implémentation, et donc si nous n'interposons pas entièrement la libc, les 2 allocateurs peuvent rentrer en conflit.
+
+Il reste pas mal de choses à améliorer, comme la concurrence, la performance de la fragmentation, un algorithme plus malin pour calloc et realloc, un allocateur best-fit, triés les blocs selon la taille, ect... mais pour un projet de quelques semaines, je suis satisfait du résultat.
+J'espère que vous avez apprécié ce rapport et #alloc_name.

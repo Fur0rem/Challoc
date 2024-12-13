@@ -80,7 +80,7 @@
 		#title
 	]
 	set align(left)
-	text(9pt)[
+	text(10pt)[
 		#raw(replaced_code, lang: lang)
 	]
 }

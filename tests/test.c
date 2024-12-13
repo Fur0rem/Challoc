@@ -10,9 +10,8 @@
 #undef INTERPOSING
 #include "../src/challoc.h"
 
-bool test_malloc() {
+bool test_chamalloc() {
 	for (size_t size = 1; size < 10000; size++) {
-		// printf("size: %zu\n", size);
 		volatile uint8_t* ptr = chamalloc(size * sizeof(uint8_t));
 		if (ptr == NULL) {
 			return false;
@@ -22,17 +21,15 @@ bool test_malloc() {
 	return true;
 }
 
-bool test_mallocs_dont_overlap() {
+bool test_chamallocs_dont_overlap() {
 	const size_t NB_PTRS	= 1000;
-	volatile uint8_t** ptrs = malloc(NB_PTRS * sizeof(uint8_t*));
-	printf("Allocating memory\n");
+	volatile uint8_t** ptrs = chamalloc(NB_PTRS * sizeof(uint8_t*));
 	for (size_t i = 1; i < NB_PTRS; i++) {
 		ptrs[i] = chamalloc(i * sizeof(uint8_t));
 		if (ptrs[i] == NULL) {
 			return false;
 		}
 	}
-	printf("Checking for overlaps\n");
 	bool overlap = false;
 	for (size_t i = 1; i < NB_PTRS; i++) {
 		for (size_t j = 1; j < i; j++) {
@@ -53,15 +50,14 @@ bool test_mallocs_dont_overlap() {
 			}
 		}
 	}
-	printf("Freeing memory\n\n");
-	for (size_t i = 0; i < NB_PTRS; i++) {
+	for (size_t i = 1; i < NB_PTRS; i++) {
 		chafree(ptrs[i]);
 	}
-	free(ptrs);
+	chafree(ptrs);
 	return !overlap;
 }
 
-bool test_calloc() {
+bool test_chacalloc() {
 	for (size_t size = 1; size < 10000; size++) {
 		volatile uint8_t* ptr = chacalloc(size, sizeof(uint8_t));
 		if (ptr == NULL) {
@@ -80,7 +76,7 @@ bool test_calloc() {
 	return true;
 }
 
-bool test_realloc() {
+bool test_charealloc() {
 	for (size_t size = 1; size <= 4096; size *= 2) {
 		volatile uint8_t* ptr = chamalloc(size * sizeof(uint8_t));
 		if (ptr == NULL) {
@@ -93,7 +89,7 @@ bool test_realloc() {
 
 		for (size_t i = 0; i < size; i++) {
 			if (ptr[i] != 10) {
-				printf("%p : Data mismatch before realloc at index %zu, expected 10, got %d\n", ptr, i, ptr[i]);
+				printf("%p : Data mismatch before charealloc at index %zu, expected 10, got %d\n", ptr, i, ptr[i]);
 				chafree(ptr);
 				return false;
 			}
@@ -101,7 +97,6 @@ bool test_realloc() {
 
 		size_t new_size		  = size * 2;
 		volatile uint8_t* new_ptr = charealloc(ptr, new_size * sizeof(uint8_t));
-		printf("old size %zu, new size %zu, old ptr %p, new ptr %p\n", size, new_size, ptr, new_ptr);
 		if (new_ptr == NULL) {
 			chafree((void*)ptr);
 			printf("charealloc failed for new size %zu\n", new_size);
@@ -113,14 +108,14 @@ bool test_realloc() {
 
 		for (size_t i = 0; i < size; i++) {
 			if (new_ptr[i] != 10) {
-				printf("%p : Data mismatch after realloc at index %zu, expected 10, got %d\n", new_ptr, i, new_ptr[i]);
+				printf("%p : Data mismatch after charealloc at index %zu, expected 10, got %d\n", new_ptr, i, new_ptr[i]);
 				chafree((void*)new_ptr);
 				return false;
 			}
 		}
 		for (size_t i = size; i < new_size; i++) {
 			if (new_ptr[i] != 20) {
-				printf("%p : Data mismatch after++ realloc at index %zu, expected 20, got %d\n", new_ptr, i, new_ptr[i]);
+				printf("%p : Data mismatch after++ charealloc at index %zu, expected 20, got %d\n", new_ptr, i, new_ptr[i]);
 				chafree((void*)new_ptr);
 				return false;
 			}
@@ -143,10 +138,10 @@ typedef struct {
 #define RESET	   "\033[0m"
 
 Test tests[] = {
-    TEST(test_malloc),
-    TEST(test_mallocs_dont_overlap),
-    TEST(test_calloc),
-    TEST(test_realloc),
+    TEST(test_chamalloc),
+    TEST(test_chamallocs_dont_overlap),
+    TEST(test_chacalloc),
+    TEST(test_charealloc),
 };
 
 int main() {

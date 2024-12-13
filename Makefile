@@ -19,10 +19,10 @@ else
     $(eval LEAKCHECK_FLAG += -DCHALLOC_LEAKCHECK)
 endif
 
-libchalloc.so: src/challoc.c | target
-	$(CC) -fpic -shared -O3 -Wall -Wextra -o target/libchalloc.so src/challoc.c $(LEAKCHECK_FLAG) -DCHALLOC_INTERPOSING $(PTHREAD)
+libchalloc.so: src/challoc.c src/challoc.h | target
+	$(CC) -fpic -shared -O3 -Wall -Wextra -o target/libchalloc.so src/challoc.c $(LEAKCHECK_FLAG) -DCHALLOC_INTERPOSING $(PTHREAD) -DNDEBUG
 
-libchalloc_dev.so: src/challoc.c | target
+libchalloc_dev.so: src/challoc.c src/challoc.h | target
 	$(CC) -fpic -shared -O3 -Wall -Wextra -o target/libchalloc_dev.so src/challoc.c $(LEAKCHECK_FLAG) -DNDCHALLOC_INTERPOSING $(PTHREAD)
 
 challoc-dev: libchalloc_dev.so
