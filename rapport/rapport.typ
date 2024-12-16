@@ -40,7 +40,7 @@
 				```c void* malloc(size_t size)```,
 				```c void free(void *ptr)```,
 				```c void* calloc(size_t nmemb, size_t size)```,
-				```c void realloc(void *ptr, size_t size)```
+				```c void* realloc(void *ptr, size_t size)```
 			)
 	]
 
