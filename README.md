@@ -38,7 +38,7 @@ Lors de la compilation, la variable LEAKCHECK peut être définie (à 1, true, o
 
 ## Dépendances
 
-Un compilateur C, doxygen pour générer la documentation, clang-format et clang-tidy pour formatter et analyser le code, Typst pour générer le rapport, python et matplotlin pour générer les figures.
+Un compilateur C, doxygen pour générer la documentation, clang-format et clang-tidy pour formatter et analyser le code, Typst pour générer le rapport, python et matplotlib pour générer les figures.
 
 D'ailleurs, je vous invite à lire le rapport pour plus des informations sur le projet.
 ## Utilisation
@@ -58,7 +58,7 @@ LD_PRELOAD=./libchalloc.so ./votre_programme
 L'allocateur se base sur mmap.
 Il utilise un vecteur de blocs alloués via mmap, et chaque bloc est utilisé en sous-allouant des blocs plus petits via une double liste chaînée en algorithmes first-fit.
 Les blocs mmap complètement libérés sont stockés temporairement dans un vecteur de blocs libres afin de les réutiliser si possible.
-L'allocateur possède aussi un petit allocateur en slab pour les petites allocations de 512 octets ou moins, la slab fait une taille totale de 4Mo (1 page), séparée en 1 cache de 512 octets, 2 caches de 256 octets, 4 caches de 128 octets, ect...
+L'allocateur possède aussi un petit allocateur en slab pour les petites allocations de 512 octets ou moins, la slab fait une taille totale de 4Ko (1 page), séparée en 1 cache de 512 octets, 2 caches de 256 octets, 4 caches de 128 octets, ect...
 
 ## Optimisations faites
 - Segmentation en classes de tailles.
