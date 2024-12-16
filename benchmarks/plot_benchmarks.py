@@ -103,14 +103,13 @@ for ub in units:
     plt.yscale('log', base=10)
 
     # Set y axis label
-    plt.ylabel("CPU Time (cycles)")
-    plt.xlabel("Size (bytes)")
+    plt.ylabel("Temps CPU (cycles)")
+    plt.xlabel("Taille (octets)")
 
     # set the axis ticks
     x_ticks = [sizes[i] for i in range(0, len(sizes), 6)]
     plt.xticks(x_ticks)
     plt.gca().xaxis.set_major_formatter(FuncFormatter(bytes_formatter))
-    plt.gca().yaxis.set_major_formatter(FuncFormatter(time_formatter_truncated))
 
     # Initialize lists to store the mean times for plotting lines
     mean_libc_times_list = []

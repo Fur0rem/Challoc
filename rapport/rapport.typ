@@ -53,11 +53,6 @@ Enfin, je présenterai toutes les fonctionnalités supplémentaires et optimisat
 Pour finir, je ferais un bilan de ce projet.
 
 = Structure du projet
-//Le projet a été réalisé en Rust, avec Cbindgen pour générer les headers C, et Criterion + Matplotlib pour les benchmarks et les plots.
-//Le code est divisé en 3 parties
-	//- L'allocateur : le code de l'allocateur mémoire
-	//- Les tests : les tests unitaires
-	//- Les benchmarks : les benchmarks pour comparer les performances de l'allocateur par rapport à libc
 
 Le projet d'abord été réalisé en Rust, mais j'ai changé vers C en cours de route pour des raisons que je détaillerai à la fin.
 Le code est divisé en 3 parties :
@@ -132,7 +127,7 @@ Avant de comparer à l'implémentation de la libc, je vais expliquer ma procédu
 
 = Procédure de benchmarks
 
-Pour les benchmarks, j'ai utilisé Criterion pour les faire tourner, puis matplotlib pour les plots (Pour l'instant aucune librairie Rust de plot est aussi flexible que matplotlib).
+Pour les benchmarks, j'ai utilisé ma propre librairie de benchmarks en C, avec rdtsc et gnutime pour mesurer les cycles CPU et le temps d'exécution avec la mémoire utilisée.
 #footnote[Réalisés sur un CPU AMD Ryzen 5 5500U with Radeon Graphics, 6 Cores hyperthreadés à 2.1 GHz, 8 Go de RAM et NixOS 24.05]
 
 Il y a 2 familles de benchmarks :

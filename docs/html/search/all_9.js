@@ -8,5 +8,6 @@ var searchData=
   ['leakchecktracelist_5',['LeakcheckTraceList',['../d2/d29/structLeakcheckTraceList.html',1,'']]],
   ['leaker_5finter_2ec_6',['leaker_inter.c',['../df/daa/leaker__inter_8c.html',1,'']]],
   ['leaker_5fnon_5finter_2ec_7',['leaker_non_inter.c',['../df/df9/leaker__non__inter_8c.html',1,'']]],
-  ['linkedlist_8',['LinkedList',['../de/d4b/structLinkedList.html',1,'']]]
+  ['libc_8',['LIBC',['../d5/d5a/group__Challoc__unit__benchmarks.html#ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6',1,'LIBC:&#160;run_program_benchs.c'],['../d5/db5/group__Challoc__prog__benchmarks.html#ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6',1,'LIBC:&#160;run_unit_benchs.c']]],
+  ['linkedlist_9',['LinkedList',['../de/d4b/structLinkedList.html',1,'']]]
 ];

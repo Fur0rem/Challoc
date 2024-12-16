@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['prev_0',['prev',['../d6/d7e/structAllocMetadata.html#aaf97a2f75247d261bc103506250616f5',1,'AllocMetadata']]],
-  ['ptr_1',['ptr',['../d0/d8c/structAllocTrace.html#ab985438f7703bd9e68565ec85e8c890e',1,'AllocTrace']]],
-  ['ptrs_2',['ptrs',['../d2/d29/structLeakcheckTraceList.html#a09101737c1343a80569b6f2e3d23bf1b',1,'LeakcheckTraceList']]]
+  ['nb_5fiters_0',['nb_iters',['../d4/d71/structBenchResult.html#a4c65e7e8431e2cc76a5920114bfa452b',1,'BenchResult']]],
+  ['next_1',['next',['../d6/d7e/structAllocMetadata.html#a60a48d11b027f0e4e2c38051878a194e',1,'AllocMetadata']]]
 ];

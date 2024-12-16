@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['is_5fclose_0',['is_close',['../d7/d04/structClosePowerOfTwo.html#aae1d8b42e5038cf6424169c63aef82bc',1,'ClosePowerOfTwo']]]
+  ['head_0',['head',['../df/d68/structBlock.html#a1f269c14b750eace5ccbe6b77b8545b9',1,'Block']]]
 ];

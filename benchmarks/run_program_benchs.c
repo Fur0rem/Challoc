@@ -32,7 +32,10 @@
 
 uint64_t cpu_freq = 0;
 
-// Hacky way to get a rough estimate of the CPU frequency
+/**
+ * @brief Approximate the CPU frequency by measuring the number of cycles in a second
+ * @return The number of cycles in a second
+ */
 uint64_t cpu_frequency() {
 	const int NB_SECS = 3;
 	uint64_t start	  = __rdtsc();
@@ -41,22 +44,34 @@ uint64_t cpu_frequency() {
 	return (end - start) / NB_SECS;
 }
 
+/**
+ * @brief The allocator in use
+ */
 typedef enum {
-	LIBC,
-	CHALLOC,
+	LIBC,	 ///< Use of the standard libc allocator
+	CHALLOC, ///< Use of the challoc allocator
 } Allocator;
 
+/**
+ * @brief The result of a benchmark
+ */
 typedef struct {
-	Allocator allocator;
-	char* fn_name;
-	size_t nb_iters;
-	uint64_t* times;
-	size_t memory_usage;
+	Allocator allocator; ///< The allocator used
+	char* fn_name;	     ///< The name of the function being benchmarked
+	size_t nb_iters;     ///< The number of iterations
+	uint64_t* times;     ///< The time taken for each iteration
+	size_t memory_usage; ///< The memory usage
 } BenchResult;
 
 #define MAX_PATH    1024
 #define MAX_COMMAND 2048
 
+/**
+ * @brief Recursively list all files in a directory
+ * @param dir_name The directory to list
+ * @param files The array to store the files in
+ * @param count The number of files
+ */
 void recursively_list_all_files(const char* dir_name, char files[][MAX_PATH], int* count) {
 	DIR* dir = opendir(dir_name);
 	printf("Opening directory: %s\n", dir_name);
@@ -85,6 +100,12 @@ void recursively_list_all_files(const char* dir_name, char files[][MAX_PATH], in
 	closedir(dir);
 }
 
+/**
+ * @brief Compile a benchmark
+ * @param source_file The source file
+ * @param output_file The output file
+ * @param flags The compilation flags
+ */
 void compile_benchmark(const char* source_file, const char* output_file, const char* flags) {
 	char command[MAX_COMMAND];
 	snprintf(command, sizeof(command), "gcc %s %s -o %s -Wno-discarded-qualifiers", source_file, flags, output_file);
@@ -96,6 +117,12 @@ void compile_benchmark(const char* source_file, const char* output_file, const c
 	}
 }
 
+/**
+ * @brief Run a benchmark
+ * @param command The command to run
+ * @param result The result of the benchmark
+ * @param command_preload Everything which precedes the command
+ */
 void run_benchmark(const char* command, BenchResult* result, char* command_preload) {
 	const uint64_t target_cycles = cpu_freq / 2; // half a second
 
@@ -169,6 +196,11 @@ void run_benchmark(const char* command, BenchResult* result, char* command_prelo
 	printf("\033[K");
 }
 
+/**
+ * @brief Clone a string and remove the extension
+ * @param filename The filename
+ * @return The cloned string without the extension
+ */
 char* clone_and_remove_extension(char* filename) {
 	char* filename2 = strdup(filename);
 	char* ext_idx	= strrchr(filename2, '.');
@@ -176,6 +208,12 @@ char* clone_and_remove_extension(char* filename) {
 	return filename2;
 }
 
+/**
+ * @brief Write the results of a benchmark to a file
+ * @param libc The result of the libc benchmark
+ * @param challoc The result of the challoc benchmark
+ * @param output_dir The output directory
+ */
 void write_results(BenchResult libc, BenchResult challoc, char* output_dir) {
 	// Write it in csv (size, libc, challoc)
 	char full_path[200];
@@ -217,6 +255,10 @@ void write_results(BenchResult libc, BenchResult challoc, char* output_dir) {
 	fclose(file);
 }
 
+/**
+ * @brief Free the results of a benchmark
+ * @param result The result to free
+ */
 void free_results(BenchResult* result) {
 	free(result->times);
 }

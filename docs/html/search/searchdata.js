@@ -3,10 +3,12 @@ var indexSectionsWithContent =
   0: "_abcdfghilmnprstuwz",
   1: "abcghlmnstw",
   2: "bcdlmnrstz",
-  3: "_abcdfilmpt",
-  4: "bcfhimnpst",
+  3: "_abcdfilmprtw",
+  4: "abcfhimnpst",
   5: "a",
-  6: "abcfilmpsu"
+  6: "a",
+  7: "cl",
+  8: "abcfilmpsu"
 };
 
 var indexSectionNames =
@@ -17,7 +19,9 @@ var indexSectionNames =
   3: "functions",
   4: "variables",
   5: "typedefs",
-  6: "groups"
+  6: "enums",
+  7: "enumvalues",
+  8: "groups"
 };
 
 var indexSectionLabels =
@@ -28,6 +32,8 @@ var indexSectionLabels =
   3: "Functions",
   4: "Variables",
   5: "Typedefs",
-  6: "Modules"
+  6: "Enumerations",
+  7: "Enumerator",
+  8: "Modules"
 };
 

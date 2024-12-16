@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['time_5fto_5flive_5fwith_5fsize_0',['time_to_live_with_size',['../d7/d75/group__Challoc__block.html#ga1f3ce2d2f34f49f2e12a0f1a561bcda6',1,'challoc.c']]]
+  ['recursively_5flist_5fall_5ffiles_0',['recursively_list_all_files',['../d5/d5a/group__Challoc__unit__benchmarks.html#ga75688ae00b440a3ea017e17250a19b46',1,'run_program_benchs.c']]],
+  ['run_5fbenchmark_1',['run_benchmark',['../d5/d5a/group__Challoc__unit__benchmarks.html#ga2a7c64a8ba40cdeefcb6fb3f7d4fc219',1,'run_program_benchs.c']]]
 ];

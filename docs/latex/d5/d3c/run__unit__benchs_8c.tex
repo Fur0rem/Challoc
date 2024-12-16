@@ -16,7 +16,7 @@ Compare the performance of challoc and libc of standalone function calls.
 \begin{DoxyCompactItemize}
 \item 
 struct \mbox{\hyperlink{structBenchResult}{Bench\+Result}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em The result of a benchmark. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
@@ -31,28 +31,27 @@ struct \mbox{\hyperlink{structBenchResult}{Bench\+Result}}
 \doxysubsubsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d}\label{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d} 
-enum {\bfseries Allocator} \{ {\bfseries LIBC}
-, {\bfseries CHALLOC}
+enum \mbox{\hyperlink{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d}{Allocator}} \{ \mbox{\hyperlink{group__Challoc__prog__benchmarks_ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6}{LIBC}}
+, \mbox{\hyperlink{group__Challoc__prog__benchmarks_ggafec31286e9f74b9225e8905730bfb67daf7c734583f24d8691c6807bd2f163e21}{CHALLOC}}
  \}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Touch the memory to make sure it\textquotesingle{}s allocated. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 void {\bfseries warmup\+\_\+clock} ()
-\item 
-uint64\+\_\+t {\bfseries cpu\+\_\+frequency} ()
-\item 
-void {\bfseries touch\+\_\+memory} (volatile uint8\+\_\+t \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size\+\_\+requested)
-\item 
-void {\bfseries bench\+\_\+malloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
-\item 
-void {\bfseries bench\+\_\+realloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}realloc)(void \texorpdfstring{$\ast$}{*}, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
-\item 
-void {\bfseries bench\+\_\+calloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}calloc)(size\+\_\+t, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
-\item 
-void {\bfseries write\+\_\+results} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} libc, \mbox{\hyperlink{structBenchResult}{Bench\+Result}} challoc, char \texorpdfstring{$\ast$}{*}output\+\_\+dir)
-\item 
+\begin{DoxyCompactList}\small\item\em Warm up the clock by doing a lot of nops. \end{DoxyCompactList}\item 
+uint64\+\_\+t \mbox{\hyperlink{group__Challoc__prog__benchmarks_ga140ff00997818659e12a386342ca5f82}{cpu\+\_\+frequency}} ()
+\begin{DoxyCompactList}\small\item\em Approximate the CPU frequency by measuring the number of cycles in a second. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_gaa840894e554c6de34f56ae8ccd49835d}{touch\+\_\+memory}} (volatile uint8\+\_\+t \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size\+\_\+requested)
+\begin{DoxyCompactList}\small\item\em Touch the memory to make sure it\textquotesingle{}s allocated. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_ga9dbb8185be5a4480fa46f8c236908d54}{bench\+\_\+malloc}} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Benchmark the malloc function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_ga887e6d8c6aa883a79e94014f7f190d15}{bench\+\_\+realloc}} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}realloc)(void \texorpdfstring{$\ast$}{*}, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Benchmark the realloc function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_ga0cffb8302e3fc20dc9f11a2298831f3d}{bench\+\_\+calloc}} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}calloc)(size\+\_\+t, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Benchmark the calloc function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_gaac150bd544dae3a8824dbbb744a2232e}{write\+\_\+results}} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} libc, \mbox{\hyperlink{structBenchResult}{Bench\+Result}} challoc, char \texorpdfstring{$\ast$}{*}output\+\_\+dir)
+\begin{DoxyCompactList}\small\item\em Write the results of a benchmark to a file. \end{DoxyCompactList}\item 
 int {\bfseries main} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Variables}

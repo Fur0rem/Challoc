@@ -85,6 +85,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The result of a benchmark.  <a href="../../d4/d71/structBenchResult.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
@@ -104,33 +105,35 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:gafec31286e9f74b9225e8905730bfb67d" id="r_gafec31286e9f74b9225e8905730bfb67d"><td class="memItemLeft" align="right" valign="top"><a id="gafec31286e9f74b9225e8905730bfb67d" name="gafec31286e9f74b9225e8905730bfb67d"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Allocator</b> { <b>LIBC</b>
-, <b>CHALLOC</b>
+<tr class="memitem:gafec31286e9f74b9225e8905730bfb67d" id="r_gafec31286e9f74b9225e8905730bfb67d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gafec31286e9f74b9225e8905730bfb67d">Allocator</a> { <a class="el" href="#ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6">LIBC</a>
+, <a class="el" href="#ggafec31286e9f74b9225e8905730bfb67daf7c734583f24d8691c6807bd2f163e21">CHALLOC</a>
  }</td></tr>
+<tr class="memdesc:gafec31286e9f74b9225e8905730bfb67d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Touch the memory to make sure it's allocated.  <a href="#gafec31286e9f74b9225e8905730bfb67d">More...</a><br /></td></tr>
 <tr class="separator:gafec31286e9f74b9225e8905730bfb67d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga41278a9376382c9fbe0057911fe1e3f6" id="r_ga41278a9376382c9fbe0057911fe1e3f6"><td class="memItemLeft" align="right" valign="top"><a id="ga41278a9376382c9fbe0057911fe1e3f6" name="ga41278a9376382c9fbe0057911fe1e3f6"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>warmup_clock</b> ()</td></tr>
+<tr class="memdesc:ga41278a9376382c9fbe0057911fe1e3f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Warm up the clock by doing a lot of nops. <br /></td></tr>
 <tr class="separator:ga41278a9376382c9fbe0057911fe1e3f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga140ff00997818659e12a386342ca5f82" id="r_ga140ff00997818659e12a386342ca5f82"><td class="memItemLeft" align="right" valign="top"><a id="ga140ff00997818659e12a386342ca5f82" name="ga140ff00997818659e12a386342ca5f82"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>cpu_frequency</b> ()</td></tr>
+<tr class="memitem:ga140ff00997818659e12a386342ca5f82" id="r_ga140ff00997818659e12a386342ca5f82"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga140ff00997818659e12a386342ca5f82">cpu_frequency</a> ()</td></tr>
+<tr class="memdesc:ga140ff00997818659e12a386342ca5f82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Approximate the CPU frequency by measuring the number of cycles in a second.  <br /></td></tr>
 <tr class="separator:ga140ff00997818659e12a386342ca5f82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa840894e554c6de34f56ae8ccd49835d" id="r_gaa840894e554c6de34f56ae8ccd49835d"><td class="memItemLeft" align="right" valign="top"><a id="gaa840894e554c6de34f56ae8ccd49835d" name="gaa840894e554c6de34f56ae8ccd49835d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>touch_memory</b> (volatile uint8_t *ptr, size_t size_requested)</td></tr>
+<tr class="memitem:gaa840894e554c6de34f56ae8ccd49835d" id="r_gaa840894e554c6de34f56ae8ccd49835d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaa840894e554c6de34f56ae8ccd49835d">touch_memory</a> (volatile uint8_t *ptr, size_t size_requested)</td></tr>
+<tr class="memdesc:gaa840894e554c6de34f56ae8ccd49835d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Touch the memory to make sure it's allocated.  <br /></td></tr>
 <tr class="separator:gaa840894e554c6de34f56ae8ccd49835d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9dbb8185be5a4480fa46f8c236908d54" id="r_ga9dbb8185be5a4480fa46f8c236908d54"><td class="memItemLeft" align="right" valign="top"><a id="ga9dbb8185be5a4480fa46f8c236908d54" name="ga9dbb8185be5a4480fa46f8c236908d54"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>bench_malloc</b> (<a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *allocator_result, void *(*alloc)(size_t), void(*dealloc)(void *), char *fn_name)</td></tr>
+<tr class="memitem:ga9dbb8185be5a4480fa46f8c236908d54" id="r_ga9dbb8185be5a4480fa46f8c236908d54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga9dbb8185be5a4480fa46f8c236908d54">bench_malloc</a> (<a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *allocator_result, void *(*alloc)(size_t), void(*dealloc)(void *), char *fn_name)</td></tr>
+<tr class="memdesc:ga9dbb8185be5a4480fa46f8c236908d54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Benchmark the malloc function.  <br /></td></tr>
 <tr class="separator:ga9dbb8185be5a4480fa46f8c236908d54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga887e6d8c6aa883a79e94014f7f190d15" id="r_ga887e6d8c6aa883a79e94014f7f190d15"><td class="memItemLeft" align="right" valign="top"><a id="ga887e6d8c6aa883a79e94014f7f190d15" name="ga887e6d8c6aa883a79e94014f7f190d15"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>bench_realloc</b> (<a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *allocator_result, void *(*alloc)(size_t), void *(*realloc)(void *, size_t), void(*dealloc)(void *), char *fn_name)</td></tr>
+<tr class="memitem:ga887e6d8c6aa883a79e94014f7f190d15" id="r_ga887e6d8c6aa883a79e94014f7f190d15"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga887e6d8c6aa883a79e94014f7f190d15">bench_realloc</a> (<a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *allocator_result, void *(*alloc)(size_t), void *(*realloc)(void *, size_t), void(*dealloc)(void *), char *fn_name)</td></tr>
+<tr class="memdesc:ga887e6d8c6aa883a79e94014f7f190d15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Benchmark the realloc function.  <br /></td></tr>
 <tr class="separator:ga887e6d8c6aa883a79e94014f7f190d15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0cffb8302e3fc20dc9f11a2298831f3d" id="r_ga0cffb8302e3fc20dc9f11a2298831f3d"><td class="memItemLeft" align="right" valign="top"><a id="ga0cffb8302e3fc20dc9f11a2298831f3d" name="ga0cffb8302e3fc20dc9f11a2298831f3d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>bench_calloc</b> (<a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *allocator_result, void *(*calloc)(size_t, size_t), void(*dealloc)(void *), char *fn_name)</td></tr>
+<tr class="memitem:ga0cffb8302e3fc20dc9f11a2298831f3d" id="r_ga0cffb8302e3fc20dc9f11a2298831f3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga0cffb8302e3fc20dc9f11a2298831f3d">bench_calloc</a> (<a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *allocator_result, void *(*calloc)(size_t, size_t), void(*dealloc)(void *), char *fn_name)</td></tr>
+<tr class="memdesc:ga0cffb8302e3fc20dc9f11a2298831f3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Benchmark the calloc function.  <br /></td></tr>
 <tr class="separator:ga0cffb8302e3fc20dc9f11a2298831f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaac150bd544dae3a8824dbbb744a2232e" id="r_gaac150bd544dae3a8824dbbb744a2232e"><td class="memItemLeft" align="right" valign="top"><a id="gaac150bd544dae3a8824dbbb744a2232e" name="gaac150bd544dae3a8824dbbb744a2232e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>write_results</b> (<a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> libc, <a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> challoc, char *output_dir)</td></tr>
+<tr class="memitem:gaac150bd544dae3a8824dbbb744a2232e" id="r_gaac150bd544dae3a8824dbbb744a2232e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaac150bd544dae3a8824dbbb744a2232e">write_results</a> (<a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> libc, <a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> challoc, char *output_dir)</td></tr>
+<tr class="memdesc:gaac150bd544dae3a8824dbbb744a2232e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the results of a benchmark to a file.  <br /></td></tr>
 <tr class="separator:gaac150bd544dae3a8824dbbb744a2232e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3c04138a5bfe5d72780bb7e82a18e627" id="r_ga3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top"><a id="ga3c04138a5bfe5d72780bb7e82a18e627" name="ga3c04138a5bfe5d72780bb7e82a18e627"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, char **argv)</td></tr>
@@ -143,6 +146,255 @@ uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>cpu_freq</b> = 0<
 <tr class="separator:ga350bc7c6c9db1b215778b34b0d15ff10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="gafec31286e9f74b9225e8905730bfb67d" name="gafec31286e9f74b9225e8905730bfb67d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafec31286e9f74b9225e8905730bfb67d">&#9670;&#160;</a></span>Allocator</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="../../d5/d5a/group__Challoc__unit__benchmarks.html#gafec31286e9f74b9225e8905730bfb67d">Allocator</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Touch the memory to make sure it's allocated. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>The pointer to the memory </td></tr>
+    <tr><td class="paramname">size_requested</td><td>The size of the memory </td></tr>
+  </table>
+  </dd>
+</dl>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6" name="ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6"></a>LIBC&#160;</td><td class="fielddoc"><p>Use of the standard libc allocator. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggafec31286e9f74b9225e8905730bfb67daf7c734583f24d8691c6807bd2f163e21" name="ggafec31286e9f74b9225e8905730bfb67daf7c734583f24d8691c6807bd2f163e21"></a>CHALLOC&#160;</td><td class="fielddoc"><p>Use of the challoc allocator. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga0cffb8302e3fc20dc9f11a2298831f3d" name="ga0cffb8302e3fc20dc9f11a2298831f3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0cffb8302e3fc20dc9f11a2298831f3d">&#9670;&#160;</a></span>bench_calloc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void bench_calloc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *</td>          <td class="paramname"><span class="paramname"><em>allocator_result</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *(*)(size_t, size_t)</td>          <td class="paramname"><span class="paramname"><em>calloc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void(*)(void *)</td>          <td class="paramname"><span class="paramname"><em>dealloc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>fn_name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Benchmark the calloc function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">allocator_result</td><td>The result of the benchmark </td></tr>
+    <tr><td class="paramname">calloc</td><td>The allocator to use </td></tr>
+    <tr><td class="paramname">dealloc</td><td>The deallocator to use </td></tr>
+    <tr><td class="paramname">fn_name</td><td>The name of the function being benchmarked </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga9dbb8185be5a4480fa46f8c236908d54" name="ga9dbb8185be5a4480fa46f8c236908d54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9dbb8185be5a4480fa46f8c236908d54">&#9670;&#160;</a></span>bench_malloc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void bench_malloc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *</td>          <td class="paramname"><span class="paramname"><em>allocator_result</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *(*)(size_t)</td>          <td class="paramname"><span class="paramname"><em>alloc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void(*)(void *)</td>          <td class="paramname"><span class="paramname"><em>dealloc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>fn_name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Benchmark the malloc function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">allocator_result</td><td>The result of the benchmark </td></tr>
+    <tr><td class="paramname">alloc</td><td>The allocator to use </td></tr>
+    <tr><td class="paramname">dealloc</td><td>The deallocator to use </td></tr>
+    <tr><td class="paramname">fn_name</td><td>The name of the function being benchmarked </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga887e6d8c6aa883a79e94014f7f190d15" name="ga887e6d8c6aa883a79e94014f7f190d15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga887e6d8c6aa883a79e94014f7f190d15">&#9670;&#160;</a></span>bench_realloc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void bench_realloc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a> *</td>          <td class="paramname"><span class="paramname"><em>allocator_result</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *(*)(size_t)</td>          <td class="paramname"><span class="paramname"><em>alloc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *(*)(void *, size_t)</td>          <td class="paramname"><span class="paramname"><em>realloc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void(*)(void *)</td>          <td class="paramname"><span class="paramname"><em>dealloc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>fn_name</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Benchmark the realloc function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">allocator_result</td><td>The result of the benchmark </td></tr>
+    <tr><td class="paramname">alloc</td><td>The allocator to use </td></tr>
+    <tr><td class="paramname">realloc</td><td>The reallocator to use </td></tr>
+    <tr><td class="paramname">dealloc</td><td>The deallocator to use </td></tr>
+    <tr><td class="paramname">fn_name</td><td>The name of the function being benchmarked </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga140ff00997818659e12a386342ca5f82" name="ga140ff00997818659e12a386342ca5f82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga140ff00997818659e12a386342ca5f82">&#9670;&#160;</a></span>cpu_frequency()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t cpu_frequency </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Approximate the CPU frequency by measuring the number of cycles in a second. </p>
+<dl class="section return"><dt>Returns</dt><dd>The number of cycles in a second </dd></dl>
+
+</div>
+</div>
+<a id="gaa840894e554c6de34f56ae8ccd49835d" name="gaa840894e554c6de34f56ae8ccd49835d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa840894e554c6de34f56ae8ccd49835d">&#9670;&#160;</a></span>touch_memory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void touch_memory </td>
+          <td>(</td>
+          <td class="paramtype">volatile uint8_t *</td>          <td class="paramname"><span class="paramname"><em>ptr</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size_requested</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Touch the memory to make sure it's allocated. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>The pointer to the memory </td></tr>
+    <tr><td class="paramname">size_requested</td><td>The size of the ptr </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaac150bd544dae3a8824dbbb744a2232e" name="gaac150bd544dae3a8824dbbb744a2232e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaac150bd544dae3a8824dbbb744a2232e">&#9670;&#160;</a></span>write_results()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void write_results </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a></td>          <td class="paramname"><span class="paramname"><em>libc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d4/d71/structBenchResult.html">BenchResult</a></td>          <td class="paramname"><span class="paramname"><em>challoc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>output_dir</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write the results of a benchmark to a file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">libc</td><td>The result of the libc benchmark </td></tr>
+    <tr><td class="paramname">challoc</td><td>The result of the challoc benchmark </td></tr>
+    <tr><td class="paramname">output_dir</td><td>The output directory </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['wordoccurence_0',['WordOccurence',['../d9/def/structWordOccurence.html',1,'']]],
-  ['wordoccurencelist_1',['WordOccurenceList',['../d3/d5a/structWordOccurenceList.html',1,'']]]
+  ['warmup_5fclock_0',['warmup_clock',['../d5/db5/group__Challoc__prog__benchmarks.html#ga41278a9376382c9fbe0057911fe1e3f6',1,'run_unit_benchs.c']]],
+  ['wordoccurence_1',['WordOccurence',['../d9/def/structWordOccurence.html',1,'']]],
+  ['wordoccurencelist_2',['WordOccurenceList',['../d3/d5a/structWordOccurenceList.html',1,'']]],
+  ['write_5fresults_3',['write_results',['../d5/d5a/group__Challoc__unit__benchmarks.html#gaac150bd544dae3a8824dbbb744a2232e',1,'write_results(BenchResult libc, BenchResult challoc, char *output_dir):&#160;run_program_benchs.c'],['../d5/db5/group__Challoc__prog__benchmarks.html#gaac150bd544dae3a8824dbbb744a2232e',1,'write_results(BenchResult libc, BenchResult challoc, char *output_dir):&#160;run_unit_benchs.c']]]
 ];

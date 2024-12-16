@@ -4,7 +4,7 @@
 \begin{DoxyCompactItemize}
 \item 
 struct \mbox{\hyperlink{structBenchResult}{Bench\+Result}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em The result of a benchmark. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
@@ -23,35 +23,28 @@ struct \mbox{\hyperlink{structBenchResult}{Bench\+Result}}
 \doxysubsubsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d}\label{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d} 
-enum {\bfseries Allocator} \{ {\bfseries LIBC}
-, {\bfseries CHALLOC}
+enum \mbox{\hyperlink{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d}{Allocator}} \{ \mbox{\hyperlink{group__Challoc__prog__benchmarks_ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6}{LIBC}}
+, \mbox{\hyperlink{group__Challoc__prog__benchmarks_ggafec31286e9f74b9225e8905730bfb67daf7c734583f24d8691c6807bd2f163e21}{CHALLOC}}
  \}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Touch the memory to make sure it\textquotesingle{}s allocated. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 \Hypertarget{group__Challoc__prog__benchmarks_ga41278a9376382c9fbe0057911fe1e3f6}\label{group__Challoc__prog__benchmarks_ga41278a9376382c9fbe0057911fe1e3f6} 
 void {\bfseries warmup\+\_\+clock} ()
-\item 
-\Hypertarget{group__Challoc__prog__benchmarks_ga140ff00997818659e12a386342ca5f82}\label{group__Challoc__prog__benchmarks_ga140ff00997818659e12a386342ca5f82} 
-uint64\+\_\+t {\bfseries cpu\+\_\+frequency} ()
-\item 
-\Hypertarget{group__Challoc__prog__benchmarks_gaa840894e554c6de34f56ae8ccd49835d}\label{group__Challoc__prog__benchmarks_gaa840894e554c6de34f56ae8ccd49835d} 
-void {\bfseries touch\+\_\+memory} (volatile uint8\+\_\+t \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size\+\_\+requested)
-\item 
-\Hypertarget{group__Challoc__prog__benchmarks_ga9dbb8185be5a4480fa46f8c236908d54}\label{group__Challoc__prog__benchmarks_ga9dbb8185be5a4480fa46f8c236908d54} 
-void {\bfseries bench\+\_\+malloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
-\item 
-\Hypertarget{group__Challoc__prog__benchmarks_ga887e6d8c6aa883a79e94014f7f190d15}\label{group__Challoc__prog__benchmarks_ga887e6d8c6aa883a79e94014f7f190d15} 
-void {\bfseries bench\+\_\+realloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}realloc)(void \texorpdfstring{$\ast$}{*}, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
-\item 
-\Hypertarget{group__Challoc__prog__benchmarks_ga0cffb8302e3fc20dc9f11a2298831f3d}\label{group__Challoc__prog__benchmarks_ga0cffb8302e3fc20dc9f11a2298831f3d} 
-void {\bfseries bench\+\_\+calloc} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}calloc)(size\+\_\+t, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
-\item 
-\Hypertarget{group__Challoc__prog__benchmarks_gaac150bd544dae3a8824dbbb744a2232e}\label{group__Challoc__prog__benchmarks_gaac150bd544dae3a8824dbbb744a2232e} 
-void {\bfseries write\+\_\+results} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} libc, \mbox{\hyperlink{structBenchResult}{Bench\+Result}} challoc, char \texorpdfstring{$\ast$}{*}output\+\_\+dir)
-\item 
+\begin{DoxyCompactList}\small\item\em Warm up the clock by doing a lot of nops. \end{DoxyCompactList}\item 
+uint64\+\_\+t \mbox{\hyperlink{group__Challoc__prog__benchmarks_ga140ff00997818659e12a386342ca5f82}{cpu\+\_\+frequency}} ()
+\begin{DoxyCompactList}\small\item\em Approximate the CPU frequency by measuring the number of cycles in a second. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_gaa840894e554c6de34f56ae8ccd49835d}{touch\+\_\+memory}} (volatile uint8\+\_\+t \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t size\+\_\+requested)
+\begin{DoxyCompactList}\small\item\em Touch the memory to make sure it\textquotesingle{}s allocated. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_ga9dbb8185be5a4480fa46f8c236908d54}{bench\+\_\+malloc}} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Benchmark the malloc function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_ga887e6d8c6aa883a79e94014f7f190d15}{bench\+\_\+realloc}} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}alloc)(size\+\_\+t), void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}realloc)(void \texorpdfstring{$\ast$}{*}, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Benchmark the realloc function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_ga0cffb8302e3fc20dc9f11a2298831f3d}{bench\+\_\+calloc}} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}allocator\+\_\+result, void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*}calloc)(size\+\_\+t, size\+\_\+t), void(\texorpdfstring{$\ast$}{*}dealloc)(void \texorpdfstring{$\ast$}{*}), char \texorpdfstring{$\ast$}{*}fn\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Benchmark the calloc function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__Challoc__prog__benchmarks_gaac150bd544dae3a8824dbbb744a2232e}{write\+\_\+results}} (\mbox{\hyperlink{structBenchResult}{Bench\+Result}} libc, \mbox{\hyperlink{structBenchResult}{Bench\+Result}} challoc, char \texorpdfstring{$\ast$}{*}output\+\_\+dir)
+\begin{DoxyCompactList}\small\item\em Write the results of a benchmark to a file. \end{DoxyCompactList}\item 
 \Hypertarget{group__Challoc__prog__benchmarks_ga3c04138a5bfe5d72780bb7e82a18e627}\label{group__Challoc__prog__benchmarks_ga3c04138a5bfe5d72780bb7e82a18e627} 
 int {\bfseries main} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
 \end{DoxyCompactItemize}
@@ -64,3 +57,150 @@ uint64\+\_\+t {\bfseries cpu\+\_\+freq} = 0
 
 
 \doxysubsection{Detailed Description}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d}\label{group__Challoc__prog__benchmarks_gafec31286e9f74b9225e8905730bfb67d} 
+\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!Allocator@{Allocator}}
+\index{Allocator@{Allocator}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}
+\doxysubsubsection{\texorpdfstring{Allocator}{Allocator}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{group__Challoc__unit__benchmarks_gafec31286e9f74b9225e8905730bfb67d}{Allocator}}}
+
+
+
+Touch the memory to make sure it\textquotesingle{}s allocated. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to the memory \\
+\hline
+{\em size\+\_\+requested} & The size of the memory \\
+\hline
+\end{DoxyParams}
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LIBC@{LIBC}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!LIBC@{LIBC}}}\Hypertarget{group__Challoc__prog__benchmarks_ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6}\label{group__Challoc__prog__benchmarks_ggafec31286e9f74b9225e8905730bfb67da8682073a81feafa5727d362f96656fc6} 
+LIBC&Use of the standard libc allocator. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CHALLOC@{CHALLOC}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!CHALLOC@{CHALLOC}}}\Hypertarget{group__Challoc__prog__benchmarks_ggafec31286e9f74b9225e8905730bfb67daf7c734583f24d8691c6807bd2f163e21}\label{group__Challoc__prog__benchmarks_ggafec31286e9f74b9225e8905730bfb67daf7c734583f24d8691c6807bd2f163e21} 
+CHALLOC&Use of the challoc allocator. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{group__Challoc__prog__benchmarks_ga0cffb8302e3fc20dc9f11a2298831f3d}\label{group__Challoc__prog__benchmarks_ga0cffb8302e3fc20dc9f11a2298831f3d} 
+\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!bench\_calloc@{bench\_calloc}}
+\index{bench\_calloc@{bench\_calloc}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}
+\doxysubsubsection{\texorpdfstring{bench\_calloc()}{bench\_calloc()}}
+{\footnotesize\ttfamily void bench\+\_\+calloc (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}}]{allocator\+\_\+result,  }\item[{void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*})(size\+\_\+t, size\+\_\+t)}]{calloc,  }\item[{void(\texorpdfstring{$\ast$}{*})(void \texorpdfstring{$\ast$}{*})}]{dealloc,  }\item[{char \texorpdfstring{$\ast$}{*}}]{fn\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Benchmark the calloc function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em allocator\+\_\+result} & The result of the benchmark \\
+\hline
+{\em calloc} & The allocator to use \\
+\hline
+{\em dealloc} & The deallocator to use \\
+\hline
+{\em fn\+\_\+name} & The name of the function being benchmarked \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__prog__benchmarks_ga9dbb8185be5a4480fa46f8c236908d54}\label{group__Challoc__prog__benchmarks_ga9dbb8185be5a4480fa46f8c236908d54} 
+\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!bench\_malloc@{bench\_malloc}}
+\index{bench\_malloc@{bench\_malloc}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}
+\doxysubsubsection{\texorpdfstring{bench\_malloc()}{bench\_malloc()}}
+{\footnotesize\ttfamily void bench\+\_\+malloc (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}}]{allocator\+\_\+result,  }\item[{void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*})(size\+\_\+t)}]{alloc,  }\item[{void(\texorpdfstring{$\ast$}{*})(void \texorpdfstring{$\ast$}{*})}]{dealloc,  }\item[{char \texorpdfstring{$\ast$}{*}}]{fn\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Benchmark the malloc function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em allocator\+\_\+result} & The result of the benchmark \\
+\hline
+{\em alloc} & The allocator to use \\
+\hline
+{\em dealloc} & The deallocator to use \\
+\hline
+{\em fn\+\_\+name} & The name of the function being benchmarked \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__prog__benchmarks_ga887e6d8c6aa883a79e94014f7f190d15}\label{group__Challoc__prog__benchmarks_ga887e6d8c6aa883a79e94014f7f190d15} 
+\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!bench\_realloc@{bench\_realloc}}
+\index{bench\_realloc@{bench\_realloc}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}
+\doxysubsubsection{\texorpdfstring{bench\_realloc()}{bench\_realloc()}}
+{\footnotesize\ttfamily void bench\+\_\+realloc (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBenchResult}{Bench\+Result}} \texorpdfstring{$\ast$}{*}}]{allocator\+\_\+result,  }\item[{void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*})(size\+\_\+t)}]{alloc,  }\item[{void \texorpdfstring{$\ast$}{*}(\texorpdfstring{$\ast$}{*})(void \texorpdfstring{$\ast$}{*}, size\+\_\+t)}]{realloc,  }\item[{void(\texorpdfstring{$\ast$}{*})(void \texorpdfstring{$\ast$}{*})}]{dealloc,  }\item[{char \texorpdfstring{$\ast$}{*}}]{fn\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Benchmark the realloc function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em allocator\+\_\+result} & The result of the benchmark \\
+\hline
+{\em alloc} & The allocator to use \\
+\hline
+{\em realloc} & The reallocator to use \\
+\hline
+{\em dealloc} & The deallocator to use \\
+\hline
+{\em fn\+\_\+name} & The name of the function being benchmarked \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__prog__benchmarks_ga140ff00997818659e12a386342ca5f82}\label{group__Challoc__prog__benchmarks_ga140ff00997818659e12a386342ca5f82} 
+\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!cpu\_frequency@{cpu\_frequency}}
+\index{cpu\_frequency@{cpu\_frequency}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}
+\doxysubsubsection{\texorpdfstring{cpu\_frequency()}{cpu\_frequency()}}
+{\footnotesize\ttfamily uint64\+\_\+t cpu\+\_\+frequency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Approximate the CPU frequency by measuring the number of cycles in a second. 
+
+\begin{DoxyReturn}{Returns}
+The number of cycles in a second 
+\end{DoxyReturn}
+\Hypertarget{group__Challoc__prog__benchmarks_gaa840894e554c6de34f56ae8ccd49835d}\label{group__Challoc__prog__benchmarks_gaa840894e554c6de34f56ae8ccd49835d} 
+\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!touch\_memory@{touch\_memory}}
+\index{touch\_memory@{touch\_memory}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}
+\doxysubsubsection{\texorpdfstring{touch\_memory()}{touch\_memory()}}
+{\footnotesize\ttfamily void touch\+\_\+memory (\begin{DoxyParamCaption}\item[{volatile uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{ptr,  }\item[{size\+\_\+t}]{size\+\_\+requested }\end{DoxyParamCaption})}
+
+
+
+Touch the memory to make sure it\textquotesingle{}s allocated. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & The pointer to the memory \\
+\hline
+{\em size\+\_\+requested} & The size of the ptr \\
+\hline
+\end{DoxyParams}
+\Hypertarget{group__Challoc__prog__benchmarks_gaac150bd544dae3a8824dbbb744a2232e}\label{group__Challoc__prog__benchmarks_gaac150bd544dae3a8824dbbb744a2232e} 
+\index{Challoc Unit Benchmarks@{Challoc Unit Benchmarks}!write\_results@{write\_results}}
+\index{write\_results@{write\_results}!Challoc Unit Benchmarks@{Challoc Unit Benchmarks}}
+\doxysubsubsection{\texorpdfstring{write\_results()}{write\_results()}}
+{\footnotesize\ttfamily void write\+\_\+results (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBenchResult}{Bench\+Result}}}]{libc,  }\item[{\mbox{\hyperlink{structBenchResult}{Bench\+Result}}}]{challoc,  }\item[{char \texorpdfstring{$\ast$}{*}}]{output\+\_\+dir }\end{DoxyParamCaption})}
+
+
+
+Write the results of a benchmark to a file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em libc} & The result of the libc benchmark \\
+\hline
+{\em challoc} & The result of the challoc benchmark \\
+\hline
+{\em output\+\_\+dir} & The output directory \\
+\hline
+\end{DoxyParams}

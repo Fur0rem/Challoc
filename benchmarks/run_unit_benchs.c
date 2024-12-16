@@ -28,6 +28,9 @@
 
 uint64_t cpu_freq = 0;
 
+/**
+ * @brief Warm up the clock by doing a lot of nops
+ */
 void warmup_clock() {
 	printf("Warming up the clock with " BOLD "%lu" RESET " nop\n", cpu_freq);
 	for (int i = 0; i < cpu_freq; i++) {
@@ -35,20 +38,31 @@ void warmup_clock() {
 	}
 }
 
+/**
+ * @brief Touch the memory to make sure it's allocated
+ * @param ptr The pointer to the memory
+ * @param size_requested The size of the memory
+ */
 typedef enum {
-	LIBC,
-	CHALLOC,
+	LIBC,	 ///< Use of the standard libc allocator
+	CHALLOC, ///< Use of the challoc allocator
 } Allocator;
 
 #define MAX_SIZE 30 // 2^30 = 1 GB
 
+/**
+ * @brief The result of a benchmark
+ */
 typedef struct {
-	Allocator allocator;
-	char* fn_name;
-	uint64_t time[MAX_SIZE + 1];
+	Allocator allocator;	     ///< The allocator used
+	char* fn_name;		     ///< The name of the function being benchmarked
+	uint64_t time[MAX_SIZE + 1]; ///< The time taken for each size
 } BenchResult;
 
-// Hacky way to get a rough estimate of the CPU frequency
+/**
+ * @brief Approximate the CPU frequency by measuring the number of cycles in a second
+ * @return The number of cycles in a second
+ */
 uint64_t cpu_frequency() {
 	const int NB_SECS = 3;
 	uint64_t start	  = __rdtsc();
@@ -57,6 +71,11 @@ uint64_t cpu_frequency() {
 	return (end - start) / NB_SECS;
 }
 
+/**
+ * @brief Touch the memory to make sure it's allocated
+ * @param ptr The pointer to the memory
+ * @param size_requested The size of the ptr
+ */
 void touch_memory(volatile uint8_t* ptr, size_t size_requested) {
 	// Touch the memory to make sure it's allocated
 	size_t first	      = 0;
@@ -71,6 +90,13 @@ void touch_memory(volatile uint8_t* ptr, size_t size_requested) {
 	ptr[last]	      = ~0;
 }
 
+/**
+ * @brief Benchmark the malloc function
+ * @param allocator_result The result of the benchmark
+ * @param alloc The allocator to use
+ * @param dealloc The deallocator to use
+ * @param fn_name The name of the function being benchmarked
+ */
 void bench_malloc(BenchResult* allocator_result, void* (*alloc)(size_t), void (*dealloc)(void*), char* fn_name) {
 	const uint64_t target_cycles = cpu_freq / 2; // half a second
 	printf("Benchmarking time set to " BOLD "%lu " RESET "cycles\n", target_cycles);
@@ -119,6 +145,14 @@ void bench_malloc(BenchResult* allocator_result, void* (*alloc)(size_t), void (*
 	}
 }
 
+/**
+ * @brief Benchmark the realloc function
+ * @param allocator_result The result of the benchmark
+ * @param alloc The allocator to use
+ * @param realloc The reallocator to use
+ * @param dealloc The deallocator to use
+ * @param fn_name The name of the function being benchmarked
+ */
 void bench_realloc(BenchResult* allocator_result, void* (*alloc)(size_t), void* (*realloc)(void*, size_t), void (*dealloc)(void*),
 		   char* fn_name) {
 	const uint64_t target_cycles = cpu_freq / 2; // half a second
@@ -170,6 +204,13 @@ void bench_realloc(BenchResult* allocator_result, void* (*alloc)(size_t), void* 
 	}
 }
 
+/**
+ * @brief Benchmark the calloc function
+ * @param allocator_result The result of the benchmark
+ * @param calloc The allocator to use
+ * @param dealloc The deallocator to use
+ * @param fn_name The name of the function being benchmarked
+ */
 void bench_calloc(BenchResult* allocator_result, void* (*calloc)(size_t, size_t), void (*dealloc)(void*), char* fn_name) {
 	const uint64_t target_cycles = cpu_freq; // 1 billion cycles
 	printf("Benchmarking time set to " BOLD "%lu " RESET "cycles\n", target_cycles);
@@ -218,6 +259,12 @@ void bench_calloc(BenchResult* allocator_result, void* (*calloc)(size_t, size_t)
 	}
 }
 
+/**
+ * @brief Write the results of a benchmark to a file
+ * @param libc The result of the libc benchmark
+ * @param challoc The result of the challoc benchmark
+ * @param output_dir The output directory
+ */
 void write_results(BenchResult libc, BenchResult challoc, char* output_dir) {
 	// Write it in csv (size, libc, challoc)
 	char full_path[200];

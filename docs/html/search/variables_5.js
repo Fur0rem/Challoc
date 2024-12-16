@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mmap_5fptr_0',['mmap_ptr',['../df/d68/structBlock.html#a2a6815cfdbd1a7d458d2085e32b3bf89',1,'Block']]]
+  ['is_5fclose_0',['is_close',['../d7/d04/structClosePowerOfTwo.html#aae1d8b42e5038cf6424169c63aef82bc',1,'ClosePowerOfTwo']]]
 ];
