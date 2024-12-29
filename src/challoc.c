@@ -25,7 +25,7 @@
  */
 
 /// Mutex to protect the minislab allocator
-static pthread_mutex_t challoc_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t challoc_mutex;
 
 /// Execute code while holding the challoc mutex
 #define CHALLOC_MUTEX(code)                                                                                                                \
@@ -379,6 +379,9 @@ AllocMetadata* challoc_get_metadata(void* ptr) {
 	return (AllocMetadata*)(ptr - sizeof(AllocMetadata));
 }
 
+void* last_block_alloc		       = NULL; ///< Last allocation made in a block
+AllocMetadata* prev_of_last_block_free = NULL; ///< Previous of last free made in a block
+
 /**
  * @brief Structure to represent a block of memory allocated with mmap
  */
@@ -581,6 +584,54 @@ Block* blocklist_peek(BlockList* list, size_t block_idx) {
 }
 
 /**
+ * @brief Tries to allocate after a given metadata
+ * @param metadata The metadata to allocate after
+ * @param size_requested The size requested
+ * @param size_needed The size needed
+ * @param block_idx The index of the block to allocate from
+ */
+void* try_allocate_next_to(AllocMetadata* metadata, size_t size_requested, size_t size_needed, size_t block_idx) {
+	Block* block	    = &challoc_blocks_in_use.blocks[block_idx];
+	AllocMetadata* next = metadata->next;
+	if (next == NULL) { // We are at the end of the linked list
+		size_t space_between_last_and_end_of_block =
+		    ((size_t)block->mmap_ptr + block->size) - (size_t)metadata - sizeof(AllocMetadata) - metadata->size;
+		if (space_between_last_and_end_of_block >= size_needed) {
+			AllocMetadata* new_metadata = (AllocMetadata*)((size_t)metadata + sizeof(AllocMetadata) + metadata->size);
+			new_metadata->size	    = size_requested;
+			new_metadata->next	    = NULL;
+			new_metadata->prev	    = metadata;
+			new_metadata->block_idx	    = block_idx;
+
+			metadata->next = new_metadata;
+			block->tail    = new_metadata;
+			block->free_space -= size_needed;
+			assert(block->free_space <= block->size);
+			block->freshly_allocated = false;
+			return (uint8_t*)(new_metadata) + sizeof(AllocMetadata);
+		}
+	}
+	else { // We are in the middle of the linked list
+		ssize_t space_between_current_and_next = (ssize_t)next - (ssize_t)metadata - sizeof(AllocMetadata) - metadata->size;
+		if (space_between_current_and_next >= (ssize_t)size_needed) { // We can allocate in between
+			AllocMetadata* new_metadata = (AllocMetadata*)((size_t)metadata + sizeof(AllocMetadata) + metadata->size);
+			new_metadata->size	    = size_requested;
+			new_metadata->next	    = next;
+			new_metadata->prev	    = metadata;
+			new_metadata->block_idx	    = block_idx;
+
+			metadata->next = new_metadata;
+			next->prev     = new_metadata;
+			block->free_space -= size_needed;
+			assert(block->free_space <= block->size);
+			block->freshly_allocated = false;
+			return (uint8_t*)(new_metadata) + sizeof(AllocMetadata);
+		}
+	}
+	return NULL;
+}
+
+/**
  * @brief Tries to allocate within a block
  * @param list The block list
  * @param block_idx The index of the block to allocate from
@@ -615,41 +666,9 @@ void* block_try_allocate(BlockList* list, size_t block_idx, size_t size_requeste
 
 	// Go through the linked list to find a space
 	for (AllocMetadata* current = block->head; current != NULL; current = current->next) {
-		AllocMetadata* next = current->next;
-		if (next == NULL) { // We are at the end of the linked list
-			size_t space_between_last_and_end_of_block =
-			    ((size_t)block->mmap_ptr + block->size) - (size_t)current - sizeof(AllocMetadata) - current->size;
-			if (space_between_last_and_end_of_block >= size_needed) {
-				AllocMetadata* new_metadata = (AllocMetadata*)((size_t)current + sizeof(AllocMetadata) + current->size);
-				new_metadata->size	    = size_requested;
-				new_metadata->next	    = NULL;
-				new_metadata->prev	    = current;
-				new_metadata->block_idx	    = block_idx;
-
-				current->next = new_metadata;
-				block->tail   = new_metadata;
-				block->free_space -= size_needed;
-				assert(block->free_space <= block->size);
-				block->freshly_allocated = false;
-				return (uint8_t*)(new_metadata) + sizeof(AllocMetadata);
-			}
-		}
-		else { // We are in the middle of the linked list
-			ssize_t space_between_current_and_next = (ssize_t)next - (ssize_t)current - sizeof(AllocMetadata) - current->size;
-			if (space_between_current_and_next >= (ssize_t)size_needed) { // We can allocate in between
-				AllocMetadata* new_metadata = (AllocMetadata*)((size_t)current + sizeof(AllocMetadata) + current->size);
-				new_metadata->size	    = size_requested;
-				new_metadata->next	    = next;
-				new_metadata->prev	    = current;
-				new_metadata->block_idx	    = block_idx;
-
-				current->next = new_metadata;
-				next->prev    = new_metadata;
-				block->free_space -= size_needed;
-				assert(block->free_space <= block->size);
-				block->freshly_allocated = false;
-				return (uint8_t*)(new_metadata) + sizeof(AllocMetadata);
-			}
+		void* ptr = try_allocate_next_to(current, size_requested, size_needed, block_idx);
+		if (ptr != NULL) {
+			return ptr;
 		}
 	}
 
@@ -702,7 +721,6 @@ void block_free(Block* block, AllocMetadata* ptr) {
  * @brief Free an allocation from a blocklist
  * @param ptr The pointer to the allocated memory
  */
-
 void blocklist_free(AllocMetadata* ptr) {
 	size_t block_idx = ptr->block_idx;
 	Block* block	 = &challoc_blocks_in_use.blocks[block_idx];
@@ -711,6 +729,9 @@ void blocklist_free(AllocMetadata* ptr) {
 	// Check if the block is empty
 	if (block->free_space == block->size) {
 		assert(block->head == NULL);
+
+		// Invalidate the last free because the block can be unmapped later on
+		prev_of_last_block_free = NULL;
 
 		// Push the block to the freed list
 		blocklist_push_or_remove(&challoc_freed_blocks, *block);
@@ -784,6 +805,28 @@ void* __chamalloc(size_t size) {
 		}
 	}
 
+	// Try to allocate next to the last allocation
+	if (last_block_alloc != NULL) {
+		AllocMetadata* metadata = challoc_get_metadata(last_block_alloc);
+		void* ptr		= try_allocate_next_to(metadata, size, size + sizeof(AllocMetadata), metadata->block_idx);
+		if (ptr != NULL) {
+			decrease_ttl_and_unmap();
+			last_block_alloc = ptr;
+			return ptr;
+		}
+	}
+
+	// Try to allocate next to the last free
+	if (prev_of_last_block_free != NULL) {
+		AllocMetadata* metadata = prev_of_last_block_free;
+		void* ptr		= try_allocate_next_to(metadata, size, size + sizeof(AllocMetadata), metadata->block_idx);
+		if (ptr != NULL) {
+			decrease_ttl_and_unmap();
+			last_block_alloc = ptr;
+			return ptr;
+		}
+	}
+
 	// Go through the list of mmap blocks
 	for (size_t i = 0; i < challoc_blocks_in_use.size; i++) {
 		Block* block = &challoc_blocks_in_use.blocks[i];
@@ -791,6 +834,7 @@ void* __chamalloc(size_t size) {
 			void* ptr = block_try_allocate(&challoc_blocks_in_use, i, size);
 			if (ptr != NULL) {
 				decrease_ttl_and_unmap();
+				last_block_alloc = ptr;
 				return ptr;
 			}
 		}
@@ -812,6 +856,7 @@ void* __chamalloc(size_t size) {
 			blocklist_push(&challoc_blocks_in_use, block);
 			void* ptr = block_try_allocate(&challoc_blocks_in_use, challoc_blocks_in_use.size - 1, size);
 			decrease_ttl_and_unmap();
+			last_block_alloc = ptr;
 			return ptr;
 		}
 	}
@@ -828,6 +873,7 @@ void* __chamalloc(size_t size) {
 
 	decrease_ttl_and_unmap();
 
+	last_block_alloc = ptr;
 	return ptr;
 }
 
@@ -846,8 +892,17 @@ void __chafree(void* ptr) {
 		return;
 	}
 
-	// Free the memory from the block list
+	if (last_block_alloc == ptr) {
+		last_block_alloc = NULL;
+	}
+
 	AllocMetadata* metadata = challoc_get_metadata(ptr);
+
+	if (metadata->prev != NULL) {
+		prev_of_last_block_free = metadata->prev;
+	}
+
+	// Free the memory from the block list
 	blocklist_free(metadata);
 }
 
@@ -1024,6 +1079,11 @@ LeakcheckTraceList challoc_leaktracker = {0}; ///< List of allocations for leak 
 void __attribute__((constructor)) init() {
 	challoc_blocks_in_use = blocklist_with_capacity(30);
 	challoc_freed_blocks  = blocklist_with_capacity(10);
+	int res		      = pthread_mutex_init(&challoc_mutex, NULL);
+	if (res != 0) {
+		perror("Could not initialize mutex");
+		exit(1);
+	}
 
 #ifdef CHALLOC_LEAKCHECK
 	challoc_leaktracker = leakcheck_list_with_capacity(10);
@@ -1052,6 +1112,12 @@ void __attribute__((destructor)) fini() {
 #endif
 	blocklist_destroy(&challoc_blocks_in_use);
 	blocklist_destroy(&challoc_freed_blocks);
+
+	int res = pthread_mutex_destroy(&challoc_mutex);
+	if (res != 0) {
+		perror("Could not destroy mutex");
+		exit(1);
+	}
 }
 
 /// ------------------------------------------------

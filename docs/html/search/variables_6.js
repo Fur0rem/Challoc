@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['memory_5fusage_0',['memory_usage',['../d4/d71/structBenchResult.html#a3992da86ecbaeb21b2c265b1b00fbcd6',1,'BenchResult']]],
-  ['mmap_5fptr_1',['mmap_ptr',['../df/d68/structBlock.html#a2a6815cfdbd1a7d458d2085e32b3bf89',1,'Block']]]
+  ['last_5fblock_5falloc_0',['last_block_alloc',['../d7/d75/group__Challoc__block.html#ga672429b83b580918d58511539f4d77ec',1,'challoc.c']]]
 ];

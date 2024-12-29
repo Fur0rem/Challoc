@@ -91,6 +91,8 @@ bool \mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{
 \begin{DoxyCompactList}\small\item\em Checks if a block has potentially enough free space to allocate a given size. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_gade5f736c6073fb5c7780633828d8bf03}{blocklist\+\_\+peek}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, size\+\_\+t block\+\_\+idx)
 \begin{DoxyCompactList}\small\item\em Peek a block from the block list. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_gabc8e05c2289de4b029756226b8a6736d}{try\+\_\+allocate\+\_\+next\+\_\+to}} (\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}metadata, size\+\_\+t size\+\_\+requested, size\+\_\+t size\+\_\+needed, size\+\_\+t block\+\_\+idx)
+\begin{DoxyCompactList}\small\item\em Tries to allocate after a given metadata. \end{DoxyCompactList}\item 
 void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\+\_\+try\+\_\+allocate}} (\mbox{\hyperlink{structBlockList}{Block\+List}} \texorpdfstring{$\ast$}{*}list, size\+\_\+t block\+\_\+idx, size\+\_\+t size\+\_\+requested)
 \begin{DoxyCompactList}\small\item\em Tries to allocate within a block. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8}{block\+\_\+free}} (\mbox{\hyperlink{structBlock}{Block}} \texorpdfstring{$\ast$}{*}block, \mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*}ptr)
@@ -138,6 +140,10 @@ void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group__Challoc__pub_ga856dcc755
 \item 
 Mini\+Slab {\bfseries challoc\+\_\+minislab} = \{0\}
 \begin{DoxyCompactList}\small\item\em Global minislab allocator. \end{DoxyCompactList}\item 
+void \texorpdfstring{$\ast$}{*} {\bfseries last\+\_\+block\+\_\+alloc} = NULL
+\begin{DoxyCompactList}\small\item\em Last allocation made in a block. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structAllocMetadata}{Alloc\+Metadata}} \texorpdfstring{$\ast$}{*} {\bfseries prev\+\_\+of\+\_\+last\+\_\+block\+\_\+free} = NULL
+\begin{DoxyCompactList}\small\item\em Previous of last free made in a block. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{structBlockList}{Block\+List}} {\bfseries challoc\+\_\+blocks\+\_\+in\+\_\+use} = \{0\}
 \begin{DoxyCompactList}\small\item\em List of blocks in use. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{structBlockList}{Block\+List}} {\bfseries challoc\+\_\+freed\+\_\+blocks} = \{0\}

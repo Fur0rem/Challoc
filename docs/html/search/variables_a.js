@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['tail_0',['tail',['../df/d68/structBlock.html#a5c8d6b0dd88e511a75d0b72dd9ae837f',1,'Block']]],
-  ['time_1',['time',['../d4/d71/structBenchResult.html#a4ae7a41fdc7167e256b854205fab0b12',1,'BenchResult']]],
-  ['time_5fto_5flive_2',['time_to_live',['../df/d68/structBlock.html#a9169058a9f7164dfc7610aa5af7cf0c8',1,'Block']]],
-  ['times_3',['times',['../d4/d71/structBenchResult.html#ab73788403d4e64668c0dec7f2ac564b3',1,'BenchResult']]]
+  ['size_0',['size',['../d6/d7e/structAllocMetadata.html#a5f4fba93a7abb661fcab9e8b2bbed18c',1,'AllocMetadata::size'],['../df/d68/structBlock.html#af029d738bbb692feb5a930cf6f5906c3',1,'Block::size'],['../df/d9e/structBlockList.html#a2279b30bafd2950909d6568fbe3a64ac',1,'BlockList::size'],['../d0/d8c/structAllocTrace.html#a0072aaba30fbc7de637bbbb467c869bb',1,'AllocTrace::size'],['../d2/d29/structLeakcheckTraceList.html#ad0a52563ba531c29bb1d17801a2c42ab',1,'LeakcheckTraceList::size']]]
 ];

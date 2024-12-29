@@ -17,7 +17,7 @@
 \DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <unistd.h>}}
 \DoxyCodeLine{00018\ }
 \DoxyCodeLine{00022\ }
-\DoxyCodeLine{00028\ \textcolor{keyword}{static}\ pthread\_mutex\_t\ challoc\_mutex\ =\ PTHREAD\_MUTEX\_INITIALIZER;}
+\DoxyCodeLine{00028\ \textcolor{keyword}{static}\ pthread\_mutex\_t\ challoc\_mutex;}
 \DoxyCodeLine{00029\ }
 \DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ CHALLOC\_MUTEX(code)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
 \DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ pthread\_mutex\_lock(\&challoc\_mutex);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
@@ -292,592 +292,652 @@
 \DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*)(ptr\ -\/\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}}));}
 \DoxyCodeLine{00380\ \}}
 \DoxyCodeLine{00381\ }
-\DoxyCodeLine{00385\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
-\DoxyCodeLine{00386\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}};\ \ \ \ \ \ \ \ }
-\DoxyCodeLine{00387\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}};\ \ \ \ }
-\DoxyCodeLine{00388\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ \mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}};\ \ \ }
-\DoxyCodeLine{00389\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ \mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}};\ \ \ }
-\DoxyCodeLine{00390\ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89}{mmap\_ptr}};\ \ \ \ \ }
-\DoxyCodeLine{00391\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}{time\_to\_live}};\ \ \ }
-\DoxyCodeLine{00392\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBlock_a81bc33e367816c5a25450f1481937b55}{freshly\_allocated}};\ }
-\DoxyCodeLine{00393\ \}\ \mbox{\hyperlink{structBlock}{Block}};}
-\DoxyCodeLine{00394\ }
-\DoxyCodeLine{00398\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
-\DoxyCodeLine{00399\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ \mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}};\ \ \ \ }
-\DoxyCodeLine{00400\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ \ \ \ \ }
-\DoxyCodeLine{00401\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}};\ }
-\DoxyCodeLine{00402\ \}\ \mbox{\hyperlink{structBlockList}{BlockList}};}
-\DoxyCodeLine{00403\ }
-\DoxyCodeLine{00409\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\_to\_4096multiple}}(\textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{00410\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ remainder\ =\ size\ \%\ 4096;}
-\DoxyCodeLine{00411\ \ \ \ \ \textcolor{keywordflow}{if}\ (remainder\ ==\ 0)\ \{}
-\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ size;}
-\DoxyCodeLine{00413\ \ \ \ \ \}}
-\DoxyCodeLine{00414\ \ \ \ \ \textcolor{keywordflow}{return}\ size\ +\ 4096\ -\/\ remainder;}
-\DoxyCodeLine{00415\ \}}
-\DoxyCodeLine{00416\ }
-\DoxyCodeLine{00422\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{group__Challoc__block_ga1f3ce2d2f34f49f2e12a0f1a561bcda6}{time\_to\_live\_with\_size}}(\textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{00423\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ceil\ =\ \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\_to\_4096multiple}}(size);}
-\DoxyCodeLine{00424\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ log2\ =\ 4096;\ \textcolor{comment}{//\ size\ of\ a\ page}}
-\DoxyCodeLine{00425\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ttl\ \ =\ 5;\ \ \ \ \textcolor{comment}{//\ 5\ is\ the\ max\ time\ to\ live}}
-\DoxyCodeLine{00426\ }
-\DoxyCodeLine{00427\ \ \ \ \ \textcolor{comment}{//\ Compute\ the\ log2\ of\ the\ size}}
-\DoxyCodeLine{00428\ \ \ \ \ \textcolor{keywordflow}{while}\ (log2\ <\ ceil)\ \{}
-\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ log2\ *=\ 2;}
-\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ ttl-\/-\/;}
-\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ttl\ ==\ 1)\ \{}
-\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00434\ \ \ \ \ \}}
-\DoxyCodeLine{00435\ }
-\DoxyCodeLine{00436\ \ \ \ \ \textcolor{keywordflow}{return}\ ttl;}
-\DoxyCodeLine{00437\ \}}
+\DoxyCodeLine{00382\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ NULL;\ }
+\DoxyCodeLine{00383\ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ \mbox{\hyperlink{group__Challoc__block_ga20bc18824383d595f22873d5d8047e13}{prev\_of\_last\_block\_free}}\ =\ NULL;\ }
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00388\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00389\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00390\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}};\ \ \ \ }
+\DoxyCodeLine{00391\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ \mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}};\ \ \ }
+\DoxyCodeLine{00392\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ \mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}};\ \ \ }
+\DoxyCodeLine{00393\ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89}{mmap\_ptr}};\ \ \ \ \ }
+\DoxyCodeLine{00394\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}{time\_to\_live}};\ \ \ }
+\DoxyCodeLine{00395\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structBlock_a81bc33e367816c5a25450f1481937b55}{freshly\_allocated}};\ }
+\DoxyCodeLine{00396\ \}\ \mbox{\hyperlink{structBlock}{Block}};}
+\DoxyCodeLine{00397\ }
+\DoxyCodeLine{00401\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00402\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ \mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}};\ \ \ \ }
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ \ \ \ \ }
+\DoxyCodeLine{00404\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}};\ }
+\DoxyCodeLine{00405\ \}\ \mbox{\hyperlink{structBlockList}{BlockList}};}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00412\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\_to\_4096multiple}}(\textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{00413\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ remainder\ =\ size\ \%\ 4096;}
+\DoxyCodeLine{00414\ \ \ \ \ \textcolor{keywordflow}{if}\ (remainder\ ==\ 0)\ \{}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ size;}
+\DoxyCodeLine{00416\ \ \ \ \ \}}
+\DoxyCodeLine{00417\ \ \ \ \ \textcolor{keywordflow}{return}\ size\ +\ 4096\ -\/\ remainder;}
+\DoxyCodeLine{00418\ \}}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00425\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{group__Challoc__block_ga1f3ce2d2f34f49f2e12a0f1a561bcda6}{time\_to\_live\_with\_size}}(\textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{00426\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ceil\ =\ \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\_to\_4096multiple}}(size);}
+\DoxyCodeLine{00427\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ log2\ =\ 4096;\ \textcolor{comment}{//\ size\ of\ a\ page}}
+\DoxyCodeLine{00428\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ttl\ \ =\ 5;\ \ \ \ \textcolor{comment}{//\ 5\ is\ the\ max\ time\ to\ live}}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \ \ \ \ \textcolor{comment}{//\ Compute\ the\ log2\ of\ the\ size}}
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordflow}{while}\ (log2\ <\ ceil)\ \{}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ log2\ *=\ 2;}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ ttl-\/-\/;}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ttl\ ==\ 1)\ \{}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00437\ \ \ \ \ \}}
 \DoxyCodeLine{00438\ }
-\DoxyCodeLine{00444\ \mbox{\hyperlink{structBlockList}{BlockList}}\ \mbox{\hyperlink{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}{blocklist\_with\_capacity}}(\textcolor{keywordtype}{size\_t}\ capacity)\ \{}
-\DoxyCodeLine{00445\ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structBlockList}{BlockList}})\{}
-\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}\ \ \ =\ mmap(NULL,\ capacity\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}),\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0),}
-\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}}\ \ \ \ \ =\ 0,}
-\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ .capacity\ =\ capacity,}
-\DoxyCodeLine{00449\ \ \ \ \ \};}
-\DoxyCodeLine{00450\ \}}
-\DoxyCodeLine{00451\ }
-\DoxyCodeLine{00456\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}{blocklist\_destroy}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list)\ \{}
-\DoxyCodeLine{00457\ \ \ \ \ munmap(list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
-\DoxyCodeLine{00458\ \}}
-\DoxyCodeLine{00459\ }
-\DoxyCodeLine{00465\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga85a4ff078b5da234a2f713ff07d314a8}{blocklist\_allocate\_new\_block}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \textcolor{keywordtype}{size\_t}\ size\_requested)\ \{}
-\DoxyCodeLine{00466\ \ \ \ \ size\_requested\ =\ \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\_to\_4096multiple}}(size\_requested);}
-\DoxyCodeLine{00467\ }
-\DoxyCodeLine{00468\ \ \ \ \ \textcolor{comment}{//\ Allocate\ the\ memory}}
-\DoxyCodeLine{00469\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ mmap(NULL,\ size\_requested,\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0);}
-\DoxyCodeLine{00470\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ MAP\_FAILED)\ \{}
-\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}mmap"{}});}
-\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ exit(1);}
-\DoxyCodeLine{00473\ \ \ \ \ \}}
-\DoxyCodeLine{00474\ }
-\DoxyCodeLine{00475\ \ \ \ \ \textcolor{comment}{//\ Add\ the\ block\ to\ the\ list}}
-\DoxyCodeLine{00476\ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ ==\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}})\ \{}
-\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *=\ 2;}
-\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ new\_blocks\ =\ mmap(NULL,\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}),\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0);}
-\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ memcpy(new\_blocks,\ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
-\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ munmap(list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
-\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}\ =\ new\_blocks;}
-\DoxyCodeLine{00482\ \ \ \ \ \}}
-\DoxyCodeLine{00483\ }
-\DoxyCodeLine{00484\ \ \ \ \ \textcolor{comment}{//\ Initialize\ the\ block}}
-\DoxyCodeLine{00485\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}]\ =\ (\mbox{\hyperlink{structBlock}{Block}})\{}
-\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}}\ \ \ \ \ \ \ \ \ \ =\ size\_requested,}
-\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ .free\_space\ \ \ \ \ \ \ \ =\ size\_requested,}
-\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ .head\ \ \ \ \ \ \ \ \ \ =\ NULL,}
-\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ .tail\ \ \ \ \ \ \ \ \ \ =\ NULL,}
-\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ .freshly\_allocated\ =\ \textcolor{keyword}{true},}
-\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ .mmap\_ptr\ \ \ \ \ \ \ \ \ \ =\ ptr,}
-\DoxyCodeLine{00492\ \ \ \ \ \};}
-\DoxyCodeLine{00493\ }
-\DoxyCodeLine{00494\ \ \ \ \ \textcolor{comment}{//\ Increment\ the\ size\ of\ the\ list}}
-\DoxyCodeLine{00495\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}++;}
-\DoxyCodeLine{00496\ \}}
-\DoxyCodeLine{00497\ }
-\DoxyCodeLine{00498\ \mbox{\hyperlink{structBlockList}{BlockList}}\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}\ =\ \{0\};\ }
-\DoxyCodeLine{00499\ \mbox{\hyperlink{structBlockList}{BlockList}}\ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}\ =\ \{0\};\ }
+\DoxyCodeLine{00439\ \ \ \ \ \textcolor{keywordflow}{return}\ ttl;}
+\DoxyCodeLine{00440\ \}}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00447\ \mbox{\hyperlink{structBlockList}{BlockList}}\ \mbox{\hyperlink{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}{blocklist\_with\_capacity}}(\textcolor{keywordtype}{size\_t}\ capacity)\ \{}
+\DoxyCodeLine{00448\ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structBlockList}{BlockList}})\{}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}\ \ \ =\ mmap(NULL,\ capacity\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}),\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0),}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}}\ \ \ \ \ =\ 0,}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ .capacity\ =\ capacity,}
+\DoxyCodeLine{00452\ \ \ \ \ \};}
+\DoxyCodeLine{00453\ \}}
+\DoxyCodeLine{00454\ }
+\DoxyCodeLine{00459\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}{blocklist\_destroy}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list)\ \{}
+\DoxyCodeLine{00460\ \ \ \ \ munmap(list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
+\DoxyCodeLine{00461\ \}}
+\DoxyCodeLine{00462\ }
+\DoxyCodeLine{00468\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga85a4ff078b5da234a2f713ff07d314a8}{blocklist\_allocate\_new\_block}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \textcolor{keywordtype}{size\_t}\ size\_requested)\ \{}
+\DoxyCodeLine{00469\ \ \ \ \ size\_requested\ =\ \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\_to\_4096multiple}}(size\_requested);}
+\DoxyCodeLine{00470\ }
+\DoxyCodeLine{00471\ \ \ \ \ \textcolor{comment}{//\ Allocate\ the\ memory}}
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ mmap(NULL,\ size\_requested,\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0);}
+\DoxyCodeLine{00473\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ MAP\_FAILED)\ \{}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}mmap"{}});}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00476\ \ \ \ \ \}}
+\DoxyCodeLine{00477\ }
+\DoxyCodeLine{00478\ \ \ \ \ \textcolor{comment}{//\ Add\ the\ block\ to\ the\ list}}
+\DoxyCodeLine{00479\ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ ==\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}})\ \{}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *=\ 2;}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ new\_blocks\ =\ mmap(NULL,\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}),\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0);}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ memcpy(new\_blocks,\ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ munmap(list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}\ =\ new\_blocks;}
+\DoxyCodeLine{00485\ \ \ \ \ \}}
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00487\ \ \ \ \ \textcolor{comment}{//\ Initialize\ the\ block}}
+\DoxyCodeLine{00488\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}]\ =\ (\mbox{\hyperlink{structBlock}{Block}})\{}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}}\ \ \ \ \ \ \ \ \ \ =\ size\_requested,}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ .free\_space\ \ \ \ \ \ \ \ =\ size\_requested,}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ .head\ \ \ \ \ \ \ \ \ \ =\ NULL,}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ .tail\ \ \ \ \ \ \ \ \ \ =\ NULL,}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ .freshly\_allocated\ =\ \textcolor{keyword}{true},}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ .mmap\_ptr\ \ \ \ \ \ \ \ \ \ =\ ptr,}
+\DoxyCodeLine{00495\ \ \ \ \ \};}
+\DoxyCodeLine{00496\ }
+\DoxyCodeLine{00497\ \ \ \ \ \textcolor{comment}{//\ Increment\ the\ size\ of\ the\ list}}
+\DoxyCodeLine{00498\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}++;}
+\DoxyCodeLine{00499\ \}}
 \DoxyCodeLine{00500\ }
-\DoxyCodeLine{00505\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_gaf0325e3cda75a17b82fa7c8bf9e097b3}{block\_print}}(\mbox{\hyperlink{structBlock}{Block}}*\ block)\ \{}
-\DoxyCodeLine{00506\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Block\ n°\%zu\ (\%zu\ /\ \%zu\ bytes)\ :\ "{}},\ block\ -\/\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}},\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
-\DoxyCodeLine{00507\ \ \ \ \ \textcolor{keywordflow}{for}\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ current\ =\ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}};\ current\ !=\ NULL;\ current\ =\ current-\/>next)\ \{}
-\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ assert(current-\/>block\_idx\ ==\ (\textcolor{keywordtype}{size\_t})(block\ -\/\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}));}
-\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}[[\%zu]\ \%p\ |\ \%zu]\ -\/>\ "{}},\ current-\/>block\_idx,\ current,\ current-\/>size);}
-\DoxyCodeLine{00510\ \ \ \ \ \}}
-\DoxyCodeLine{00511\ \ \ \ \ printf(\textcolor{stringliteral}{"{}x\(\backslash\)n"{}});}
-\DoxyCodeLine{00512\ \}}
-\DoxyCodeLine{00513\ }
-\DoxyCodeLine{00518\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga0e4e55eb1cb628b044b42847350b1388}{blocklist\_print}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list)\ \{}
-\DoxyCodeLine{00519\ \ \ \ \ printf(\textcolor{stringliteral}{"{}BlockList\ (\%zu\ /\ \%zu)\ :\ \(\backslash\)n"{}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}},\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}});}
-\DoxyCodeLine{00520\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ i++)\ \{}
-\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gaf0325e3cda75a17b82fa7c8bf9e097b3}{block\_print}}(\&list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i]);}
-\DoxyCodeLine{00522\ \ \ \ \ \}}
-\DoxyCodeLine{00523\ \}}
-\DoxyCodeLine{00524\ }
-\DoxyCodeLine{00530\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_gaea5de1c86431322ce809cd6ea3e8cca5}{blocklist\_push}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \mbox{\hyperlink{structBlock}{Block}}\ block)\ \{}
-\DoxyCodeLine{00531\ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ ==\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}})\ \{}
-\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *=\ 2;}
-\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size\ \ \ =\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}});}
-\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ size\ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\_to\_4096multiple}}(size);}
-\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ new\_blocks\ =\ mmap(NULL,\ size,\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0);}
-\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ memcpy(new\_blocks,\ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
-\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (munmap(list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}))\ ==\ -\/1)\ \{}
-\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}munmap"{}});}
-\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}\ =\ new\_blocks;}
-\DoxyCodeLine{00541\ \ \ \ \ \}}
-\DoxyCodeLine{00542\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}]\ =\ block;}
-\DoxyCodeLine{00543\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}++;}
-\DoxyCodeLine{00544\ \}}
-\DoxyCodeLine{00545\ }
-\DoxyCodeLine{00551\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga980660e55ff5572dadb47e4efd321eae}{blocklist\_push\_or\_remove}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \mbox{\hyperlink{structBlock}{Block}}\ block)\ \{}
-\DoxyCodeLine{00552\ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ ==\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}})\ \{}
-\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (munmap(block.\mbox{\hyperlink{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89}{mmap\_ptr}},\ block.\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}})\ ==\ -\/1)\ \{}
-\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}munmap"{}});}
-\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
-\DoxyCodeLine{00557\ \ \ \ \ \}}
-\DoxyCodeLine{00558\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}]\ =\ block;}
-\DoxyCodeLine{00559\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}++;}
-\DoxyCodeLine{00560\ \}}
-\DoxyCodeLine{00561\ }
-\DoxyCodeLine{00568\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{block\_has\_enough\_space}}(\mbox{\hyperlink{structBlock}{Block}}*\ block,\ \textcolor{keywordtype}{size\_t}\ size\_requested)\ \{}
-\DoxyCodeLine{00569\ \ \ \ \ \textcolor{keywordflow}{return}\ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ >=\ size\_requested\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}});}
-\DoxyCodeLine{00570\ \}}
-\DoxyCodeLine{00571\ }
-\DoxyCodeLine{00578\ \mbox{\hyperlink{structBlock}{Block}}*\ \mbox{\hyperlink{group__Challoc__block_gade5f736c6073fb5c7780633828d8bf03}{blocklist\_peek}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \textcolor{keywordtype}{size\_t}\ block\_idx)\ \{}
-\DoxyCodeLine{00579\ \ \ \ \ assert(block\_idx\ <=\ list-\/>size);}
-\DoxyCodeLine{00580\ \ \ \ \ \textcolor{keywordflow}{return}\ \&list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
-\DoxyCodeLine{00581\ \}}
-\DoxyCodeLine{00582\ }
-\DoxyCodeLine{00590\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\_try\_allocate}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \textcolor{keywordtype}{size\_t}\ block\_idx,\ \textcolor{keywordtype}{size\_t}\ size\_requested)\ \{}
-\DoxyCodeLine{00591\ \ \ \ \ assert(block\_idx\ <=\ list-\/>size);}
-\DoxyCodeLine{00592\ \ \ \ \ assert(list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx].\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ <=\ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx].\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
-\DoxyCodeLine{00593\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size\_needed\ =\ size\_requested\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}});\ \textcolor{comment}{//\ We\ need\ to\ store\ the\ metadata}}
-\DoxyCodeLine{00594\ }
-\DoxyCodeLine{00595\ \ \ \ \ \textcolor{comment}{//\ We\ will\ never\ be\ able\ to\ find\ a\ space}}
-\DoxyCodeLine{00596\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ =\ \&list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
-\DoxyCodeLine{00597\ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>free\_space\ <\ size\_needed)\ \{}
-\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
-\DoxyCodeLine{00599\ \ \ \ \ \}}
-\DoxyCodeLine{00600\ }
-\DoxyCodeLine{00601\ \ \ \ \ \textcolor{comment}{//\ First\ allocated\ block}}
-\DoxyCodeLine{00602\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ last\ =\ block-\/>tail;}
-\DoxyCodeLine{00603\ \ \ \ \ \textcolor{keywordflow}{if}\ (last\ ==\ NULL)\ \{}
-\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ block-\/>head\ \ \ \ \ \ \ \ =\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*)(block-\/>mmap\_ptr);}
-\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ block-\/>head-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ \ \ \ \ \ =\ size\_requested;}
-\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ block-\/>head-\/>next\ \ \ \ \ \ =\ NULL;}
-\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ block-\/>head-\/>prev\ \ \ \ \ \ =\ NULL;}
-\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ block-\/>head-\/>block\_idx\ =\ block\_idx;}
-\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ block-\/>tail\ \ \ \ \ \ \ \ =\ block-\/>head;}
-\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ block-\/>free\_space\ -\/=\ size\_needed;}
-\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ assert(block-\/>free\_space\ <=\ block-\/>size);}
-\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ block-\/>freshly\_allocated\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint8\_t*)(block-\/>head)\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}});}
-\DoxyCodeLine{00614\ \ \ \ \ \}}
-\DoxyCodeLine{00615\ }
-\DoxyCodeLine{00616\ \ \ \ \ \textcolor{comment}{//\ Go\ through\ the\ linked\ list\ to\ find\ a\ space}}
-\DoxyCodeLine{00617\ \ \ \ \ \textcolor{keywordflow}{for}\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ current\ =\ block-\/>head;\ current\ !=\ NULL;\ current\ =\ current-\/>next)\ \{}
-\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ next\ =\ current-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}};}
-\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (next\ ==\ NULL)\ \{\ \textcolor{comment}{//\ We\ are\ at\ the\ end\ of\ the\ linked\ list}}
-\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ space\_between\_last\_and\_end\_of\_block\ =}
-\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((size\_t)block-\/>mmap\_ptr\ +\ block-\/>size)\ -\/\ (size\_t)current\ -\/\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}})\ -\/\ current-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}};}
-\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (space\_between\_last\_and\_end\_of\_block\ >=\ size\_needed)\ \{}
-\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ new\_metadata\ =\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*)((\textcolor{keywordtype}{size\_t})current\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}})\ +\ current-\/>size);}
-\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ \ \ \ \ \ =\ size\_requested;}
-\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ \ \ \ \ \ =\ NULL;}
-\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ \ \ \ \ \ =\ current;}
-\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}}\ \ \ \ \ \ \ \ =\ block\_idx;}
-\DoxyCodeLine{00628\ }
-\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current-\/>next\ =\ new\_metadata;}
-\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>tail\ \ \ =\ new\_metadata;}
-\DoxyCodeLine{00631\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>free\_space\ -\/=\ size\_needed;}
-\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert(block-\/>free\_space\ <=\ block-\/>size);}
-\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>freshly\_allocated\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint8\_t*)(new\_metadata)\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}});}
-\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{\ \textcolor{comment}{//\ We\ are\ in\ the\ middle\ of\ the\ linked\ list}}
-\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \ \ \ \ ssize\_t\ space\_between\_current\_and\_next\ =\ (ssize\_t)next\ -\/\ (ssize\_t)current\ -\/\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}})\ -\/\ current-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}};}
-\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (space\_between\_current\_and\_next\ >=\ (ssize\_t)size\_needed)\ \{\ \textcolor{comment}{//\ We\ can\ allocate\ in\ between}}
-\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ new\_metadata\ =\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*)((\textcolor{keywordtype}{size\_t})current\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}})\ +\ current-\/>size);}
-\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ \ \ \ \ \ =\ size\_requested;}
-\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ \ \ \ \ \ =\ next;}
-\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ \ \ \ \ \ =\ current;}
-\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}}\ \ \ \ \ \ \ \ =\ block\_idx;}
+\DoxyCodeLine{00501\ \mbox{\hyperlink{structBlockList}{BlockList}}\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}\ =\ \{0\};\ }
+\DoxyCodeLine{00502\ \mbox{\hyperlink{structBlockList}{BlockList}}\ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}\ =\ \{0\};\ }
+\DoxyCodeLine{00503\ }
+\DoxyCodeLine{00508\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_gaf0325e3cda75a17b82fa7c8bf9e097b3}{block\_print}}(\mbox{\hyperlink{structBlock}{Block}}*\ block)\ \{}
+\DoxyCodeLine{00509\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Block\ n°\%zu\ (\%zu\ /\ \%zu\ bytes)\ :\ "{}},\ block\ -\/\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}},\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
+\DoxyCodeLine{00510\ \ \ \ \ \textcolor{keywordflow}{for}\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ current\ =\ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}};\ current\ !=\ NULL;\ current\ =\ current-\/>next)\ \{}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ assert(current-\/>block\_idx\ ==\ (\textcolor{keywordtype}{size\_t})(block\ -\/\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}));}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}[[\%zu]\ \%p\ |\ \%zu]\ -\/>\ "{}},\ current-\/>block\_idx,\ current,\ current-\/>size);}
+\DoxyCodeLine{00513\ \ \ \ \ \}}
+\DoxyCodeLine{00514\ \ \ \ \ printf(\textcolor{stringliteral}{"{}x\(\backslash\)n"{}});}
+\DoxyCodeLine{00515\ \}}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00521\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga0e4e55eb1cb628b044b42847350b1388}{blocklist\_print}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list)\ \{}
+\DoxyCodeLine{00522\ \ \ \ \ printf(\textcolor{stringliteral}{"{}BlockList\ (\%zu\ /\ \%zu)\ :\ \(\backslash\)n"{}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}},\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}});}
+\DoxyCodeLine{00523\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ i++)\ \{}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gaf0325e3cda75a17b82fa7c8bf9e097b3}{block\_print}}(\&list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i]);}
+\DoxyCodeLine{00525\ \ \ \ \ \}}
+\DoxyCodeLine{00526\ \}}
+\DoxyCodeLine{00527\ }
+\DoxyCodeLine{00533\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_gaea5de1c86431322ce809cd6ea3e8cca5}{blocklist\_push}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \mbox{\hyperlink{structBlock}{Block}}\ block)\ \{}
+\DoxyCodeLine{00534\ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ ==\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}})\ \{}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *=\ 2;}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size\ \ \ =\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}});}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ size\ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{group__Challoc__block_gaa352cda03b947b55c02cbeb6c1254d08}{ceil\_to\_4096multiple}}(size);}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ new\_blocks\ =\ mmap(NULL,\ size,\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0);}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ memcpy(new\_blocks,\ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (munmap(list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}},\ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}))\ ==\ -\/1)\ \{}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}munmap"{}});}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}\ =\ new\_blocks;}
+\DoxyCodeLine{00544\ \ \ \ \ \}}
+\DoxyCodeLine{00545\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}]\ =\ block;}
+\DoxyCodeLine{00546\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}++;}
+\DoxyCodeLine{00547\ \}}
+\DoxyCodeLine{00548\ }
+\DoxyCodeLine{00554\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga980660e55ff5572dadb47e4efd321eae}{blocklist\_push\_or\_remove}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \mbox{\hyperlink{structBlock}{Block}}\ block)\ \{}
+\DoxyCodeLine{00555\ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ ==\ list-\/>\mbox{\hyperlink{structBlockList_a1340d84d9895c868354d64a5d3e6f3b7}{capacity}})\ \{}
+\DoxyCodeLine{00556\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (munmap(block.\mbox{\hyperlink{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89}{mmap\_ptr}},\ block.\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}})\ ==\ -\/1)\ \{}
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}munmap"{}});}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00560\ \ \ \ \ \}}
+\DoxyCodeLine{00561\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}]\ =\ block;}
+\DoxyCodeLine{00562\ \ \ \ \ list-\/>\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}++;}
+\DoxyCodeLine{00563\ \}}
+\DoxyCodeLine{00564\ }
+\DoxyCodeLine{00571\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{block\_has\_enough\_space}}(\mbox{\hyperlink{structBlock}{Block}}*\ block,\ \textcolor{keywordtype}{size\_t}\ size\_requested)\ \{}
+\DoxyCodeLine{00572\ \ \ \ \ \textcolor{keywordflow}{return}\ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ >=\ size\_requested\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}});}
+\DoxyCodeLine{00573\ \}}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00581\ \mbox{\hyperlink{structBlock}{Block}}*\ \mbox{\hyperlink{group__Challoc__block_gade5f736c6073fb5c7780633828d8bf03}{blocklist\_peek}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \textcolor{keywordtype}{size\_t}\ block\_idx)\ \{}
+\DoxyCodeLine{00582\ \ \ \ \ assert(block\_idx\ <=\ list-\/>size);}
+\DoxyCodeLine{00583\ \ \ \ \ \textcolor{keywordflow}{return}\ \&list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
+\DoxyCodeLine{00584\ \}}
+\DoxyCodeLine{00585\ }
+\DoxyCodeLine{00593\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__block_gabc8e05c2289de4b029756226b8a6736d}{try\_allocate\_next\_to}}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata,\ \textcolor{keywordtype}{size\_t}\ size\_requested,\ \textcolor{keywordtype}{size\_t}\ size\_needed,\ \textcolor{keywordtype}{size\_t}\ block\_idx)\ \{}
+\DoxyCodeLine{00594\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
+\DoxyCodeLine{00595\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ next\ =\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}};}
+\DoxyCodeLine{00596\ \ \ \ \ \textcolor{keywordflow}{if}\ (next\ ==\ NULL)\ \{\ \textcolor{comment}{//\ We\ are\ at\ the\ end\ of\ the\ linked\ list}}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ space\_between\_last\_and\_end\_of\_block\ =}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ ((size\_t)block-\/>\mbox{\hyperlink{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89}{mmap\_ptr}}\ +\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}})\ -\/\ (size\_t)metadata\ -\/\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}})\ -\/\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}};}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (space\_between\_last\_and\_end\_of\_block\ >=\ size\_needed)\ \{}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ new\_metadata\ =\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*)((\textcolor{keywordtype}{size\_t})metadata\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}})\ +\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}});}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ \ \ \ \ \ =\ size\_requested;}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ \ \ \ \ \ =\ NULL;}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ \ \ \ \ \ =\ metadata;}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}}\ \ \ \ \ \ \ \ =\ block\_idx;}
+\DoxyCodeLine{00605\ }
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \ \ \ \ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ =\ new\_metadata;}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}}\ \ \ \ =\ new\_metadata;}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ -\/=\ size\_needed;}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \ \ \ \ assert(block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ <=\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a81bc33e367816c5a25450f1481937b55}{freshly\_allocated}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint8\_t*)(new\_metadata)\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}});}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00613\ \ \ \ \ \}}
+\DoxyCodeLine{00614\ \ \ \ \ \textcolor{keywordflow}{else}\ \{\ \textcolor{comment}{//\ We\ are\ in\ the\ middle\ of\ the\ linked\ list}}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ ssize\_t\ space\_between\_current\_and\_next\ =\ (ssize\_t)next\ -\/\ (ssize\_t)metadata\ -\/\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}})\ -\/\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}};}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (space\_between\_current\_and\_next\ >=\ (ssize\_t)size\_needed)\ \{\ \textcolor{comment}{//\ We\ can\ allocate\ in\ between}}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ new\_metadata\ =\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*)((\textcolor{keywordtype}{size\_t})metadata\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}})\ +\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}});}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ \ \ \ \ \ =\ size\_requested;}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ \ \ \ \ \ =\ next;}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ \ \ \ \ \ =\ metadata;}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ new\_metadata-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}}\ \ \ \ \ \ \ \ =\ block\_idx;}
+\DoxyCodeLine{00622\ }
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \ \ \ \ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ =\ new\_metadata;}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \ \ \ \ next-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ \ \ \ \ =\ new\_metadata;}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ -\/=\ size\_needed;}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ assert(block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ <=\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a81bc33e367816c5a25450f1481937b55}{freshly\_allocated}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint8\_t*)(new\_metadata)\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}});}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00630\ \ \ \ \ \}}
+\DoxyCodeLine{00631\ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00632\ \}}
+\DoxyCodeLine{00633\ }
+\DoxyCodeLine{00641\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\_try\_allocate}}(\mbox{\hyperlink{structBlockList}{BlockList}}*\ list,\ \textcolor{keywordtype}{size\_t}\ block\_idx,\ \textcolor{keywordtype}{size\_t}\ size\_requested)\ \{}
+\DoxyCodeLine{00642\ \ \ \ \ assert(block\_idx\ <=\ list-\/>size);}
+\DoxyCodeLine{00643\ \ \ \ \ assert(list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx].\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ <=\ list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx].\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
+\DoxyCodeLine{00644\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size\_needed\ =\ size\_requested\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}});\ \textcolor{comment}{//\ We\ need\ to\ store\ the\ metadata}}
 \DoxyCodeLine{00645\ }
-\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current-\/>next\ =\ new\_metadata;}
-\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ next-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ \ \ \ =\ new\_metadata;}
-\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>free\_space\ -\/=\ size\_needed;}
-\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ assert(block-\/>free\_space\ <=\ block-\/>size);}
-\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>freshly\_allocated\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint8\_t*)(new\_metadata)\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}});}
-\DoxyCodeLine{00652\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00653\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00654\ \ \ \ \ \}}
-\DoxyCodeLine{00655\ }
-\DoxyCodeLine{00656\ \ \ \ \ \textcolor{comment}{//\ We\ did\ not\ find\ a\ space}}
-\DoxyCodeLine{00657\ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
-\DoxyCodeLine{00658\ \}}
-\DoxyCodeLine{00659\ }
-\DoxyCodeLine{00665\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8}{block\_free}}(\mbox{\hyperlink{structBlock}{Block}}*\ block,\ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ ptr)\ \{}
-\DoxyCodeLine{00666\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ current\ =\ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}};}
-\DoxyCodeLine{00667\ }
-\DoxyCodeLine{00668\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ only\ block\ is\ the\ one\ we\ want\ to\ free}}
-\DoxyCodeLine{00669\ \ \ \ \ \textcolor{keywordflow}{if}\ (current\ ==\ ptr)\ \{}
-\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ =\ current-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}};}
-\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ ==\ NULL)\ \{}
-\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}}\ =\ NULL;}
-\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ +=\ current-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}});}
-\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ assert(block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ <=\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
-\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
-\DoxyCodeLine{00677\ \ \ \ \ \}}
+\DoxyCodeLine{00646\ \ \ \ \ \textcolor{comment}{//\ We\ will\ never\ be\ able\ to\ find\ a\ space}}
+\DoxyCodeLine{00647\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ =\ \&list-\/>\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
+\DoxyCodeLine{00648\ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>free\_space\ <\ size\_needed)\ \{}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00650\ \ \ \ \ \}}
+\DoxyCodeLine{00651\ }
+\DoxyCodeLine{00652\ \ \ \ \ \textcolor{comment}{//\ First\ allocated\ block}}
+\DoxyCodeLine{00653\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ last\ =\ block-\/>tail;}
+\DoxyCodeLine{00654\ \ \ \ \ \textcolor{keywordflow}{if}\ (last\ ==\ NULL)\ \{}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ block-\/>head\ \ \ \ \ \ \ \ =\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*)(block-\/>mmap\_ptr);}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ block-\/>head-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ \ \ \ \ \ =\ size\_requested;}
+\DoxyCodeLine{00657\ \ \ \ \ \ \ \ \ block-\/>head-\/>next\ \ \ \ \ \ =\ NULL;}
+\DoxyCodeLine{00658\ \ \ \ \ \ \ \ \ block-\/>head-\/>prev\ \ \ \ \ \ =\ NULL;}
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ block-\/>head-\/>block\_idx\ =\ block\_idx;}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ block-\/>tail\ \ \ \ \ \ \ \ =\ block-\/>head;}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ block-\/>free\_space\ -\/=\ size\_needed;}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ \ \ assert(block-\/>free\_space\ <=\ block-\/>size);}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ block-\/>freshly\_allocated\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint8\_t*)(block-\/>head)\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}});}
+\DoxyCodeLine{00665\ \ \ \ \ \}}
+\DoxyCodeLine{00666\ }
+\DoxyCodeLine{00667\ \ \ \ \ \textcolor{comment}{//\ Go\ through\ the\ linked\ list\ to\ find\ a\ space}}
+\DoxyCodeLine{00668\ \ \ \ \ \textcolor{keywordflow}{for}\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ current\ =\ block-\/>head;\ current\ !=\ NULL;\ current\ =\ current-\/>next)\ \{}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__block_gabc8e05c2289de4b029756226b8a6736d}{try\_allocate\_next\_to}}(current,\ size\_requested,\ size\_needed,\ block\_idx);}
+\DoxyCodeLine{00670\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00673\ \ \ \ \ \}}
+\DoxyCodeLine{00674\ }
+\DoxyCodeLine{00675\ \ \ \ \ \textcolor{comment}{//\ We\ did\ not\ find\ a\ space}}
+\DoxyCodeLine{00676\ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00677\ \}}
 \DoxyCodeLine{00678\ }
-\DoxyCodeLine{00679\ \ \ \ \ \textcolor{comment}{//\ Remove\ the\ metadata\ from\ the\ linked\ list}}
-\DoxyCodeLine{00680\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ !=\ NULL)\ \{}
-\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ ptr-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}};}
-\DoxyCodeLine{00682\ \ \ \ \ \}}
-\DoxyCodeLine{00683\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ !=\ NULL)\ \{}
-\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}};}
-\DoxyCodeLine{00685\ \ \ \ \ \}}
+\DoxyCodeLine{00684\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8}{block\_free}}(\mbox{\hyperlink{structBlock}{Block}}*\ block,\ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ ptr)\ \{}
+\DoxyCodeLine{00685\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ current\ =\ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}};}
 \DoxyCodeLine{00686\ }
-\DoxyCodeLine{00687\ \ \ \ \ \textcolor{comment}{//\ Update\ the\ head\ and\ tail}}
-\DoxyCodeLine{00688\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}})\ \{}
-\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}};}
-\DoxyCodeLine{00690\ \ \ \ \ \}}
-\DoxyCodeLine{00691\ }
-\DoxyCodeLine{00692\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ block-\/>\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}})\ \{}
-\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}}\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}};}
-\DoxyCodeLine{00694\ \ \ \ \ \}}
-\DoxyCodeLine{00695\ }
-\DoxyCodeLine{00696\ \ \ \ \ \textcolor{comment}{//\ Update\ the\ free\ space}}
-\DoxyCodeLine{00697\ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ +=\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}});}
-\DoxyCodeLine{00698\ \ \ \ \ assert(block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ <=\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
-\DoxyCodeLine{00699\ \}}
-\DoxyCodeLine{00700\ }
-\DoxyCodeLine{00706\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_gaaad9cd52194179549f0f48fdb4f5d82f}{blocklist\_free}}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ ptr)\ \{}
-\DoxyCodeLine{00707\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ block\_idx\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}};}
-\DoxyCodeLine{00708\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
-\DoxyCodeLine{00709\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8}{block\_free}}(block,\ ptr);}
+\DoxyCodeLine{00687\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ only\ block\ is\ the\ one\ we\ want\ to\ free}}
+\DoxyCodeLine{00688\ \ \ \ \ \textcolor{keywordflow}{if}\ (current\ ==\ ptr)\ \{}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ =\ current-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}};}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ ==\ NULL)\ \{}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}}\ =\ NULL;}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ +=\ current-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}});}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ assert(block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ <=\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00696\ \ \ \ \ \}}
+\DoxyCodeLine{00697\ }
+\DoxyCodeLine{00698\ \ \ \ \ \textcolor{comment}{//\ Remove\ the\ metadata\ from\ the\ linked\ list}}
+\DoxyCodeLine{00699\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ !=\ NULL)\ \{}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ ptr-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}};}
+\DoxyCodeLine{00701\ \ \ \ \ \}}
+\DoxyCodeLine{00702\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}\ !=\ NULL)\ \{}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}}-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}};}
+\DoxyCodeLine{00704\ \ \ \ \ \}}
+\DoxyCodeLine{00705\ }
+\DoxyCodeLine{00706\ \ \ \ \ \textcolor{comment}{//\ Update\ the\ head\ and\ tail}}
+\DoxyCodeLine{00707\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}})\ \{}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a60a48d11b027f0e4e2c38051878a194e}{next}};}
+\DoxyCodeLine{00709\ \ \ \ \ \}}
 \DoxyCodeLine{00710\ }
-\DoxyCodeLine{00711\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ block\ is\ empty}}
-\DoxyCodeLine{00712\ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ ==\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}})\ \{}
-\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ assert(block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ ==\ NULL);}
+\DoxyCodeLine{00711\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ block-\/>\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}})\ \{}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}}\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}};}
+\DoxyCodeLine{00713\ \ \ \ \ \}}
 \DoxyCodeLine{00714\ }
-\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Push\ the\ block\ to\ the\ freed\ list}}
-\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga980660e55ff5572dadb47e4efd321eae}{blocklist\_push\_or\_remove}}(\&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}},\ *block);}
-\DoxyCodeLine{00717\ }
-\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Remove\ and\ swap\ the\ block\ from\ the\ allocated}}
-\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ ==\ 1)\ \{}
-\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ list\ is\ empty}}
-\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ =\ 0;}
-\DoxyCodeLine{00722\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
-\DoxyCodeLine{00723\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00724\ }
-\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Move\ the\ last\ block\ to\ the\ empty\ block}}
-\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ last\_block\ \ \ \ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1];}
-\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx]\ =\ *last\_block;}
-\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}-\/-\/;}
-\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ current\ =\ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}};\ current\ !=\ NULL;\ current\ =\ current-\/>next)\ \{}
-\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \ \ \ \ current-\/>block\_idx\ =\ block\_idx;}
-\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00732\ \ \ \ \ \}}
-\DoxyCodeLine{00733\ \}}
-\DoxyCodeLine{00734\ }
-\DoxyCodeLine{00738\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}()\ \{}
-\DoxyCodeLine{00739\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ i++)\ \{}
-\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i].\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ ==\ NULL);}
-\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ =\ \&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i];}
-\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>\mbox{\hyperlink{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}{time\_to\_live}}\ ==\ 1)\ \{}
-\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (munmap(block-\/>\mbox{\hyperlink{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89}{mmap\_ptr}},\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}})\ ==\ -\/1)\ \{}
-\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}munmap"{}});}
-\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Move\ the\ last\ block\ to\ the\ empty\ block}}
-\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ last\_block\ \ \ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1];}
-\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i]\ =\ *last\_block;}
-\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}-\/-\/;}
-\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ i-\/-\/;}
-\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}{time\_to\_live}}-\/-\/;}
-\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00755\ \ \ \ \ \}}
-\DoxyCodeLine{00756\ \}}
-\DoxyCodeLine{00762\ }
-\DoxyCodeLine{00772\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(\textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{00773\ \ \ \ \ \textcolor{keywordflow}{if}\ (size\ ==\ 0)\ \{}
-\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
-\DoxyCodeLine{00775\ \ \ \ \ \}}
-\DoxyCodeLine{00776\ }
-\DoxyCodeLine{00777\ \ \ \ \ \textcolor{comment}{//\ Try\ to\ allocate\ from\ the\ minislab}}
-\DoxyCodeLine{00778\ \ \ \ \ \mbox{\hyperlink{structClosePowerOfTwo}{ClosePowerOfTwo}}\ close\_pow2\ =\ \mbox{\hyperlink{group__Challoc__minislab_gadaf947726269a4d97ccbc1ae1cfe2ce5}{is\_close\_to\_power\_of\_two}}(size);}
-\DoxyCodeLine{00779\ \ \ \ \ \textcolor{keywordflow}{if}\ (close\_pow2.\mbox{\hyperlink{structClosePowerOfTwo_aae1d8b42e5038cf6424169c63aef82bc}{is\_close}})\ \{}
-\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__minislab_ga6db6301bc314956b20209d058964c5b9}{minislab\_alloc}}(close\_pow2);}
-\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
-\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
-\DoxyCodeLine{00783\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
-\DoxyCodeLine{00784\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00785\ \ \ \ \ \}}
-\DoxyCodeLine{00786\ }
-\DoxyCodeLine{00787\ \ \ \ \ \textcolor{comment}{//\ Go\ through\ the\ list\ of\ mmap\ blocks}}
-\DoxyCodeLine{00788\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ i++)\ \{}
-\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i];}
-\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{block\_has\_enough\_space}}(block,\ size))\ \{}
-\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\_try\_allocate}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ i,\ size);}
-\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
-\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
-\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
-\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00797\ \ \ \ \ \}}
-\DoxyCodeLine{00798\ }
-\DoxyCodeLine{00799\ \ \ \ \ \textcolor{comment}{//\ Go\ through\ the\ list\ of\ freed\ blocks}}
-\DoxyCodeLine{00800\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ i++)\ \{}
-\DoxyCodeLine{00801\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}\ block\ =\ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i];}
-\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{block\_has\_enough\_space}}(\&block,\ size))\ \{}
-\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ last\_block\ \ \ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1];}
-\DoxyCodeLine{00804\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i]\ =\ *last\_block;}
-\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}-\/-\/;}
-\DoxyCodeLine{00806\ }
-\DoxyCodeLine{00807\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Revive\ the\ block\ into\ a\ ready-\/to-\/use\ one}}
-\DoxyCodeLine{00808\ \ \ \ \ \ \ \ \ \ \ \ \ block.\mbox{\hyperlink{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}{time\_to\_live}}\ =\ \mbox{\hyperlink{group__Challoc__block_ga1f3ce2d2f34f49f2e12a0f1a561bcda6}{time\_to\_live\_with\_size}}(block.\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
-\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \ \ \ \ block.\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ \ \ \ \ =\ NULL;}
-\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \ \ \ \ block.\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}}\ \ \ \ \ =\ NULL;}
-\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \ \ \ \ block.\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ \ \ =\ block.\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}};}
-\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gaea5de1c86431322ce809cd6ea3e8cca5}{blocklist\_push}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ block);}
-\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\_try\_allocate}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1,\ size);}
-\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
+\DoxyCodeLine{00715\ \ \ \ \ \textcolor{comment}{//\ Update\ the\ free\ space}}
+\DoxyCodeLine{00716\ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ +=\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}}\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{group__Challoc__block_gabc1edbd554339dd9453cd6b41b655e99}{AllocMetadata}});}
+\DoxyCodeLine{00717\ \ \ \ \ assert(block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ <=\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
+\DoxyCodeLine{00718\ \}}
+\DoxyCodeLine{00719\ }
+\DoxyCodeLine{00724\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_gaaad9cd52194179549f0f48fdb4f5d82f}{blocklist\_free}}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ ptr)\ \{}
+\DoxyCodeLine{00725\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ block\_idx\ =\ ptr-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}};}
+\DoxyCodeLine{00726\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
+\DoxyCodeLine{00727\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga6578d7dd6a3dce1c79ad3616a65084e8}{block\_free}}(block,\ ptr);}
+\DoxyCodeLine{00728\ }
+\DoxyCodeLine{00729\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ block\ is\ empty}}
+\DoxyCodeLine{00730\ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ ==\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}})\ \{}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ assert(block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ ==\ NULL);}
+\DoxyCodeLine{00732\ }
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Invalidate\ the\ last\ free\ because\ the\ block\ can\ be\ unmapped\ later\ on}}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga20bc18824383d595f22873d5d8047e13}{prev\_of\_last\_block\_free}}\ =\ NULL;}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Push\ the\ block\ to\ the\ freed\ list}}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga980660e55ff5572dadb47e4efd321eae}{blocklist\_push\_or\_remove}}(\&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}},\ *block);}
+\DoxyCodeLine{00738\ }
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Remove\ and\ swap\ the\ block\ from\ the\ allocated}}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ ==\ 1)\ \{}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ list\ is\ empty}}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ =\ 0;}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00745\ }
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Move\ the\ last\ block\ to\ the\ empty\ block}}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ last\_block\ \ \ \ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1];}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx]\ =\ *last\_block;}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}-\/-\/;}
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ current\ =\ block-\/>\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}};\ current\ !=\ NULL;\ current\ =\ current-\/>next)\ \{}
+\DoxyCodeLine{00751\ \ \ \ \ \ \ \ \ \ \ \ \ current-\/>block\_idx\ =\ block\_idx;}
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00753\ \ \ \ \ \}}
+\DoxyCodeLine{00754\ \}}
+\DoxyCodeLine{00755\ }
+\DoxyCodeLine{00759\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}()\ \{}
+\DoxyCodeLine{00760\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ i++)\ \{}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ assert(\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i].\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ ==\ NULL);}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ =\ \&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i];}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>\mbox{\hyperlink{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}{time\_to\_live}}\ ==\ 1)\ \{}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (munmap(block-\/>\mbox{\hyperlink{structBlock_a2a6815cfdbd1a7d458d2085e32b3bf89}{mmap\_ptr}},\ block-\/>\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}})\ ==\ -\/1)\ \{}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}munmap"{}});}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Move\ the\ last\ block\ to\ the\ empty\ block}}
+\DoxyCodeLine{00768\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ last\_block\ \ \ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1];}
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i]\ =\ *last\_block;}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}-\/-\/;}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \ \ \ \ i-\/-\/;}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00773\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \ \ \ \ block-\/>\mbox{\hyperlink{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}{time\_to\_live}}-\/-\/;}
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00776\ \ \ \ \ \}}
+\DoxyCodeLine{00777\ \}}
+\DoxyCodeLine{00783\ }
+\DoxyCodeLine{00793\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(\textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{00794\ \ \ \ \ \textcolor{keywordflow}{if}\ (size\ ==\ 0)\ \{}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00796\ \ \ \ \ \}}
+\DoxyCodeLine{00797\ }
+\DoxyCodeLine{00798\ \ \ \ \ \textcolor{comment}{//\ Try\ to\ allocate\ from\ the\ minislab}}
+\DoxyCodeLine{00799\ \ \ \ \ \mbox{\hyperlink{structClosePowerOfTwo}{ClosePowerOfTwo}}\ close\_pow2\ =\ \mbox{\hyperlink{group__Challoc__minislab_gadaf947726269a4d97ccbc1ae1cfe2ce5}{is\_close\_to\_power\_of\_two}}(size);}
+\DoxyCodeLine{00800\ \ \ \ \ \textcolor{keywordflow}{if}\ (close\_pow2.\mbox{\hyperlink{structClosePowerOfTwo_aae1d8b42e5038cf6424169c63aef82bc}{is\_close}})\ \{}
+\DoxyCodeLine{00801\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__minislab_ga6db6301bc314956b20209d058964c5b9}{minislab\_alloc}}(close\_pow2);}
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
+\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
+\DoxyCodeLine{00804\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00806\ \ \ \ \ \}}
+\DoxyCodeLine{00807\ }
+\DoxyCodeLine{00808\ \ \ \ \ \textcolor{comment}{//\ Try\ to\ allocate\ next\ to\ the\ last\ allocation}}
+\DoxyCodeLine{00809\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ !=\ NULL)\ \{}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata\ =\ \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\_get\_metadata}}(\mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}});}
+\DoxyCodeLine{00811\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ \ \ \ \ \ \ =\ \mbox{\hyperlink{group__Challoc__block_gabc8e05c2289de4b029756226b8a6736d}{try\_allocate\_next\_to}}(metadata,\ size,\ size\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}),\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}});}
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ =\ ptr;}
 \DoxyCodeLine{00815\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
 \DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00817\ \ \ \ \ \}}
 \DoxyCodeLine{00818\ }
-\DoxyCodeLine{00819\ \ \ \ \ \textcolor{comment}{//\ No\ block\ had\ enough\ space,\ create\ a\ new\ one}}
-\DoxyCodeLine{00820\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga85a4ff078b5da234a2f713ff07d314a8}{blocklist\_allocate\_new\_block}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ size\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}})\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
-\DoxyCodeLine{00821\ }
-\DoxyCodeLine{00822\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ we\ could\ allocate\ the\ new\ one}}
-\DoxyCodeLine{00823\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}\ ==\ MAP\_FAILED)\ \{}
-\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
-\DoxyCodeLine{00825\ \ \ \ \ \}}
-\DoxyCodeLine{00826\ }
-\DoxyCodeLine{00827\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\_try\_allocate}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1,\ size);}
-\DoxyCodeLine{00828\ }
-\DoxyCodeLine{00829\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
-\DoxyCodeLine{00830\ }
-\DoxyCodeLine{00831\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
-\DoxyCodeLine{00832\ \}}
-\DoxyCodeLine{00833\ }
-\DoxyCodeLine{00838\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}{\_\_chafree}}(\textcolor{keywordtype}{void}*\ ptr)\ \{}
-\DoxyCodeLine{00839\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ NULL)\ \{}
-\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00819\ \ \ \ \ \textcolor{comment}{//\ Try\ to\ allocate\ next\ to\ the\ last\ free}}
+\DoxyCodeLine{00820\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_ga20bc18824383d595f22873d5d8047e13}{prev\_of\_last\_block\_free}}\ !=\ NULL)\ \{}
+\DoxyCodeLine{00821\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata\ =\ \mbox{\hyperlink{group__Challoc__block_ga20bc18824383d595f22873d5d8047e13}{prev\_of\_last\_block\_free}};}
+\DoxyCodeLine{00822\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ \ \ \ \ \ \ =\ \mbox{\hyperlink{group__Challoc__block_gabc8e05c2289de4b029756226b8a6736d}{try\_allocate\_next\_to}}(metadata,\ size,\ size\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}),\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}});}
+\DoxyCodeLine{00823\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ =\ ptr;}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00828\ \ \ \ \ \}}
+\DoxyCodeLine{00829\ }
+\DoxyCodeLine{00830\ \ \ \ \ \textcolor{comment}{//\ Go\ through\ the\ list\ of\ mmap\ blocks}}
+\DoxyCodeLine{00831\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ i++)\ \{}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i];}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{block\_has\_enough\_space}}(block,\ size))\ \{}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\_try\_allocate}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ i,\ size);}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
+\DoxyCodeLine{00836\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ =\ ptr;}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{00841\ \ \ \ \ \}}
 \DoxyCodeLine{00842\ }
-\DoxyCodeLine{00843\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ pointer\ comes\ from\ the\ minislab\ before\ getting\ wrong\ metadata}}
-\DoxyCodeLine{00844\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}{ptr\_comes\_from\_minislab}}(ptr))\ \{}
-\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__minislab_ga21d2366abcfe647d32a12bcd204d5074}{minislab\_free}}(ptr);}
-\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
-\DoxyCodeLine{00847\ \ \ \ \ \}}
-\DoxyCodeLine{00848\ }
-\DoxyCodeLine{00849\ \ \ \ \ \textcolor{comment}{//\ Free\ the\ memory\ from\ the\ block\ list}}
-\DoxyCodeLine{00850\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata\ =\ \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\_get\_metadata}}(ptr);}
-\DoxyCodeLine{00851\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gaaad9cd52194179549f0f48fdb4f5d82f}{blocklist\_free}}(metadata);}
-\DoxyCodeLine{00852\ \}}
-\DoxyCodeLine{00853\ }
-\DoxyCodeLine{00859\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc_gacc7f10a0cbff8b9fa73601f58c7b1d04}{\_\_chacalloc}}(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{00860\ \ \ \ \ \textcolor{comment}{//\ Allocate\ the\ memory}}
-\DoxyCodeLine{00861\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(nmemb\ *\ size);}
-\DoxyCodeLine{00862\ }
-\DoxyCodeLine{00863\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ pointer\ comes\ from\ the\ minislab\ before\ getting\ wrong\ metadata}}
-\DoxyCodeLine{00864\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}{ptr\_comes\_from\_minislab}}(ptr))\ \{}
-\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ memset(ptr,\ 0,\ nmemb\ *\ size);}
-\DoxyCodeLine{00866\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
-\DoxyCodeLine{00867\ \ \ \ \ \}}
-\DoxyCodeLine{00868\ }
-\DoxyCodeLine{00869\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ it\ comes\ from\ a\ freshly\ allocated\ block}}
-\DoxyCodeLine{00870\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata\ =\ \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\_get\_metadata}}(ptr);}
-\DoxyCodeLine{00871\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ block\_idx\ \ \ \ =\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}};}
-\DoxyCodeLine{00872\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
-\DoxyCodeLine{00873\ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>\mbox{\hyperlink{structBlock_a81bc33e367816c5a25450f1481937b55}{freshly\_allocated}})\ \{\ \textcolor{comment}{//\ No\ need\ to\ memset,\ the\ block\ is\ already\ zeroed}}
-\DoxyCodeLine{00874\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ nmemb\ *\ size;\ i++)\ \{}
-\DoxyCodeLine{00875\ \ \ \ \ \ \ \ \ \ \ \ \ assert(((uint8\_t*)ptr)[i]\ ==\ 0);}
-\DoxyCodeLine{00876\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00877\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
-\DoxyCodeLine{00878\ \ \ \ \ \}}
+\DoxyCodeLine{00843\ \ \ \ \ \textcolor{comment}{//\ Go\ through\ the\ list\ of\ freed\ blocks}}
+\DoxyCodeLine{00844\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}};\ i++)\ \{}
+\DoxyCodeLine{00845\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}\ block\ =\ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i];}
+\DoxyCodeLine{00846\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_gab661e17a10034ffc577490bec6459418}{block\_has\_enough\_space}}(\&block,\ size))\ \{}
+\DoxyCodeLine{00847\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ last\_block\ \ \ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1];}
+\DoxyCodeLine{00848\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[i]\ =\ *last\_block;}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}-\/-\/;}
+\DoxyCodeLine{00850\ }
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Revive\ the\ block\ into\ a\ ready-\/to-\/use\ one}}
+\DoxyCodeLine{00852\ \ \ \ \ \ \ \ \ \ \ \ \ block.\mbox{\hyperlink{structBlock_a9169058a9f7164dfc7610aa5af7cf0c8}{time\_to\_live}}\ =\ \mbox{\hyperlink{group__Challoc__block_ga1f3ce2d2f34f49f2e12a0f1a561bcda6}{time\_to\_live\_with\_size}}(block.\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}});}
+\DoxyCodeLine{00853\ \ \ \ \ \ \ \ \ \ \ \ \ block.\mbox{\hyperlink{structBlock_a1f269c14b750eace5ccbe6b77b8545b9}{head}}\ \ \ \ \ =\ NULL;}
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \ \ \ \ block.\mbox{\hyperlink{structBlock_a5c8d6b0dd88e511a75d0b72dd9ae837f}{tail}}\ \ \ \ \ =\ NULL;}
+\DoxyCodeLine{00855\ \ \ \ \ \ \ \ \ \ \ \ \ block.\mbox{\hyperlink{structBlock_a0dd176c9ec08558ee9d812fd562a7951}{free\_space}}\ \ \ =\ block.\mbox{\hyperlink{structBlock_af029d738bbb692feb5a930cf6f5906c3}{size}};}
+\DoxyCodeLine{00856\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gaea5de1c86431322ce809cd6ea3e8cca5}{blocklist\_push}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ block);}
+\DoxyCodeLine{00857\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\_try\_allocate}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1,\ size);}
+\DoxyCodeLine{00858\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
+\DoxyCodeLine{00859\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ =\ ptr;}
+\DoxyCodeLine{00860\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00861\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00862\ \ \ \ \ \}}
+\DoxyCodeLine{00863\ }
+\DoxyCodeLine{00864\ \ \ \ \ \textcolor{comment}{//\ No\ block\ had\ enough\ space,\ create\ a\ new\ one}}
+\DoxyCodeLine{00865\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga85a4ff078b5da234a2f713ff07d314a8}{blocklist\_allocate\_new\_block}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ size\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocMetadata}{AllocMetadata}})\ +\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structBlock}{Block}}));}
+\DoxyCodeLine{00866\ }
+\DoxyCodeLine{00867\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ we\ could\ allocate\ the\ new\ one}}
+\DoxyCodeLine{00868\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}\ ==\ MAP\_FAILED)\ \{}
+\DoxyCodeLine{00869\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00870\ \ \ \ \ \}}
+\DoxyCodeLine{00871\ }
+\DoxyCodeLine{00872\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc__block_ga5a9130281fdd09b71826f03a2957dc28}{block\_try\_allocate}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}},\ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_a2279b30bafd2950909d6568fbe3a64ac}{size}}\ -\/\ 1,\ size);}
+\DoxyCodeLine{00873\ }
+\DoxyCodeLine{00874\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga377bc6ce69aacaeeac82ab1d5661be6f}{decrease\_ttl\_and\_unmap}}();}
+\DoxyCodeLine{00875\ }
+\DoxyCodeLine{00876\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ =\ ptr;}
+\DoxyCodeLine{00877\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00878\ \}}
 \DoxyCodeLine{00879\ }
-\DoxyCodeLine{00880\ \ \ \ \ \textcolor{comment}{//\ Set\ memory\ to\ zero}}
-\DoxyCodeLine{00881\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
-\DoxyCodeLine{00882\ \ \ \ \ \ \ \ \ memset(ptr,\ 0,\ nmemb\ *\ size);}
-\DoxyCodeLine{00883\ \ \ \ \ \}}
-\DoxyCodeLine{00884\ }
-\DoxyCodeLine{00885\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
-\DoxyCodeLine{00886\ \}}
-\DoxyCodeLine{00887\ }
-\DoxyCodeLine{00894\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc_ga11dcaa5b91481a23168776d350d28b44}{\_\_charealloc}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ new\_size)\ \{}
-\DoxyCodeLine{00895\ \ \ \ \ \textcolor{comment}{//\ If\ ptr\ is\ NULL,\ behave\ like\ malloc}}
-\DoxyCodeLine{00896\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ NULL)\ \{}
-\DoxyCodeLine{00897\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(new\_size);}
-\DoxyCodeLine{00898\ \ \ \ \ \}}
-\DoxyCodeLine{00899\ }
-\DoxyCodeLine{00900\ \ \ \ \ \textcolor{comment}{//\ Get\ the\ size\ of\ the\ allocation}}
-\DoxyCodeLine{00901\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_size\ =\ 0;}
-\DoxyCodeLine{00902\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}{ptr\_comes\_from\_minislab}}(ptr))\ \{}
-\DoxyCodeLine{00903\ \ \ \ \ \ \ \ \ old\_size\ =\ \mbox{\hyperlink{group__Challoc__minislab_ga9c67b6c17635a949a08545f27d7e74b4}{minislab\_ptr\_size}}(ptr);}
-\DoxyCodeLine{00904\ \ \ \ \ \}}
-\DoxyCodeLine{00905\ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata\ =\ \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\_get\_metadata}}(ptr);}
-\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ old\_size\ \ \ \ \ \ \ \ =\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}};}
-\DoxyCodeLine{00908\ \ \ \ \ \}}
-\DoxyCodeLine{00909\ }
-\DoxyCodeLine{00910\ \ \ \ \ \textcolor{keywordtype}{void}*\ new\_ptr\ =\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(new\_size);}
-\DoxyCodeLine{00911\ \ \ \ \ \textcolor{keywordflow}{if}\ (new\_ptr\ ==\ NULL)\ \{}
-\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
-\DoxyCodeLine{00913\ \ \ \ \ \}}
-\DoxyCodeLine{00914\ }
-\DoxyCodeLine{00915\ \ \ \ \ \textcolor{comment}{//\ Copy\ the\ old\ data}}
-\DoxyCodeLine{00916\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_size\ =\ old\_size\ <\ new\_size\ ?\ old\_size\ :\ new\_size;}
-\DoxyCodeLine{00917\ \ \ \ \ memcpy(new\_ptr,\ ptr,\ min\_size);}
-\DoxyCodeLine{00918\ }
-\DoxyCodeLine{00919\ \ \ \ \ \textcolor{comment}{//\ Free\ the\ old\ memory}}
-\DoxyCodeLine{00920\ \ \ \ \ \mbox{\hyperlink{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}{\_\_chafree}}(ptr);}
-\DoxyCodeLine{00921\ }
-\DoxyCodeLine{00922\ \ \ \ \ \textcolor{keywordflow}{return}\ new\_ptr;}
-\DoxyCodeLine{00923\ \}}
-\DoxyCodeLine{00929\ }
-\DoxyCodeLine{00934\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
-\DoxyCodeLine{00938\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
-\DoxyCodeLine{00939\ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}};\ \ \ }
-\DoxyCodeLine{00940\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structAllocTrace_a0072aaba30fbc7de637bbbb467c869bb}{size}};\ }
-\DoxyCodeLine{00941\ \}\ \mbox{\hyperlink{structAllocTrace}{AllocTrace}};}
+\DoxyCodeLine{00884\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}{\_\_chafree}}(\textcolor{keywordtype}{void}*\ ptr)\ \{}
+\DoxyCodeLine{00885\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ NULL)\ \{}
+\DoxyCodeLine{00886\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00887\ \ \ \ \ \}}
+\DoxyCodeLine{00888\ }
+\DoxyCodeLine{00889\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ pointer\ comes\ from\ the\ minislab\ before\ getting\ wrong\ metadata}}
+\DoxyCodeLine{00890\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}{ptr\_comes\_from\_minislab}}(ptr))\ \{}
+\DoxyCodeLine{00891\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__minislab_ga21d2366abcfe647d32a12bcd204d5074}{minislab\_free}}(ptr);}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00893\ \ \ \ \ \}}
+\DoxyCodeLine{00894\ }
+\DoxyCodeLine{00895\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ ==\ ptr)\ \{}
+\DoxyCodeLine{00896\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga672429b83b580918d58511539f4d77ec}{last\_block\_alloc}}\ =\ NULL;}
+\DoxyCodeLine{00897\ \ \ \ \ \}}
+\DoxyCodeLine{00898\ }
+\DoxyCodeLine{00899\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata\ =\ \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\_get\_metadata}}(ptr);}
+\DoxyCodeLine{00900\ }
+\DoxyCodeLine{00901\ \ \ \ \ \textcolor{keywordflow}{if}\ (metadata-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}}\ !=\ NULL)\ \{}
+\DoxyCodeLine{00902\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga20bc18824383d595f22873d5d8047e13}{prev\_of\_last\_block\_free}}\ =\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_aaf97a2f75247d261bc103506250616f5}{prev}};}
+\DoxyCodeLine{00903\ \ \ \ \ \}}
+\DoxyCodeLine{00904\ }
+\DoxyCodeLine{00905\ \ \ \ \ \textcolor{comment}{//\ Free\ the\ memory\ from\ the\ block\ list}}
+\DoxyCodeLine{00906\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gaaad9cd52194179549f0f48fdb4f5d82f}{blocklist\_free}}(metadata);}
+\DoxyCodeLine{00907\ \}}
+\DoxyCodeLine{00908\ }
+\DoxyCodeLine{00914\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc_gacc7f10a0cbff8b9fa73601f58c7b1d04}{\_\_chacalloc}}(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{00915\ \ \ \ \ \textcolor{comment}{//\ Allocate\ the\ memory}}
+\DoxyCodeLine{00916\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(nmemb\ *\ size);}
+\DoxyCodeLine{00917\ }
+\DoxyCodeLine{00918\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ pointer\ comes\ from\ the\ minislab\ before\ getting\ wrong\ metadata}}
+\DoxyCodeLine{00919\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}{ptr\_comes\_from\_minislab}}(ptr))\ \{}
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ memset(ptr,\ 0,\ nmemb\ *\ size);}
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00922\ \ \ \ \ \}}
+\DoxyCodeLine{00923\ }
+\DoxyCodeLine{00924\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ it\ comes\ from\ a\ freshly\ allocated\ block}}
+\DoxyCodeLine{00925\ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata\ =\ \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\_get\_metadata}}(ptr);}
+\DoxyCodeLine{00926\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ block\_idx\ \ \ \ =\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a48a7f49a9caa5f46c9fa200048ab51ce}{block\_idx}};}
+\DoxyCodeLine{00927\ \ \ \ \ \mbox{\hyperlink{structBlock}{Block}}*\ block\ \ \ \ \ \ \ =\ \&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}.\mbox{\hyperlink{structBlockList_af0355d88caabfaea7a86d7885e0c0724}{blocks}}[block\_idx];}
+\DoxyCodeLine{00928\ \ \ \ \ \textcolor{keywordflow}{if}\ (block-\/>\mbox{\hyperlink{structBlock_a81bc33e367816c5a25450f1481937b55}{freshly\_allocated}})\ \{\ \textcolor{comment}{//\ No\ need\ to\ memset,\ the\ block\ is\ already\ zeroed}}
+\DoxyCodeLine{00929\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ nmemb\ *\ size;\ i++)\ \{}
+\DoxyCodeLine{00930\ \ \ \ \ \ \ \ \ \ \ \ \ assert(((uint8\_t*)ptr)[i]\ ==\ 0);}
+\DoxyCodeLine{00931\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00932\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00933\ \ \ \ \ \}}
+\DoxyCodeLine{00934\ }
+\DoxyCodeLine{00935\ \ \ \ \ \textcolor{comment}{//\ Set\ memory\ to\ zero}}
+\DoxyCodeLine{00936\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ !=\ NULL)\ \{}
+\DoxyCodeLine{00937\ \ \ \ \ \ \ \ \ memset(ptr,\ 0,\ nmemb\ *\ size);}
+\DoxyCodeLine{00938\ \ \ \ \ \}}
+\DoxyCodeLine{00939\ }
+\DoxyCodeLine{00940\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00941\ \}}
 \DoxyCodeLine{00942\ }
-\DoxyCodeLine{00947\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}{alloctrace\_free}}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}\ trace)\ \{\}}
-\DoxyCodeLine{00948\ }
-\DoxyCodeLine{00952\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
-\DoxyCodeLine{00953\ \ \ \ \ \mbox{\hyperlink{structAllocTrace}{AllocTrace}}*\ \mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}};\ }
-\DoxyCodeLine{00954\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}};\ \ \ \ \ \ }
-\DoxyCodeLine{00955\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structLeakcheckTraceList_a8110a1895e5740fc3886f7820a2593d0}{capacity}};\ \ }
-\DoxyCodeLine{00956\ \}\ \mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}};}
-\DoxyCodeLine{00957\ }
-\DoxyCodeLine{00963\ \mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}\ \mbox{\hyperlink{group__Challoc__leakcheck_ga427c47cea9b2b311c3986539750dc982}{leakcheck\_list\_with\_capacity}}(\textcolor{keywordtype}{size\_t}\ capacity)\ \{}
-\DoxyCodeLine{00964\ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}})\{}
-\DoxyCodeLine{00965\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}\ \ \ \ \ =\ mmap(NULL,\ capacity\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}),\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0),}
-\DoxyCodeLine{00966\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structAllocTrace_a0072aaba30fbc7de637bbbb467c869bb}{size}}\ \ \ \ \ =\ 0,}
-\DoxyCodeLine{00967\ \ \ \ \ \ \ \ \ .capacity\ =\ capacity,}
-\DoxyCodeLine{00968\ \ \ \ \ \};}
-\DoxyCodeLine{00969\ \}}
-\DoxyCodeLine{00970\ }
-\DoxyCodeLine{00977\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\_list\_push}}(\mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}*\ list,\ \textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ ptr\_size)\ \{}
-\DoxyCodeLine{00978\ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ ==\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a8110a1895e5740fc3886f7820a2593d0}{capacity}})\ \{}
-\DoxyCodeLine{00979\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a8110a1895e5740fc3886f7820a2593d0}{capacity}}\ *=\ 2;}
-\DoxyCodeLine{00980\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocTrace}{AllocTrace}}*\ new\_ptrs\ =}
-\DoxyCodeLine{00981\ \ \ \ \ \ \ \ \ \ \ \ \ mmap(NULL,\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a8110a1895e5740fc3886f7820a2593d0}{capacity}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}),\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0);}
-\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ memcpy(new\_ptrs,\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}},\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}));}
-\DoxyCodeLine{00983\ \ \ \ \ \ \ \ \ munmap(list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}},\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}));}
-\DoxyCodeLine{00984\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}\ =\ new\_ptrs;}
-\DoxyCodeLine{00985\ \ \ \ \ \}}
-\DoxyCodeLine{00986\ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}]\ =\ (\mbox{\hyperlink{structAllocTrace}{AllocTrace}})\{}
-\DoxyCodeLine{00987\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}}\ \ =\ ptr,}
-\DoxyCodeLine{00988\ \ \ \ \ \ \ \ \ .size\ =\ ptr\_size,}
-\DoxyCodeLine{00989\ \ \ \ \ \};}
-\DoxyCodeLine{00990\ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}++;}
-\DoxyCodeLine{00991\ \}}
-\DoxyCodeLine{00992\ }
-\DoxyCodeLine{00998\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}{leakcheck\_list\_remove\_ptr}}(\mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}*\ list,\ \textcolor{keywordtype}{void}*\ ptr)\ \{}
-\DoxyCodeLine{00999\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}};\ i++)\ \{}
-\DoxyCodeLine{01000\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i].\mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}}\ ==\ ptr)\ \{}
-\DoxyCodeLine{01001\ \ \ \ \ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i]\ =\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ -\/\ 1];}
-\DoxyCodeLine{01002\ \ \ \ \ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}-\/-\/;}
-\DoxyCodeLine{01003\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}{alloctrace\_free}}(list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}]);}
-\DoxyCodeLine{01004\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
-\DoxyCodeLine{01005\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{01006\ \ \ \ \ \}}
-\DoxyCodeLine{01007\ \}}
-\DoxyCodeLine{01008\ }
-\DoxyCodeLine{01013\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__leakcheck_gaf393beb1b581581052541e163eb886a5}{leakcheck\_list\_free}}(\mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}*\ list)\ \{}
-\DoxyCodeLine{01014\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}};\ i++)\ \{}
-\DoxyCodeLine{01015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}{alloctrace\_free}}(list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i]);}
-\DoxyCodeLine{01016\ \ \ \ \ \}}
-\DoxyCodeLine{01017\ \ \ \ \ munmap(list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}},\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}));}
-\DoxyCodeLine{01018\ \}}
-\DoxyCodeLine{01019\ }
-\DoxyCodeLine{01020\ \mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}\ =\ \{0\};\ }
-\DoxyCodeLine{01021\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{01024\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__minislab_gae5bd43ddfa01d13ff845185ef27200b7}{\_\_attribute\_\_}}((constructor))\ init()\ \{}
-\DoxyCodeLine{01025\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}\ =\ \mbox{\hyperlink{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}{blocklist\_with\_capacity}}(30);}
-\DoxyCodeLine{01026\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}\ \ =\ \mbox{\hyperlink{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}{blocklist\_with\_capacity}}(10);}
-\DoxyCodeLine{01027\ }
-\DoxyCodeLine{01028\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
-\DoxyCodeLine{01029\ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}\ =\ \mbox{\hyperlink{group__Challoc__leakcheck_ga427c47cea9b2b311c3986539750dc982}{leakcheck\_list\_with\_capacity}}(10);}
-\DoxyCodeLine{01030\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{01031\ \}}
-\DoxyCodeLine{01032\ }
-\DoxyCodeLine{01033\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__minislab_gae5bd43ddfa01d13ff845185ef27200b7}{\_\_attribute\_\_}}((destructor))\ fini()\ \{}
-\DoxyCodeLine{01034\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
-\DoxyCodeLine{01035\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ >\ 0)\ \{}
-\DoxyCodeLine{01036\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}challoc:\ detected\ \%zu\ memory\ leaks\(\backslash\)n"{}},\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}});}
-\DoxyCodeLine{01037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}};\ i++)\ \{}
-\DoxyCodeLine{01038\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Leaked\ memory\ at\ \%p,\ Content:\ "{}},\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i].\mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}});}
-\DoxyCodeLine{01039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ptr\_size\ =\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i].\mbox{\hyperlink{structAllocTrace_a0072aaba30fbc7de637bbbb467c869bb}{size}};}
-\DoxyCodeLine{01040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j\ =\ 0;\ j\ <\ ptr\_size;\ j++)\ \{}
-\DoxyCodeLine{01041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}\%02X\ "{}},\ ((uint8\_t*)\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i].\mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}})[j]);}
-\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{01044\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{01045\ \ \ \ \ \ \ \ \ exit(EXIT\_FAILURE);}
-\DoxyCodeLine{01046\ \ \ \ \ \}}
+\DoxyCodeLine{00949\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc_ga11dcaa5b91481a23168776d350d28b44}{\_\_charealloc}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ new\_size)\ \{}
+\DoxyCodeLine{00950\ \ \ \ \ \textcolor{comment}{//\ If\ ptr\ is\ NULL,\ behave\ like\ malloc}}
+\DoxyCodeLine{00951\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr\ ==\ NULL)\ \{}
+\DoxyCodeLine{00952\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(new\_size);}
+\DoxyCodeLine{00953\ \ \ \ \ \}}
+\DoxyCodeLine{00954\ }
+\DoxyCodeLine{00955\ \ \ \ \ \textcolor{comment}{//\ Get\ the\ size\ of\ the\ allocation}}
+\DoxyCodeLine{00956\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_size\ =\ 0;}
+\DoxyCodeLine{00957\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__minislab_ga1de1d2254d18fc8a8fe812589a471340}{ptr\_comes\_from\_minislab}}(ptr))\ \{}
+\DoxyCodeLine{00958\ \ \ \ \ \ \ \ \ old\_size\ =\ \mbox{\hyperlink{group__Challoc__minislab_ga9c67b6c17635a949a08545f27d7e74b4}{minislab\_ptr\_size}}(ptr);}
+\DoxyCodeLine{00959\ \ \ \ \ \}}
+\DoxyCodeLine{00960\ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00961\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocMetadata}{AllocMetadata}}*\ metadata\ =\ \mbox{\hyperlink{group__Challoc__block_gaa6e534661329ac09709b4559fdacb760}{challoc\_get\_metadata}}(ptr);}
+\DoxyCodeLine{00962\ \ \ \ \ \ \ \ \ old\_size\ \ \ \ \ \ \ \ =\ metadata-\/>\mbox{\hyperlink{structAllocMetadata_a5f4fba93a7abb661fcab9e8b2bbed18c}{size}};}
+\DoxyCodeLine{00963\ \ \ \ \ \}}
+\DoxyCodeLine{00964\ }
+\DoxyCodeLine{00965\ \ \ \ \ \textcolor{keywordtype}{void}*\ new\_ptr\ =\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(new\_size);}
+\DoxyCodeLine{00966\ \ \ \ \ \textcolor{keywordflow}{if}\ (new\_ptr\ ==\ NULL)\ \{}
+\DoxyCodeLine{00967\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00968\ \ \ \ \ \}}
+\DoxyCodeLine{00969\ }
+\DoxyCodeLine{00970\ \ \ \ \ \textcolor{comment}{//\ Copy\ the\ old\ data}}
+\DoxyCodeLine{00971\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_size\ =\ old\_size\ <\ new\_size\ ?\ old\_size\ :\ new\_size;}
+\DoxyCodeLine{00972\ \ \ \ \ memcpy(new\_ptr,\ ptr,\ min\_size);}
+\DoxyCodeLine{00973\ }
+\DoxyCodeLine{00974\ \ \ \ \ \textcolor{comment}{//\ Free\ the\ old\ memory}}
+\DoxyCodeLine{00975\ \ \ \ \ \mbox{\hyperlink{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}{\_\_chafree}}(ptr);}
+\DoxyCodeLine{00976\ }
+\DoxyCodeLine{00977\ \ \ \ \ \textcolor{keywordflow}{return}\ new\_ptr;}
+\DoxyCodeLine{00978\ \}}
+\DoxyCodeLine{00984\ }
+\DoxyCodeLine{00989\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
+\DoxyCodeLine{00993\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00994\ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}};\ \ \ }
+\DoxyCodeLine{00995\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structAllocTrace_a0072aaba30fbc7de637bbbb467c869bb}{size}};\ }
+\DoxyCodeLine{00996\ \}\ \mbox{\hyperlink{structAllocTrace}{AllocTrace}};}
+\DoxyCodeLine{00997\ }
+\DoxyCodeLine{01002\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}{alloctrace\_free}}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}\ trace)\ \{\}}
+\DoxyCodeLine{01003\ }
+\DoxyCodeLine{01007\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{01008\ \ \ \ \ \mbox{\hyperlink{structAllocTrace}{AllocTrace}}*\ \mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}};\ }
+\DoxyCodeLine{01009\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}};\ \ \ \ \ \ }
+\DoxyCodeLine{01010\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{structLeakcheckTraceList_a8110a1895e5740fc3886f7820a2593d0}{capacity}};\ \ }
+\DoxyCodeLine{01011\ \}\ \mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}};}
+\DoxyCodeLine{01012\ }
+\DoxyCodeLine{01018\ \mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}\ \mbox{\hyperlink{group__Challoc__leakcheck_ga427c47cea9b2b311c3986539750dc982}{leakcheck\_list\_with\_capacity}}(\textcolor{keywordtype}{size\_t}\ capacity)\ \{}
+\DoxyCodeLine{01019\ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}})\{}
+\DoxyCodeLine{01020\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}\ \ \ \ \ =\ mmap(NULL,\ capacity\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}),\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0),}
+\DoxyCodeLine{01021\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structAllocTrace_a0072aaba30fbc7de637bbbb467c869bb}{size}}\ \ \ \ \ =\ 0,}
+\DoxyCodeLine{01022\ \ \ \ \ \ \ \ \ .capacity\ =\ capacity,}
+\DoxyCodeLine{01023\ \ \ \ \ \};}
+\DoxyCodeLine{01024\ \}}
+\DoxyCodeLine{01025\ }
+\DoxyCodeLine{01032\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\_list\_push}}(\mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}*\ list,\ \textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ ptr\_size)\ \{}
+\DoxyCodeLine{01033\ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ ==\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a8110a1895e5740fc3886f7820a2593d0}{capacity}})\ \{}
+\DoxyCodeLine{01034\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a8110a1895e5740fc3886f7820a2593d0}{capacity}}\ *=\ 2;}
+\DoxyCodeLine{01035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structAllocTrace}{AllocTrace}}*\ new\_ptrs\ =}
+\DoxyCodeLine{01036\ \ \ \ \ \ \ \ \ \ \ \ \ mmap(NULL,\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a8110a1895e5740fc3886f7820a2593d0}{capacity}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}),\ PROT\_READ\ |\ PROT\_WRITE,\ MAP\_PRIVATE\ |\ MAP\_ANONYMOUS,\ -\/1,\ 0);}
+\DoxyCodeLine{01037\ \ \ \ \ \ \ \ \ memcpy(new\_ptrs,\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}},\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}));}
+\DoxyCodeLine{01038\ \ \ \ \ \ \ \ \ munmap(list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}},\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}));}
+\DoxyCodeLine{01039\ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}\ =\ new\_ptrs;}
+\DoxyCodeLine{01040\ \ \ \ \ \}}
+\DoxyCodeLine{01041\ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}]\ =\ (\mbox{\hyperlink{structAllocTrace}{AllocTrace}})\{}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ .\mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}}\ \ =\ ptr,}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ .size\ =\ ptr\_size,}
+\DoxyCodeLine{01044\ \ \ \ \ \};}
+\DoxyCodeLine{01045\ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}++;}
+\DoxyCodeLine{01046\ \}}
 \DoxyCodeLine{01047\ }
-\DoxyCodeLine{01048\ \ \ \ \ printf(\textcolor{stringliteral}{"{}challoc:\ no\ memory\ leaks\ detected,\ congrats!\(\backslash\)n"{}});}
-\DoxyCodeLine{01049\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ /\(\backslash\)\(\backslash\)\_/\(\backslash\)\(\backslash\)\(\backslash\)n>(\string^w\string^)<\(\backslash\)n\ \ b\ d\(\backslash\)n"{}});}
-\DoxyCodeLine{01050\ }
-\DoxyCodeLine{01051\ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaf393beb1b581581052541e163eb886a5}{leakcheck\_list\_free}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}});}
-\DoxyCodeLine{01052\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{01053\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}{blocklist\_destroy}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}});}
-\DoxyCodeLine{01054\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}{blocklist\_destroy}}(\&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}});}
-\DoxyCodeLine{01055\ \}}
-\DoxyCodeLine{01056\ }
-\DoxyCodeLine{01060\ }
-\DoxyCodeLine{01070\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}{chamalloc}}(\textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{01071\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr;}
-\DoxyCodeLine{01072\ \ \ \ \ \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\_MUTEX}}(\{}
-\DoxyCodeLine{01073\ \ \ \ \ \ \ \ \ ptr\ =\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(size);}
-\DoxyCodeLine{01074\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
-\DoxyCodeLine{01075\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\_list\_push}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ ptr,\ size);}
+\DoxyCodeLine{01053\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}{leakcheck\_list\_remove\_ptr}}(\mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}*\ list,\ \textcolor{keywordtype}{void}*\ ptr)\ \{}
+\DoxyCodeLine{01054\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}};\ i++)\ \{}
+\DoxyCodeLine{01055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i].\mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}}\ ==\ ptr)\ \{}
+\DoxyCodeLine{01056\ \ \ \ \ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i]\ =\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ -\/\ 1];}
+\DoxyCodeLine{01057\ \ \ \ \ \ \ \ \ \ \ \ \ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}-\/-\/;}
+\DoxyCodeLine{01058\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}{alloctrace\_free}}(list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}]);}
+\DoxyCodeLine{01059\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{01060\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01061\ \ \ \ \ \}}
+\DoxyCodeLine{01062\ \}}
+\DoxyCodeLine{01063\ }
+\DoxyCodeLine{01068\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__leakcheck_gaf393beb1b581581052541e163eb886a5}{leakcheck\_list\_free}}(\mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}*\ list)\ \{}
+\DoxyCodeLine{01069\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}};\ i++)\ \{}
+\DoxyCodeLine{01070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_ga2e784200cedd11fc176a59ce8b5a4624}{alloctrace\_free}}(list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i]);}
+\DoxyCodeLine{01071\ \ \ \ \ \}}
+\DoxyCodeLine{01072\ \ \ \ \ munmap(list-\/>\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}},\ list-\/>\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ *\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structAllocTrace}{AllocTrace}}));}
+\DoxyCodeLine{01073\ \}}
+\DoxyCodeLine{01074\ }
+\DoxyCodeLine{01075\ \mbox{\hyperlink{structLeakcheckTraceList}{LeakcheckTraceList}}\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}\ =\ \{0\};\ }
 \DoxyCodeLine{01076\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{01077\ \ \ \ \ \})}
-\DoxyCodeLine{01078\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
-\DoxyCodeLine{01079\ \}}
-\DoxyCodeLine{01080\ }
-\DoxyCodeLine{01085\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}{chafree}}(\textcolor{keywordtype}{void}*\ ptr)\ \{}
-\DoxyCodeLine{01086\ \ \ \ \ \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\_MUTEX}}(\{}
-\DoxyCodeLine{01087\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}{\_\_chafree}}(ptr);}
+\DoxyCodeLine{01079\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__minislab_gae5bd43ddfa01d13ff845185ef27200b7}{\_\_attribute\_\_}}((constructor))\ init()\ \{}
+\DoxyCodeLine{01080\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}}\ =\ \mbox{\hyperlink{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}{blocklist\_with\_capacity}}(30);}
+\DoxyCodeLine{01081\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}}\ \ =\ \mbox{\hyperlink{group__Challoc__block_ga47ad8fc687b8bc735ee31d05274ee80e}{blocklist\_with\_capacity}}(10);}
+\DoxyCodeLine{01082\ \ \ \ \ \textcolor{keywordtype}{int}\ res\ \ \ \ \ \ \ \ \ \ \ =\ pthread\_mutex\_init(\&challoc\_mutex,\ NULL);}
+\DoxyCodeLine{01083\ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ !=\ 0)\ \{}
+\DoxyCodeLine{01084\ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}Could\ not\ initialize\ mutex"{}});}
+\DoxyCodeLine{01085\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{01086\ \ \ \ \ \}}
+\DoxyCodeLine{01087\ }
 \DoxyCodeLine{01088\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
-\DoxyCodeLine{01089\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}{leakcheck\_list\_remove\_ptr}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ ptr);}
+\DoxyCodeLine{01089\ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}\ =\ \mbox{\hyperlink{group__Challoc__leakcheck_ga427c47cea9b2b311c3986539750dc982}{leakcheck\_list\_with\_capacity}}(10);}
 \DoxyCodeLine{01090\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{01091\ \ \ \ \ \})}
-\DoxyCodeLine{01092\ \}}
-\DoxyCodeLine{01093\ }
-\DoxyCodeLine{01100\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}{chacalloc}}(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{01101\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr;}
-\DoxyCodeLine{01102\ \ \ \ \ \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\_MUTEX}}(\{}
-\DoxyCodeLine{01103\ \ \ \ \ \ \ \ \ ptr\ =\ \mbox{\hyperlink{group__Challoc_gacc7f10a0cbff8b9fa73601f58c7b1d04}{\_\_chacalloc}}(nmemb,\ size);}
-\DoxyCodeLine{01104\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
-\DoxyCodeLine{01105\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\_list\_push}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ ptr,\ nmemb\ *\ size);}
-\DoxyCodeLine{01106\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{01107\ \ \ \ \ \})}
-\DoxyCodeLine{01108\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
-\DoxyCodeLine{01109\ \}}
+\DoxyCodeLine{01091\ \}}
+\DoxyCodeLine{01092\ }
+\DoxyCodeLine{01093\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__minislab_gae5bd43ddfa01d13ff845185ef27200b7}{\_\_attribute\_\_}}((destructor))\ fini()\ \{}
+\DoxyCodeLine{01094\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
+\DoxyCodeLine{01095\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}}\ >\ 0)\ \{}
+\DoxyCodeLine{01096\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}challoc:\ detected\ \%zu\ memory\ leaks\(\backslash\)n"{}},\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}});}
+\DoxyCodeLine{01097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_ad0a52563ba531c29bb1d17801a2c42ab}{size}};\ i++)\ \{}
+\DoxyCodeLine{01098\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Leaked\ memory\ at\ \%p,\ Content:\ "{}},\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i].\mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}});}
+\DoxyCodeLine{01099\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ ptr\_size\ =\ \mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i].\mbox{\hyperlink{structAllocTrace_a0072aaba30fbc7de637bbbb467c869bb}{size}};}
+\DoxyCodeLine{01100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j\ =\ 0;\ j\ <\ ptr\_size;\ j++)\ \{}
+\DoxyCodeLine{01101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}\%02X\ "{}},\ ((uint8\_t*)\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}}.\mbox{\hyperlink{structLeakcheckTraceList_a09101737c1343a80569b6f2e3d23bf1b}{ptrs}}[i].\mbox{\hyperlink{structAllocTrace_ab985438f7703bd9e68565ec85e8c890e}{ptr}})[j]);}
+\DoxyCodeLine{01102\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01103\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{01104\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01105\ \ \ \ \ \ \ \ \ exit(EXIT\_FAILURE);}
+\DoxyCodeLine{01106\ \ \ \ \ \}}
+\DoxyCodeLine{01107\ }
+\DoxyCodeLine{01108\ \ \ \ \ printf(\textcolor{stringliteral}{"{}challoc:\ no\ memory\ leaks\ detected,\ congrats!\(\backslash\)n"{}});}
+\DoxyCodeLine{01109\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ /\(\backslash\)\(\backslash\)\_/\(\backslash\)\(\backslash\)\(\backslash\)n>(\string^w\string^)<\(\backslash\)n\ \ b\ d\(\backslash\)n"{}});}
 \DoxyCodeLine{01110\ }
-\DoxyCodeLine{01117\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}{charealloc}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{01118\ \ \ \ \ \textcolor{keywordtype}{void}*\ new\_ptr;}
-\DoxyCodeLine{01119\ \ \ \ \ \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\_MUTEX}}(\{}
-\DoxyCodeLine{01120\ \ \ \ \ \ \ \ \ new\_ptr\ =\ \mbox{\hyperlink{group__Challoc_ga11dcaa5b91481a23168776d350d28b44}{\_\_charealloc}}(ptr,\ size);}
-\DoxyCodeLine{01121\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
-\DoxyCodeLine{01122\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}{leakcheck\_list\_remove\_ptr}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ ptr);}
-\DoxyCodeLine{01123\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\_list\_push}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ new\_ptr,\ size);}
-\DoxyCodeLine{01124\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{01125\ \ \ \ \ \})}
-\DoxyCodeLine{01126\ \ \ \ \ \textcolor{keywordflow}{return}\ new\_ptr;}
-\DoxyCodeLine{01127\ \}}
-\DoxyCodeLine{01128\ }
-\DoxyCodeLine{01131\ \textcolor{comment}{//\ Set\ the\ interposing\ functions}}
-\DoxyCodeLine{01132\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_INTERPOSING}}
-\DoxyCodeLine{01133\ \textcolor{keywordtype}{void}*\ malloc(\textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{01134\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}{chamalloc}}(size);}
-\DoxyCodeLine{01135\ \}}
-\DoxyCodeLine{01136\ }
-\DoxyCodeLine{01137\ \textcolor{keywordtype}{void}\ free(\textcolor{keywordtype}{void}*\ ptr)\ \{}
-\DoxyCodeLine{01138\ \ \ \ \ \mbox{\hyperlink{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}{chafree}}(ptr);}
-\DoxyCodeLine{01139\ \}}
-\DoxyCodeLine{01140\ }
-\DoxyCodeLine{01141\ \textcolor{keywordtype}{void}*\ calloc(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{01142\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}{chacalloc}}(nmemb,\ size);}
-\DoxyCodeLine{01143\ \}}
-\DoxyCodeLine{01144\ }
-\DoxyCodeLine{01145\ \textcolor{keywordtype}{void}*\ realloc(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
-\DoxyCodeLine{01146\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}{charealloc}}(ptr,\ size);}
-\DoxyCodeLine{01147\ \}}
-\DoxyCodeLine{01148\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01111\ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaf393beb1b581581052541e163eb886a5}{leakcheck\_list\_free}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}});}
+\DoxyCodeLine{01112\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01113\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}{blocklist\_destroy}}(\&\mbox{\hyperlink{group__Challoc__block_ga372c0cf6a369cd74e3ef75f5852403b6}{challoc\_blocks\_in\_use}});}
+\DoxyCodeLine{01114\ \ \ \ \ \mbox{\hyperlink{group__Challoc__block_gac0ea9d4826ea53b39174807059da0c33}{blocklist\_destroy}}(\&\mbox{\hyperlink{group__Challoc__block_ga91342243d26d851e14c33337961c30d1}{challoc\_freed\_blocks}});}
+\DoxyCodeLine{01115\ }
+\DoxyCodeLine{01116\ \ \ \ \ \textcolor{keywordtype}{int}\ res\ =\ pthread\_mutex\_destroy(\&challoc\_mutex);}
+\DoxyCodeLine{01117\ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ !=\ 0)\ \{}
+\DoxyCodeLine{01118\ \ \ \ \ \ \ \ \ perror(\textcolor{stringliteral}{"{}Could\ not\ destroy\ mutex"{}});}
+\DoxyCodeLine{01119\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{01120\ \ \ \ \ \}}
+\DoxyCodeLine{01121\ \}}
+\DoxyCodeLine{01122\ }
+\DoxyCodeLine{01126\ }
+\DoxyCodeLine{01136\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}{chamalloc}}(\textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{01137\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr;}
+\DoxyCodeLine{01138\ \ \ \ \ \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\_MUTEX}}(\{}
+\DoxyCodeLine{01139\ \ \ \ \ \ \ \ \ ptr\ =\ \mbox{\hyperlink{group__Challoc_ga961960f0cc9ae134385d1c5b28209936}{\_\_chamalloc}}(size);}
+\DoxyCodeLine{01140\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
+\DoxyCodeLine{01141\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\_list\_push}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ ptr,\ size);}
+\DoxyCodeLine{01142\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01143\ \ \ \ \ \})}
+\DoxyCodeLine{01144\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{01145\ \}}
+\DoxyCodeLine{01146\ }
+\DoxyCodeLine{01151\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}{chafree}}(\textcolor{keywordtype}{void}*\ ptr)\ \{}
+\DoxyCodeLine{01152\ \ \ \ \ \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\_MUTEX}}(\{}
+\DoxyCodeLine{01153\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc_gac59c66af9ce49488e45b407d71d4ec6f}{\_\_chafree}}(ptr);}
+\DoxyCodeLine{01154\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
+\DoxyCodeLine{01155\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}{leakcheck\_list\_remove\_ptr}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ ptr);}
+\DoxyCodeLine{01156\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01157\ \ \ \ \ \})}
+\DoxyCodeLine{01158\ \}}
+\DoxyCodeLine{01159\ }
+\DoxyCodeLine{01166\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}{chacalloc}}(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{01167\ \ \ \ \ \textcolor{keywordtype}{void}*\ ptr;}
+\DoxyCodeLine{01168\ \ \ \ \ \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\_MUTEX}}(\{}
+\DoxyCodeLine{01169\ \ \ \ \ \ \ \ \ ptr\ =\ \mbox{\hyperlink{group__Challoc_gacc7f10a0cbff8b9fa73601f58c7b1d04}{\_\_chacalloc}}(nmemb,\ size);}
+\DoxyCodeLine{01170\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
+\DoxyCodeLine{01171\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\_list\_push}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ ptr,\ nmemb\ *\ size);}
+\DoxyCodeLine{01172\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01173\ \ \ \ \ \})}
+\DoxyCodeLine{01174\ \ \ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{01175\ \}}
+\DoxyCodeLine{01176\ }
+\DoxyCodeLine{01183\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}{charealloc}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{01184\ \ \ \ \ \textcolor{keywordtype}{void}*\ new\_ptr;}
+\DoxyCodeLine{01185\ \ \ \ \ \mbox{\hyperlink{group__Challoc__multithreading_ga9bdf3671ffe7e14d63bf6416fd6139e8}{CHALLOC\_MUTEX}}(\{}
+\DoxyCodeLine{01186\ \ \ \ \ \ \ \ \ new\_ptr\ =\ \mbox{\hyperlink{group__Challoc_ga11dcaa5b91481a23168776d350d28b44}{\_\_charealloc}}(ptr,\ size);}
+\DoxyCodeLine{01187\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_LEAKCHECK}}
+\DoxyCodeLine{01188\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gacc5c651186c8ebad4bbfa9536ad25f92}{leakcheck\_list\_remove\_ptr}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ ptr);}
+\DoxyCodeLine{01189\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group__Challoc__leakcheck_gaed744b4d8415dd09078d2cd70286f236}{leakcheck\_list\_push}}(\&\mbox{\hyperlink{group__Challoc__leakcheck_gaafef467767e8a3b2ee524dee8fcf4e2a}{challoc\_leaktracker}},\ new\_ptr,\ size);}
+\DoxyCodeLine{01190\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01191\ \ \ \ \ \})}
+\DoxyCodeLine{01192\ \ \ \ \ \textcolor{keywordflow}{return}\ new\_ptr;}
+\DoxyCodeLine{01193\ \}}
+\DoxyCodeLine{01194\ }
+\DoxyCodeLine{01197\ \textcolor{comment}{//\ Set\ the\ interposing\ functions}}
+\DoxyCodeLine{01198\ \textcolor{preprocessor}{\#ifdef\ CHALLOC\_INTERPOSING}}
+\DoxyCodeLine{01199\ \textcolor{keywordtype}{void}*\ malloc(\textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{01200\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__Challoc__pub_ga9f3b6167b237941d8c574b363ec2c5d3}{chamalloc}}(size);}
+\DoxyCodeLine{01201\ \}}
+\DoxyCodeLine{01202\ }
+\DoxyCodeLine{01203\ \textcolor{keywordtype}{void}\ free(\textcolor{keywordtype}{void}*\ ptr)\ \{}
+\DoxyCodeLine{01204\ \ \ \ \ \mbox{\hyperlink{group__Challoc__pub_ga4c54a44dfe34e217f00b08dcb7e13d52}{chafree}}(ptr);}
+\DoxyCodeLine{01205\ \}}
+\DoxyCodeLine{01206\ }
+\DoxyCodeLine{01207\ \textcolor{keywordtype}{void}*\ calloc(\textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{01208\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__Challoc__pub_gab3bdaf331b155010f7388e05cac82c3f}{chacalloc}}(nmemb,\ size);}
+\DoxyCodeLine{01209\ \}}
+\DoxyCodeLine{01210\ }
+\DoxyCodeLine{01211\ \textcolor{keywordtype}{void}*\ realloc(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ size)\ \{}
+\DoxyCodeLine{01212\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group__Challoc__pub_ga856dcc755d8babdc7dfcb5545f1f22e0}{charealloc}}(ptr,\ size);}
+\DoxyCodeLine{01213\ \}}
+\DoxyCodeLine{01214\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

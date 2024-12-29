@@ -335,8 +335,23 @@ En temps, on peut voir que pour les benchmarks unitaires, cela n'a pas changé g
 Pour la mémoire, la différence est flagrente, sur certaines figures #alloc_name n'est plus tellement gourmand que le plot de la libc n'est même pas visible.
 Par exemple, double_linked_list est passée de 820Mo à 12Mo, et les autres programmes faisant des allocations plus petites observent une évolution similaire.
 
+= Garder en mémoire les dernières allocations
+
+Le plus grand problème maintenant est que je reparcours les listes depuis le début à chaque appel, ce qui peut vite devenir long.
+
+Pour résoudre cela, je garde en mémoire la dernière allocation faite, et je regarde si je peux allouer juste à coté, car il y a de grandes chances que si on a trouvé de la place une fois, on puisse en trouver juste à coté.
+Aussi, je garde en mémoire le dernier free fait, et je regarde si je peux allouer à cet endroit, car il y a de grandes chances que si on a libéré un bloc, on puisse le réallouer juste après.
+
+Il faut bien sûr invalider ces informations si on unmap le bloc qui les contient.
+
+#pagebreak(weak: true)
+#bench_show("bench_results/slab_N_reusage_N_frag_N_last")
+
+Comme on peut le voir, il y a une nette amélioration, surtout pour les programmes qui font beaucoup d'allocations et de libérations, comme double_linked_list, count_occurences, et small_allocs, qui ont eu un gain de presque x10 en temps d'exécution.
+Pour les autres, la différence est moins flagrante, mais reste tout de même significative.
 
 Bien sûr, #alloc_name n'est pas au niveau de la libc car il reste plein de pistes à explorer, et que les optimisations deviennent moins évidentes, mais nous avons des performances bien meilleures qu'un mmap basique.
+Dans le pire cas, #alloc_name est 3 fois plus lent que la libc, mais dans le meilleur cas, arrive presque à être au même niveau.
 
 = Fonctionnalités rajoutées
 

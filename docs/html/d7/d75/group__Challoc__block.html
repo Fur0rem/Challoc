@@ -140,6 +140,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gade5f736c6073fb5c7780633828d8bf03" id="r_gade5f736c6073fb5c7780633828d8bf03"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/d68/structBlock.html">Block</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gade5f736c6073fb5c7780633828d8bf03">blocklist_peek</a> (<a class="el" href="../../df/d9e/structBlockList.html">BlockList</a> *list, size_t block_idx)</td></tr>
 <tr class="memdesc:gade5f736c6073fb5c7780633828d8bf03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Peek a block from the block list.  <br /></td></tr>
 <tr class="separator:gade5f736c6073fb5c7780633828d8bf03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabc8e05c2289de4b029756226b8a6736d" id="r_gabc8e05c2289de4b029756226b8a6736d"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gabc8e05c2289de4b029756226b8a6736d">try_allocate_next_to</a> (<a class="el" href="../../d6/d7e/structAllocMetadata.html">AllocMetadata</a> *metadata, size_t size_requested, size_t size_needed, size_t block_idx)</td></tr>
+<tr class="memdesc:gabc8e05c2289de4b029756226b8a6736d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tries to allocate after a given metadata.  <br /></td></tr>
+<tr class="separator:gabc8e05c2289de4b029756226b8a6736d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5a9130281fdd09b71826f03a2957dc28" id="r_ga5a9130281fdd09b71826f03a2957dc28"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga5a9130281fdd09b71826f03a2957dc28">block_try_allocate</a> (<a class="el" href="../../df/d9e/structBlockList.html">BlockList</a> *list, size_t block_idx, size_t size_requested)</td></tr>
 <tr class="memdesc:ga5a9130281fdd09b71826f03a2957dc28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tries to allocate within a block.  <br /></td></tr>
 <tr class="separator:ga5a9130281fdd09b71826f03a2957dc28"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,6 +159,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>decrease_ttl_and_unma
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
+<tr class="memitem:ga672429b83b580918d58511539f4d77ec" id="r_ga672429b83b580918d58511539f4d77ec"><td class="memItemLeft" align="right" valign="top"><a id="ga672429b83b580918d58511539f4d77ec" name="ga672429b83b580918d58511539f4d77ec"></a>
+void *&#160;</td><td class="memItemRight" valign="bottom"><b>last_block_alloc</b> = NULL</td></tr>
+<tr class="memdesc:ga672429b83b580918d58511539f4d77ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last allocation made in a block. <br /></td></tr>
+<tr class="separator:ga672429b83b580918d58511539f4d77ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga20bc18824383d595f22873d5d8047e13" id="r_ga20bc18824383d595f22873d5d8047e13"><td class="memItemLeft" align="right" valign="top"><a id="ga20bc18824383d595f22873d5d8047e13" name="ga20bc18824383d595f22873d5d8047e13"></a>
+<a class="el" href="../../d6/d7e/structAllocMetadata.html">AllocMetadata</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>prev_of_last_block_free</b> = NULL</td></tr>
+<tr class="memdesc:ga20bc18824383d595f22873d5d8047e13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Previous of last free made in a block. <br /></td></tr>
+<tr class="separator:ga20bc18824383d595f22873d5d8047e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga372c0cf6a369cd74e3ef75f5852403b6" id="r_ga372c0cf6a369cd74e3ef75f5852403b6"><td class="memItemLeft" align="right" valign="top"><a id="ga372c0cf6a369cd74e3ef75f5852403b6" name="ga372c0cf6a369cd74e3ef75f5852403b6"></a>
 <a class="el" href="../../df/d9e/structBlockList.html">BlockList</a>&#160;</td><td class="memItemRight" valign="bottom"><b>challoc_blocks_in_use</b> = {0}</td></tr>
 <tr class="memdesc:ga372c0cf6a369cd74e3ef75f5852403b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of blocks in use. <br /></td></tr>
@@ -615,6 +626,48 @@ Fragmented Block Allocator</h2>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The time to live of the block </dd></dl>
+
+</div>
+</div>
+<a id="gabc8e05c2289de4b029756226b8a6736d" name="gabc8e05c2289de4b029756226b8a6736d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabc8e05c2289de4b029756226b8a6736d">&#9670;&#160;</a></span>try_allocate_next_to()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * try_allocate_next_to </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d6/d7e/structAllocMetadata.html">AllocMetadata</a> *</td>          <td class="paramname"><span class="paramname"><em>metadata</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size_requested</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size_needed</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>block_idx</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tries to allocate after a given metadata. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">metadata</td><td>The metadata to allocate after </td></tr>
+    <tr><td class="paramname">size_requested</td><td>The size requested </td></tr>
+    <tr><td class="paramname">size_needed</td><td>The size needed </td></tr>
+    <tr><td class="paramname">block_idx</td><td>The index of the block to allocate from </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
